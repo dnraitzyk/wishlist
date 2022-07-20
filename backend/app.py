@@ -1,7 +1,10 @@
 import time
 import argparse
+from tkinter import W
 from backend.Wish import Wish
 import logging
+import json
+from bson import json_util
 from pymongo import MongoClient
 from backend.api.HelloApiHandler import HelloApiHandler
 from flask import Flask, jsonify, render_template, request, send_from_directory
@@ -91,9 +94,9 @@ def addWish():
 
 @app.route("/getwishlists", methods=["GET"], strict_slashes=False)
 def getWishlist():
-    name = request.json['name']
-    quantity = request.json['quantity']
-    baselink = request.json['baselink']
+    # name = request.json['name']
+    # quantity = request.json['quantity']
+    # baselink = request.json['baselink']
 
     # wish = Wish(
     #     name=itemname,
@@ -118,8 +121,14 @@ def getWishlist():
     # }
 
     wishes = mycollection.find({})
+    # for wish in wishes:
+    #     wish[id] = wish.get('_id')
+    #     wish.pop('_id')
 
-    return jsonify([wish for wish in wishes])
+    # print("python json is " + jsonify([wish for wish in wishes]))
+
+    return json_util.dumps(wishes)
+
 
 # @app.route('/<path:path>')
 # def staticHost(self, path):

@@ -11,10 +11,10 @@ module.exports = {
     static: './build/',
     hot: true,
     devMiddleware: {
-        publicPath: '/build/',
-        writeToDisk: true,
-     }
-   },
+      publicPath: '/build/',
+      writeToDisk: true,
+    }
+  },
   resolve: {
     modules: [path.join(__dirname, 'src'), 'node_modules'],
     alias: {

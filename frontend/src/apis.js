@@ -1,31 +1,46 @@
+import axios from 'axios';
+
+
 export default class Apis {
     // Insert an article
+    // static InsertWish(body) {
+    //     console.log(body)
+    //     return fetch(`http://localhost:5000/submitwish`, {
+    //         'method': 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body: JSON.stringify(body)
+
+    //     })
+    //         .then(response => response.json())
+    //         .catch(error => console.log(error))
+    // }
+
     static InsertWish(body) {
         console.log(body)
-        return fetch(`http://localhost:5000/submitwish`, {
-            'method': 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(body)
-
-        })
-            .then(response => response.json())
+        return axios.post(`http://localhost:5000/submitwish`, body)
+            .then(response => response)
             .catch(error => console.log(error))
     }
 
-    static GetWishes(body) {
-        console.log(body)
-        return fetch(`http://localhost:5000/getwishlists`, {
-            'method': 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-            // ,
-            // body: JSON.stringify(body)
+    static GetWishes() {
+        return axios.get(`http://localhost:5000/getwishlists`)
+            .then(response => response)
+            .catch(error => console.log(error))
 
-        }).then(response => response.json())
-        // .catch(error => console.log(error))
     }
+
+    // fetch(`http://localhost:5000/getwishlists`, {
+    //     'method': 'GET',
+    //     headers: {
+    //         'Content-Type': 'application/json'
+    //         }
+    //     // ,
+    //     // body: JSON.stringify(body)
+
+    // }).then(response => response.json())
+    //     // .catch(error => console.log(error))
+    // }
 
 }

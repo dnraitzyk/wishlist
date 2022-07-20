@@ -20,15 +20,8 @@
     overflow-x: hidden;
   }
 
-  /* .currencyinput {
-    border: 1px solid rgb(12, 10, 10);
-}
-.currencyinput input {
-    border: 0px solid black;
-} */
-  
   /* Side navigation links */
-a {
+.sidenav a {
     color: white ;
     padding: 16px;
     text-decoration: none;
@@ -45,6 +38,23 @@ a {
   .content {
     margin-left: 200px;
     padding-left: 20px;
+  }
+  
+.wish {
+  padding-bottom: 20px;
+border: 1px solid red;
+margin: 5px;
+}
+
+.wish a {
+  color: black;
+
+}
+.wishTitle {
+
+}
+  .wishatt {
+
   }
 
 .button-24 {
