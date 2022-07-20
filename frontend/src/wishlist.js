@@ -11,13 +11,15 @@ class Wishlist extends React.Component {
             name: "",
             quantity: 0,
             baselink: "",
-            items: [],
+            filter: "Default",
             wishes: [],
+            wishesToShow: [],
             loading: 'initial'
         };
 
         this.GetWishesList = this.GetWishesList.bind(this);
         this.ShowWishes = this.ShowWishes.bind(this);
+        this.HandleFilterChange = this.HandleFilterChange.bind(this);
 
     }
 
@@ -28,13 +30,12 @@ class Wishlist extends React.Component {
     }
 
     ShowWishes() {
-        // console.log(this.state.wishes);
-        const wishwish = this.state.wishes;
+        const uiWishes = this.state.wishesToShow
         return (
-            <div>
+            < div >
                 {
-                    this.state.wishes.data == null ? null :
-                        this.state.wishes.data.map(({ name, quantity, cost, description, category, link }) => (
+                    uiWishes == null ? null :
+                        uiWishes.map(({ name, quantity, cost, description, category, link }) => (
                             <div className='wish' key={cost}>
                                 <div className="wishatt">Category: {category}</div>
                                 <div className="wishatt">Item name: {name}</div>
@@ -49,17 +50,24 @@ class Wishlist extends React.Component {
         );
     }
 
+    HandleFilterChange = (e) => {
+        const wishcheck = this.state.wishes
+        const value = e.target.value;
+
+        for (var i = wishcheck.length - 1; i >= 0; i--) {
+            if (wishcheck[i].category !== value) {
+                wishcheck.splice(i, 1);
+            }
+            if (wishcheck[i] != null) { console.log(wishcheck[i].category); }
+        }
+        this.setState({ filter: value, wishesToShow: wishcheck });
+    }
+
     GetWishesList() {
-        console.log("Gettings wishes");
-        wishes: Apis.GetWishes({}).then(function (response) { return response; }).then(data => {
-            this.setState({ wishes: data, loading: 'false' });
+        Apis.GetWishes().then(function (response) { return response; }).then(data => {
+            this.setState({ wishes: data.data, wishesToShow: data.data, loading: 'false' });
         })
-        // response => this.ShowWishes(response)).json });
-        // return getdata
-        // console.log("response is "+ resp);
-        // const getdata = await get.json();
-        // console.log("get data is " + getdata);
-        // this.setState({s name: getdata.name })
+
     }
 
     render() {
@@ -74,9 +82,18 @@ class Wishlist extends React.Component {
         const mywishes = this.ShowWishes();
 
         return (
-            <div className="content">
-                <h1 className="wishTitle">Wishes:</h1>
-                <div>{mywishes}</div>
+            <div className="contentwrapper">
+                <div className="contentBanner"><h1 className="wishTitle">Wishes:</h1> <label>
+                    <p className="bannerFilter">Category</p>
+                    <select name="category" value={this.state.filter} onChange={this.HandleFilterChange}>
+                        <option value="default">Default</option>
+                        <option value="camping">Camping</option>
+                        <option value="hendrix">Hendrix</option>
+                        <option value="decor">Decor</option>
+                    </select>
+                </label></div>
+                <div className="content"><div>{mywishes}</div>
+                </div>
             </div>
         );
     };

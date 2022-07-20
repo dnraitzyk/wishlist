@@ -73,11 +73,9 @@ class AddWish extends React.Component {
 
 
     render() {
-        return <div className='content'>
-            {/* <form onSubmit={handleSubmit}> */}
+        return <div className='contentwrapper'>
             <form>
                 <fieldset>
-                    {/* <label onChange={(e) => setCategory(e.target.value)}> */}
                     <label>
                         <p>Category</p>
                         <select name="category" value={this.state.category} onChange={this.handleChange}>

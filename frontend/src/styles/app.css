@@ -35,10 +35,26 @@
   }
   
   /* Style the content */
-  .content {
+  .contentwrapper {
     margin-left: 200px;
     padding-left: 20px;
   }
+  
+  .content {
+
+  }
+
+  .contentBanner {
+   /* display: inline-block; */
+   display: flex;
+
+  }
+
+  .bannerFilter {
+    margin-bottom: 0;
+  }
+
+  
   
 .wish {
   padding-bottom: 20px;
@@ -51,7 +67,7 @@ margin: 5px;
 
 }
 .wishTitle {
-
+margin-right: 3em;
 }
   .wishatt {
 
