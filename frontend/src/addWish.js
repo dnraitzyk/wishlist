@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import ReactDOM from "react-dom";
-import Apis from './apis'
+import { InsertWish } from './apis'
 
 class AddWish extends React.Component {
 
@@ -19,7 +19,7 @@ class AddWish extends React.Component {
     }
 
 
-    insertWish() {
+    async insertWish() {
         let name = this.state.name
         let description = this.state.description
         let cost = this.state.cost
@@ -27,9 +27,14 @@ class AddWish extends React.Component {
         let link = this.state.link
         let category = this.state.category
         let wishlist = this.state.wishlist
-        Apis.InsertWish({ name, description, cost, quantity, category, link, wishlist })
-            .then(response => console.log(JSON.stringify(response)))
-            .catch(error => console.log('error', error))
+        try {
+            let insertwish = await InsertWish({ name, description, cost, quantity, category, link, wishlist })
+        }
+        catch (e) {
+            console.log("Error in addWish.insertWish: " + e.message);
+        }
+        // .then(response => console.log(JSON.stringify(response)))
+        //     .catch(error => console.log('error', error))
     }
 
     handleSubmit = (event) => {

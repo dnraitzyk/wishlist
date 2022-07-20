@@ -1,46 +1,23 @@
 import axios from 'axios';
 
-
-export default class Apis {
-    // Insert an article
-    // static InsertWish(body) {
-    //     console.log(body)
-    //     return fetch(`http://localhost:5000/submitwish`, {
-    //         'method': 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify(body)
-
-    //     })
-    //         .then(response => response.json())
-    //         .catch(error => console.log(error))
-    // }
-
-    static InsertWish(body) {
-        console.log(body)
-        return axios.post(`http://localhost:5000/submitwish`, body)
-            .then(response => response)
-            .catch(error => console.log(error))
+async function InsertWish(body) {
+    try {
+        let postdbresp = axios.post(`http://localhost:5000/submitwish`, body)
     }
-
-    static GetWishes() {
-        return axios.get(`http://localhost:5000/getwishlists`)
-            .then(response => response)
-            .catch(error => console.log(error))
-
+    catch (e) {
+        console.log("Error in Apis.InsertWish: " + e.message);
     }
-
-    // fetch(`http://localhost:5000/getwishlists`, {
-    //     'method': 'GET',
-    //     headers: {
-    //         'Content-Type': 'application/json'
-    //         }
-    //     // ,
-    //     // body: JSON.stringify(body)
-
-    // }).then(response => response.json())
-    //     // .catch(error => console.log(error))
-    // }
-
 }
+
+
+async function GetWishes() {
+    try {
+        let getdbresp = await axios.get("http://localhost:5000/getwishlists");
+        return getdbresp;
+    }
+    catch (e) {
+        console.log("Error in Apis.GetWishes" + e.message);
+    }
+};
+
+export { GetWishes, InsertWish };

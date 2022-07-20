@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import ReactDOM from "react-dom";
-import Apis from './apis'
+import { GetWishes } from './apis'
 
 class Wishlist extends React.Component {
 
@@ -63,11 +63,14 @@ class Wishlist extends React.Component {
         this.setState({ filter: value, wishesToShow: wishcheck });
     }
 
-    GetWishesList() {
-        Apis.GetWishes().then(function (response) { return response; }).then(data => {
-            this.setState({ wishes: data.data, wishesToShow: data.data, loading: 'false' });
-        })
-
+    async GetWishesList() {
+        try {
+            let apiresp = await GetWishes()
+            this.setState({ wishes: apiresp.data, wishesToShow: apiresp.data, loading: 'false' });
+        }
+        catch (e) {
+            console.log("Error in Wishlist.GetWishesList: " + e.message);
+        }
     }
 
     render() {
