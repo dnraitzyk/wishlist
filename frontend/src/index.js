@@ -7,7 +7,6 @@ import AddWish from './addWish';
 import Sidenav from './sidenav';
 import Wishlist from './wishlist';
 
-// import HelloWorld from './components/HelloWorld';
 const rootelem = document.getElementById('root');
 const root = createRoot(rootelem);
 

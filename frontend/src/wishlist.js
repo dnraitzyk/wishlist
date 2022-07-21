@@ -3,43 +3,18 @@ import { GetWishes } from './apis'
 
 function Wishlist() {
 
-    // constructor(props) {
-    //     super(props);
-
-    //     this.state = {
-    //         name: "",
-    //         quantity: 0,
-    //         baselink: "",
-    //         filter: "Default",
-    //         wishes: [],
-    //         wishesToShow: [],
-    //         loading: 'initial'
-    //     };
-
-    //     this.GetWishesList = this.GetWishesList.bind(this);
-    //     this.ShowWishes = this.ShowWishes.bind(this);
-    //     this.HandleFilterChange = this.HandleFilterChange.bind(this);
-
-    // }
-
     const [name, setName] = useState("");
     const [quantity, setQuantity] = useState(0);
-    const [baselink, setBaselink] = useState("");
     const [filter, setFilter] = useState("Default");
     const [wishes, setWishes] = useState([]);
     const [wishesToShow, setWishesToShow] = useState([]);
     const [loading, setLoading] = useState("initial");
 
+    // only runs once because of []
     useEffect(() => {
         setLoading('true');
         GetWishesList();
     }, []);
-
-    // function componentDidMount() {
-    //     setLoading('true');
-    //     GetWishesList();
-
-    // };
 
     function ShowWishes() {
         const uiWishes = wishesToShow
@@ -74,7 +49,6 @@ function Wishlist() {
         }
         setFilter(value);
         setWishesToShow(wishcheck);
-        // this.setState({ filter: value, wishesToShow: wishcheck });
     };
 
     async function GetWishesList() {
@@ -83,7 +57,6 @@ function Wishlist() {
             setWishes(apiresp);
             setWishesToShow(apiresp);
             setLoading('false');
-            // this.setState({ wishes: apiresp.data, wishesToShow: apiresp.data, loading: 'false' });
         }
         catch (e) {
             console.log("Error in Wishlist.GetWishesList: " + e.message);

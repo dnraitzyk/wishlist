@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import ReactDOM from "react-dom";
+import React from 'react';
 
-class Header extends React.Component {
-  render() {
-    return <div className="Header">Header is here</div>;
-  }
+function Header() {
+  return (
+    <div className="Header">Header is here</div>
+  );
 }
- export default Header;
+export default Header;
 
