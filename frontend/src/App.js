@@ -1,9 +1,4 @@
-// import logo from './logo.svg';
-// import './App.css';
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
-import Header from './header';
-import Home from './home';
 
 function App() {
     //   const [getMessage, setGetMessage] = useState({})
