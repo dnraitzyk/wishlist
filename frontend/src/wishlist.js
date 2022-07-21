@@ -18,6 +18,7 @@ function Wishlist() {
 
     function ShowWishes() {
         const uiWishes = wishesToShow
+
         return (
             < div >
                 {
@@ -38,17 +39,17 @@ function Wishlist() {
     };
 
     function HandleFilterChange(e) {
-        const wishcheck = wishes
+        const wishcheck = wishes.slice();
         const value = e.target.value;
 
         for (var i = wishcheck.length - 1; i >= 0; i--) {
             if (wishcheck[i].category !== value) {
                 wishcheck.splice(i, 1);
             }
-            if (wishcheck[i] != null) { console.log(wishcheck[i].category); }
         }
         setFilter(value);
         setWishesToShow(wishcheck);
+
     };
 
     async function GetWishesList() {
@@ -75,16 +76,20 @@ function Wishlist() {
 
     return (
         <div className="contentwrapper">
-            <div className="contentBanner"><h1 className="wishTitle">Wishes:</h1> <label>
-                <p className="bannerFilter">Category</p>
-                <select name="category" value={filter} onChange={(e) => HandleFilterChange(e)}>
-                    <option value="default">Default</option>
-                    <option value="camping">Camping</option>
-                    <option value="hendrix">Hendrix</option>
-                    <option value="decor">Decor</option>
-                </select>
-            </label></div>
-            <div className="content"><div>{mywishes}</div>
+            <div className="contentBanner">
+                <h1 className="wishTitle">Wishes:</h1>
+                <label>
+                    <p className="bannerFilter">Category</p>
+                    <select name="category" value={filter} onChange={(e) => HandleFilterChange(e)}>
+                        <option value="default">Default</option>
+                        <option value="camping">Camping</option>
+                        <option value="hendrix">Hendrix</option>
+                        <option value="decor">Decor</option>
+                    </select>
+                </label>
+            </div>
+            <div className="content">
+                {mywishes}
             </div>
         </div>
     );
