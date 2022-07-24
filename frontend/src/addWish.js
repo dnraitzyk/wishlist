@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { InsertWish } from './apis';
-import axios from 'axios';
-
 
 function AddWish() {
     const [name, setName] = useState("");
@@ -11,15 +9,22 @@ function AddWish() {
     const [category, setCategory] = useState("default");
     const [link, setLink] = useState("");
     const [wishlist, setWishlist] = useState("Default");
-    const [errors, setErrors] = useState({ "name": name });
-    const [fields, setFields] = useState({ "name": name, "description": description, "cost": cost, "quantity": quantity, "link": link, "category": category });
+    const [errors, setErrors] = useState({});
+    // const [fields, setFields] = useState({ ...fields, "name": name, "description": description, "cost": cost, "quantity": quantity, "link": link, "category": category });
+    const [fields, setFields] = useState(setInitialFields());
 
+    function setInitialFields() {
+        return { "name": name, "description": description, "cost": cost, "quantity": quantity, "link": link, "category": category }
+    }
 
+    console.log("fields initially is ", fields)
+
+    let source = "manual";
 
     async function insertWish() {
 
         try {
-            await InsertWish({ name, description, cost, quantity, category, link, wishlist })
+            await InsertWish({ name, description, cost, quantity, category, link, wishlist, source })
         }
         catch (e) {
             console.log("Error in addWish.insertWish: " + e.message);
@@ -30,7 +35,6 @@ function AddWish() {
     const handleSubmit = (event) => {
         event.preventDefault()
 
-        setErrors({});
         if (handleValidation(fields)) {
             alert("Form submitted");
 
@@ -42,7 +46,7 @@ function AddWish() {
             setQuantity("1");
             setLink("");
             setCategory("default");
-            setFields({});
+            setFields(setInitialFields());
         } else {
             alert("Form has errors.");
         }
@@ -50,6 +54,7 @@ function AddWish() {
     }
 
     const handleValidation = (sfields) => {
+
         let fields = sfields;
         let errors = {};
         let formIsValid = true;
@@ -79,6 +84,7 @@ function AddWish() {
 
         const { name, value } = event.target;
         setFields({ ...fields, [name]: value });
+        console.log("fields on change is ", fields)
         //special cases
         // if (setter === setVideo) {
         //     setInvalidVideo(!ReactPlayer.canPlay(value))

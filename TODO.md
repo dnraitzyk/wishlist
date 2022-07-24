@@ -1,5 +1,3 @@
-Form validation
-- only numbers in cost/quantity
 
 Functionality
 - add edit button on each wishlist item
@@ -11,7 +9,12 @@ UI
 - fields CSS
 - banner
 - nav menu fold up hamburger
-- 
+- bootstrap?
 
+Validation
+-
+
+========================================================================
 DONE
 - need something in name and cost field
+- only numbers in cost/quantity

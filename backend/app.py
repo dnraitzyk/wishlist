@@ -48,6 +48,7 @@ def serve(path):
 
 @app.route("/submitwish", methods=["POST"], strict_slashes=False)
 def addWish():
+    logger.info("json is ", len(request.json))
     itemname = request.json['name']
     quantity = request.json['quantity']
     cost = request.json['cost']
@@ -55,6 +56,7 @@ def addWish():
     category = request.json['category']
     description = request.json['description']
     wishlist = request.json['wishlist']
+    source = request.json['source']
     modified_date = datetime.today()
 
     client = MongoClient('localhost', 27017)
@@ -69,7 +71,8 @@ def addWish():
         'quantity': quantity,
         'category': category,
         'wishlist': wishlist,
-        'modified_date': modified_date
+        'modified_date': modified_date,
+        'source': source
     }
 
     rec = mycollection.insert_one(record)
