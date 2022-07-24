@@ -38,31 +38,46 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 
-class app():
+def getReiWishes():
 
-    def __init__(self):
-        self.message = 'Hello world!'
-        print("test")
+    reiwishlist = requests.get("https://www.rei.com/lists/415791132")
 
-    print("testapp")
-    wish = Wish()
-    # logger.info("log test")
-# logger.info(args)
+    soup = BeautifulSoup(reiwishlist.content, 'html.parser')
+    reiitems = soup.find_all("tr", class_="list-item list-body-item")
+
+    reiWishObjs = list()
+    for row in reiitems:
+        itemname = row.td.find_all("p", class_="product__title")
+        unicode_string = str(itemname[0].string).strip()
+        logger.info(unicode_string)
+        mappedwish = mapWishToDBRecord(Wish(unicode_string, wishlist="rei"))
+        reiWishObjs.append(mappedwish)
+    saveWishesDB(reiWishObjs)
+    # TODO need to make this bulk upsert
+    # logger.info("logging reiWishObjs")
+    # logger.info(reiWishObjs)
 
 
-reiwishlist = requests.get("https://www.rei.com/lists/415791132")
+def mapWishToDBRecord(Wish):
+    recordDict = {
+        "name": Wish.name,
+        "description": Wish.description,
+        "cost": Wish.cost,
+        "quantity": Wish.quantity,
+        "category": Wish.category,
+        "link": Wish.link,
+        "wishlist": Wish.wishlist,
+        "_id": Wish.id
+    }
+    return recordDict
+    # logger.info(soup.prettify())
 
-# with open("index.html") as fp:
-#     soup = BeautifulSoup(fp, 'html.parser')
 
-soup = BeautifulSoup(reiwishlist.content, 'html.parser')
-reiitems = soup.find_all("tr", class_="list-item list-body-item")
+def saveWishesDB(recordList):
+    logger.info("inserting " + str(len(recordList)) + " records")
+    mycollection.insert_many(recordList)
+# TODO find out why this request runs twice from UI
 
-for row in reiitems:
-    itemname = row.td.find_all("p", class_="product__title")
-    unicode_string = str(itemname[0].string).strip()
-    logger.info(unicode_string)
-# logger.info(soup.prettify())
 
 amazonwishlist = requests.get(
     "https://www.amazon.com/hz/wishlist/ls/3M5WRZQLL8Z1U?ref_=wl_share")

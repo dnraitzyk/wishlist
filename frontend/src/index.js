@@ -12,15 +12,15 @@ const root = createRoot(rootelem);
 
 root.render(
 
-    <StrictMode>
-        <BrowserRouter>
-            <Sidenav />
-            <Routes>
-                <Route path="/" element={<App />} />
-                <Route path="/addwish" element={<AddWish />} />
-                <Route path="/wishlists" element={<Wishlist />} />
-                <Route path="*" element={<App />} />
-            </Routes>
-        </BrowserRouter>
-    </StrictMode>
+    // <StrictMode>
+    <BrowserRouter>
+        <Sidenav />
+        <Routes>
+            <Route path="/" element={<App />} />
+            <Route path="/addwish" element={<AddWish />} />
+            <Route path="/wishlists" element={<Wishlist />} />
+            <Route path="*" element={<App />} />
+        </Routes>
+    </BrowserRouter>
+    // </StrictMode>
 );

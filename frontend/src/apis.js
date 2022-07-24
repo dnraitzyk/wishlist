@@ -14,9 +14,7 @@ async function GetWishes() {
     try {
         let getdbresp = await axios.get("http://localhost:5000/getwishlists");
         let respdata = getdbresp.data;
-        for (let i = 0; i < respdata.length; i++) {
-            respdata[i]._id = respdata[i]._id.$oid;
-        }
+
         return respdata;
     }
     catch (e) {

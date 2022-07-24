@@ -7,6 +7,7 @@ module.exports = {
     filename: 'bundle.js',
     clean: true
   },
+  devtool: "source-map",
   devServer: {
     static: './build/',
     hot: true,

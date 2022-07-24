@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useState, useEffect } from 'react';
 import { GetWishes } from './apis'
 
@@ -9,6 +10,7 @@ function Wishlist() {
     const [wishes, setWishes] = useState([]);
     const [wishesToShow, setWishesToShow] = useState([]);
     const [loading, setLoading] = useState("initial");
+    const [wishlist, setWishlist] = useState("default");
 
     // only runs once because of []
     useEffect(() => {
@@ -16,25 +18,64 @@ function Wishlist() {
         GetWishesList();
     }, []);
 
+    async function goToLink(link) {
+        // let tempurl = await axios.get('/go_outside_flask/https://www.rei.com');
+        try {
+            let tempurl = await axios.get('/go_outside_flask/' + link);
+            let newurl = tempurl.data;
+            // window.location.replace(newurl);
+        }
+        catch (e) {
+            console.log("Error redirecting from link: " + link + " " + e.message);
+        }
+    }
+
+    const goToLinkTest = async link => {
+        let taburl = ""
+        try {
+            taburl = await getUrl(link);
+            return openInTab(taburl);
+        }
+        catch (e) {
+            console.log("Error getting url from link: " + link + " " + e.message);
+            return window.location.href;
+
+        }
+    };
+
+    //return entire function
+    const openInTab = (url) => {
+        const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
+        if (newWindow) newWindow.opener = null
+    };
+
+    async function getUrl(link) {
+        let toflask = '/go_outside_flask/' + link;
+        let tempurl = await axios.get(toflask);
+        let newurl = tempurl.data;
+        return newurl;
+    };
+
     function ShowWishes() {
         const uiWishes = wishesToShow
-
+        console.log(uiWishes);
         return (
             < div >
                 {
                     uiWishes == null ? null :
-                        uiWishes.map(({ name, quantity, cost, description, category, link, _id }) => (
+                        uiWishes.map(({ name, quantity, cost, description, category, link, wishlist, _id }) => (
                             <div className='wish' key={_id}>
                                 <div className="wishatt">Category: {category}</div>
                                 <div className="wishatt">Item name: {name}</div>
                                 <div className="wishatt">Description: {description}</div>
                                 <div className="wishatt">Cost: {cost}</div>
-                                <a className="wishatt" href={link}>Link: {link}</a>
+                                <a className="wishatt" href="" onClick={(e) => goToLinkTest(link)}>Link: {link}</a>
                                 <div className="wishatt">Quantity: {quantity}</div>
+                                <div className="wishatt">Wishlist: {wishlist}</div>
                             </div>
                         ))
                 }
-            </div>
+            </div >
         );
     };
 
@@ -73,6 +114,8 @@ function Wishlist() {
     }
 
     const mywishes = ShowWishes();
+
+
 
     return (
         <div className="contentwrapper">
