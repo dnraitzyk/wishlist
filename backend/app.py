@@ -87,10 +87,9 @@ def getWishlist():
     mydatabase = client.wish
     mycollection = mydatabase.wishes
 
+    getReiWishes()
     wishes = mycollection.find({})
-
-    # getReiWishes()
-
+    # logger.info(json_util.dumps(wishes))
     return json_util.dumps(wishes)
 
 

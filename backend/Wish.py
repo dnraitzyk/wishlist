@@ -15,7 +15,4 @@ class Wish():
         self.category = category
         self.link = link
         self.wishlist = wishlist
-        self.id = wishlist+"_"+name.replace(" ", "_")
-
-
-# def createWish():
+        self.id = wishlist+"_"+name.replace(" ", "_").lower()

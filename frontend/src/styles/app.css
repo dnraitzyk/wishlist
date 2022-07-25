@@ -16,7 +16,7 @@
     z-index: 1;
     top: 0;
     left: 0;
-    background-color: #111;
+    background-color: #161748;
     overflow-x: hidden;
   }
 
@@ -31,7 +31,7 @@
   /* Change color on hover */
   .sidenav a:hover {
     background-color: #ddd;
-    color: black;
+    color: #161748;
   }
   
   /* Style the content */
@@ -55,11 +55,17 @@
   }
 
   
+.righthand {
+  float:right;
+  margin-top: .25em;
+  margin-right: 7em;
+}
   
 .wish {
   padding-bottom: 20px;
 border: 1px solid red;
 margin: 5px;
+padding-left: .5em;
 }
 
 .wish a {
@@ -73,9 +79,9 @@ margin-right: 3em;
 
   }
 
-.button-24 {
-  background: #FF4742;
-  border: 1px solid #FF4742;
+.typicalbutton {
+  background: #478559;
+  border: 1px solid #478559;
   border-radius: 6px;
   box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 4px;
   box-sizing: border-box;
@@ -83,12 +89,11 @@ margin-right: 3em;
   cursor: pointer;
   display: inline-block;
   font-family: nunito,roboto,proxima-nova,"proxima nova",sans-serif;
-  font-size: 16px;
-  font-weight: 800;
+  font-size: 1em;
   line-height: 16px;
-  min-height: 40px;
+  /* min-height: 40px; */
   outline: 0;
-  padding: 12px 14px;
+  padding: 5px 20px;
   text-align: center;
   text-rendering: geometricprecision;
   text-transform: none;
@@ -98,13 +103,13 @@ margin-right: 3em;
   vertical-align: middle;
 }
 
-.button-24:hover,
-.button-24:active {
+.typicalbutton:hover,
+.typicalbutton:active {
   background-color: initial;
   background-position: 0 0;
-  color: #FF4742;
+  color: #478559;
 }
 
-.button-24:active {
+.typicalbutton:active {
   opacity: .5;
 }

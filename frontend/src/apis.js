@@ -14,7 +14,14 @@ async function GetWishes() {
     try {
         let getdbresp = await axios.get("http://localhost:5000/getwishlists");
         let respdata = getdbresp.data;
+        respdata.forEach(function (arrayItem) {
+            var id = "";
+            if (typeof arrayItem._id === "object") {
+                ({ $oid: id } = arrayItem._id);
+                arrayItem._id = id;
+            }
 
+        });
         return respdata;
     }
     catch (e) {

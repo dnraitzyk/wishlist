@@ -18,19 +18,7 @@ function Wishlist() {
         GetWishesList();
     }, []);
 
-    async function goToLink(link) {
-        // let tempurl = await axios.get('/go_outside_flask/https://www.rei.com');
-        try {
-            let tempurl = await axios.get('/go_outside_flask/' + link);
-            let newurl = tempurl.data;
-            // window.location.replace(newurl);
-        }
-        catch (e) {
-            console.log("Error redirecting from link: " + link + " " + e.message);
-        }
-    }
-
-    const goToLinkTest = async link => {
+    const goToLink = async link => {
         let taburl = ""
         try {
             taburl = await getUrl(link);
@@ -56,22 +44,44 @@ function Wishlist() {
         return newurl;
     };
 
+    function ShowEdit(props) {
+        if (props.source === 'manual') {
+            console.log("manual");
+            return (
+
+                <span>
+                    <button className="typicalbutton righthand" type="button" onClick={(e) => handleEdit(e)}>
+                        Edit
+                    </button>
+                </span>
+
+            );
+        }
+        return null;
+    }
+
+    // TODO need to save all _id as object and hexdecimal, create new variable for id unique 
     function ShowWishes() {
         const uiWishes = wishesToShow
-        console.log(uiWishes);
         return (
             < div >
                 {
                     uiWishes == null ? null :
-                        uiWishes.map(({ name, quantity, cost, description, category, link, wishlist, _id }) => (
-                            <div className='wish' key={_id}>
-                                <div className="wishatt">Category: {category}</div>
-                                <div className="wishatt">Item name: {name}</div>
-                                <div className="wishatt">Description: {description}</div>
-                                <div className="wishatt">Cost: {cost}</div>
-                                <a className="wishatt" href="" onClick={(e) => goToLinkTest(link)}>Link: {link}</a>
-                                <div className="wishatt">Quantity: {quantity}</div>
-                                <div className="wishatt">Wishlist: {wishlist}</div>
+                        uiWishes.map(({ name, quantity, cost, description, category, link, wishlist, _id, source }) => (
+                            <div>
+
+                                <div className='wish' key={_id}>
+                                    <div>
+                                        <span className="wishatt">Category: {category}</span>
+                                        <ShowEdit source={source} />
+                                    </div>
+                                    <div className="wishatt">Item name: {name}</div>
+                                    <div className="wishatt">Description: {description}</div>
+                                    <div className="wishatt">Cost: {cost}</div>
+                                    <span>Link: </span><a className="wishatt" href="" onClick={(e) => goToLink(link)}>{link}</a>
+                                    <div className="wishatt">Quantity: {quantity}</div>
+                                    <div className="wishatt">Wishlist: {wishlist}</div>
+                                </div>
                             </div>
                         ))
                 }
@@ -93,9 +103,25 @@ function Wishlist() {
 
     };
 
+    function dynamicSort(property) {
+        var sortOrder = 1;
+        if (property[0] === "-") {
+            sortOrder = -1;
+            property = property.substr(1);
+        }
+        return function (a, b) {
+            /* next line works with strings and numbers, 
+             * and you may want to customize it to your needs
+             */
+            var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+            return result * sortOrder;
+        }
+    }
+
     async function GetWishesList() {
         try {
-            let apiresp = await GetWishes()
+            let apiresp = await GetWishes();
+            apiresp.sort(dynamicSort("-source"));
             setWishes(apiresp);
             setWishesToShow(apiresp);
             setLoading('false');
@@ -115,6 +141,10 @@ function Wishlist() {
 
     const mywishes = ShowWishes();
 
+
+    const handleEdit = (event) => {
+
+    }
 
 
     return (

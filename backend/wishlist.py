@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import app
 import requests
 import re
-from pymongo import MongoClient
+from pymongo import MongoClient, UpdateOne
 
 
 client = MongoClient('localhost', 27017)
@@ -53,7 +53,6 @@ def getReiWishes():
         mappedwish = mapWishToDBRecord(Wish(unicode_string, wishlist="rei"))
         reiWishObjs.append(mappedwish)
     saveWishesDB(reiWishObjs)
-    # TODO need to make this bulk upsert
     # logger.info("logging reiWishObjs")
     # logger.info(reiWishObjs)
 
@@ -67,7 +66,8 @@ def mapWishToDBRecord(Wish):
         "category": Wish.category,
         "link": Wish.link,
         "wishlist": Wish.wishlist,
-        "_id": Wish.id
+        "_id": Wish.id,
+        "source": "auto"
     }
     return recordDict
     # logger.info(soup.prettify())
@@ -75,8 +75,15 @@ def mapWishToDBRecord(Wish):
 
 def saveWishesDB(recordList):
     logger.info("inserting " + str(len(recordList)) + " records")
-    mycollection.insert_many(recordList)
-# TODO find out why this request runs twice from UI
+    # bulkop = mycollection.bulk_write()
+    # results = []
+    ids = [record.pop("_id") for record in recordList]
+
+    # for record in recordList:
+
+    operations = [UpdateOne({"_id": idn}, {'$set': data}, upsert=True)
+                  for idn, data in zip(ids, recordList)]
+    mycollection.bulk_write(operations)
 
 
 amazonwishlist = requests.get(

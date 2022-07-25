@@ -6,25 +6,28 @@ function AddWish() {
     const [description, setDescription] = useState("");
     const [cost, setCost] = useState("");
     const [quantity, setQuantity] = useState("1");
-    const [category, setCategory] = useState("default");
+    const [category, setCategory] = useState("");
     const [link, setLink] = useState("");
     const [wishlist, setWishlist] = useState("Default");
     const [errors, setErrors] = useState({});
-    // const [fields, setFields] = useState({ ...fields, "name": name, "description": description, "cost": cost, "quantity": quantity, "link": link, "category": category });
     const [fields, setFields] = useState(setInitialFields());
 
     function setInitialFields() {
         return { "name": name, "description": description, "cost": cost, "quantity": quantity, "link": link, "category": category }
-    }
+    };
 
-    console.log("fields initially is ", fields)
+    function clearFields() {
+        return { "name": "", "description": "", "cost": "", "quantity": "1", "link": "", "category": "Default" }
+    };
+
 
     let source = "manual";
 
-    async function insertWish() {
-
+    async function insertWish(insertFields) {
+        let { name, description, cost, quantity, link, category, wishlist, source } = insertFields;
         try {
-            await InsertWish({ name, description, cost, quantity, category, link, wishlist, source })
+            await InsertWish({ name, description, cost, quantity, link, category, wishlist, source });
+            // await InsertWish({ name, description, cost, quantity, category, link, wishlist, source })
         }
         catch (e) {
             console.log("Error in addWish.insertWish: " + e.message);
@@ -32,13 +35,32 @@ function AddWish() {
 
     }
 
+    function isValidPrice(price) {
+        const priceregex = new RegExp(/(?=(?:\.)?\d{1,})^\d{0,}(?:\.)?(?:\d{0,2})$/);
+        let isValid = true;
+        if (price === "") {
+            return isValid
+        }
+        if (priceregex.test(price)) {
+            return isValid;
+        }
+        else {
+            return false
+        }
+    };
+
     const handleSubmit = (event) => {
         event.preventDefault()
 
         if (handleValidation(fields)) {
             alert("Form submitted");
+            let newlink = "";
 
-            insertWish()
+            if (link !== "" && !link.startsWith("https://")) {
+                newlink = "https://" + link;
+                setLink(newlink);
+            }
+            insertWish({ "name": name, "description": description, "cost": cost, "quantity": quantity, "link": newlink, "category": category, "wishlist": wishlist, "source": source })
 
             setName("");
             setDescription("");
@@ -46,7 +68,7 @@ function AddWish() {
             setQuantity("1");
             setLink("");
             setCategory("default");
-            setFields(setInitialFields());
+            setFields(clearFields());
         } else {
             alert("Form has errors.");
         }
@@ -64,14 +86,12 @@ function AddWish() {
             errors["name"] = "Cannot be empty";
         }
 
-        const priceregex = new RegExp(/(?=(?:\.)?\d{1,})^\d{0,}(?:\.)?(?:\d{0,2})$/);
-        if (!priceregex.test(fields['cost'])) {
+        if (!isValidPrice(fields['cost'])) {
             formIsValid = false;
             errors["cost"] = "Must be a valid price"
         }
 
         const intregex = new RegExp(/^\d{1,}$/);
-        console.log("quantity is ", fields['quantity'])
         if (!intregex.test(fields['quantity'])) {
             formIsValid = false;
             errors["quantity"] = "Must be a valid quantity"
@@ -84,7 +104,6 @@ function AddWish() {
 
         const { name, value } = event.target;
         setFields({ ...fields, [name]: value });
-        console.log("fields on change is ", fields)
         //special cases
         // if (setter === setVideo) {
         //     setInvalidVideo(!ReactPlayer.canPlay(value))
@@ -92,7 +111,6 @@ function AddWish() {
 
         setter(value)
     }
-
 
     return (
         <div className='contentwrapper'>
@@ -136,7 +154,7 @@ function AddWish() {
                         <input name="link" placeholder="URL" value={link} onChange={handleChange(setLink)} />
                     </label>
                 </fieldset>
-                <button className="button-24" type="submit" onClick={(e) => handleSubmit(e)}>
+                <button className="typicalbutton" type="submit" onClick={(e) => handleSubmit(e)}>
                     Submit
                 </button>
             </form>
