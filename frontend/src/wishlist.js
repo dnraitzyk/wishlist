@@ -1,11 +1,9 @@
 import axios from 'axios';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { GetWishes, InsertWish } from './apis'
 
 function Wishlist() {
 
-    const [name, setName] = useState("");
-    const [quantity, setQuantity] = useState(0);
     const [filter, setFilter] = useState("Default");
     const [wishes, setWishes] = useState([]);
     const [wishesToShow, setWishesToShow] = useState([]);
@@ -32,7 +30,6 @@ function Wishlist() {
         }
     };
 
-    //return entire function
     const openInTab = (url) => {
         const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
         if (newWindow) newWindow.opener = null
@@ -45,15 +42,13 @@ function Wishlist() {
         return newurl;
     };
 
-
-    // TODO need to save all _id as object and hexdecimal, create new variable for id unique 
     function ShowWishes() {
 
         const [showlist, setShowList] = useState(wishesToShow);
         const [prevWish, setPrevWish] = useState();
 
 
-        // setWishCount(wishesToShow.length);
+        setWishCount(wishesToShow.length);
 
         const ShowEdit = ({ item }) => {
 
@@ -78,43 +73,16 @@ function Wishlist() {
             return null;
         };
 
-        function pushItemToWishlist(item, wishlist) {
-            // console.log("item is ", item);
-            // console.log("wishlist is ", wishlist);
-
-            wishlist.forEach(function (elem, index, wishlist) {
-                // console.log("wishlist item ", wishlist[index]._id);
-                // console.log("item ", item._id);
-                if (item._id === wishlist[index]._id) {
-                    wishlist.splice(index, 1, item);
-
-                }
-                // setWishCount(wishlist.length);
-                setShowList(wishlist);
-            });
-        };
-
-
-        // const handleCancel = (e, prevItem, item) => {
-        //     item.isReadOnly = true;
-
-        //     item = JSON.parse(JSON.stringify(prevItem));
-        //     console.log("item ", item);
-
-        //     let wishlist = [...wishesToShow]
-        //     setShowList(wishlist);
-        // }
-
         const Cancel = (props) => {
 
             var [prevItem, item] = props.props;
 
-            const handleCancel = () => {
+            const handleCancel = useCallback(() => {
 
                 prevItem.isReadOnly = true;
                 let wishlist = wishesToShow.map(check => check._id !== item._id ? check : prevItem);
                 setShowList(wishlist);
-            };
+            })
 
             if (!item.isReadOnly) {
                 return (
@@ -132,12 +100,12 @@ function Wishlist() {
 
         const Submit = ({ item }) => {
 
-            const handleSubmit = () => {
+            const handleSubmit = useCallback(() => {
                 insertWish(item);
                 item.isReadOnly = true;
                 let wishlist = [...wishesToShow]
                 setShowList(wishlist);
-            };
+            }, [])
 
             async function insertWish(item) {
                 try {
@@ -148,7 +116,6 @@ function Wishlist() {
                 }
 
             }
-
 
             if (!item.isReadOnly) {
                 return (
@@ -165,7 +132,6 @@ function Wishlist() {
         };
 
         const handleCategoryChange = (e, item) => {
-
             item.category = e.target.value;
             let wishlist = [...wishesToShow]
             setShowList(wishlist);
@@ -173,8 +139,6 @@ function Wishlist() {
 
         function handleChange(e, item) {
             const { name, value } = e.target;
-            // let tempitem = { ...item, [name]: value };
-            // pushItemToWishlist(tempitem, wishesToShow);
             item[name] = value;
             let wishlist = [...wishesToShow];
             setShowList(wishlist);
@@ -271,16 +235,10 @@ function Wishlist() {
             property = property.substr(1);
         }
         return function (a, b) {
-            /* next line works with strings and numbers, 
-             * and you may want to customize it to your needs
-             */
+
             var result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
             return result * sortOrder;
         }
-    }
-
-    const Wish = (item) => {
-        const [wish, setWish] = useState(item);
     }
 
     async function GetWishesList() {
@@ -307,8 +265,6 @@ function Wishlist() {
     if (loading === 'true') {
         return <h2 className="content">Loading...</h2>;
     }
-
-    // const mywishes = ShowWishes();
 
     return (
         <div className="contentwrapper">

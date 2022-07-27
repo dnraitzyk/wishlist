@@ -25,7 +25,6 @@ record = {
 }
 
 rec = mycollection.insert_one(record)
-# rec = myTable.insert_one(record)
 
 
 # Create and configure logger
@@ -33,7 +32,6 @@ logging.basicConfig(filename="app.log",
                     format='%(message)s',
                     filemode='w')
 
-# Creating an object
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
@@ -75,11 +73,8 @@ def mapWishToDBRecord(Wish):
 
 def saveWishesDB(recordList):
     logger.info("inserting " + str(len(recordList)) + " records")
-    # bulkop = mycollection.bulk_write()
-    # results = []
-    ids = [record.pop("id") for record in recordList]
 
-    # for record in recordList:
+    ids = [record.pop("id") for record in recordList]
 
     operations = [UpdateOne({"id": idn}, {'$set': data}, upsert=True)
                   for idn, data in zip(ids, recordList)]

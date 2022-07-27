@@ -10,7 +10,7 @@ from bson.objectid import ObjectId
 from backend.api.HelloApiHandler import HelloApiHandler
 from flask import Flask, jsonify, render_template, request, redirect, url_for
 from flask_restful import Api, Resource, reqparse
-from flask_cors import CORS  # comment this on deployment
+from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 import pathlib

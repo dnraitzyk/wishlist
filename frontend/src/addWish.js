@@ -78,7 +78,7 @@ function AddWish() {
         let fields = sfields;
         let errors = {};
         let formIsValid = true;
-        //Name
+
         if (!fields["name"]) {
             formIsValid = false;
             errors["name"] = "Cannot be empty";
