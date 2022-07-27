@@ -2,7 +2,11 @@ import axios from 'axios';
 
 async function InsertWish(body) {
     try {
-        let postdbresp = axios.post(`http://localhost:5000/submitwish`, body)
+        let postdbresp = axios.post(`http://localhost:5000/submitwish`, body, {
+            headers: {
+                'content-type': 'application/json'
+            }
+        });
     }
     catch (e) {
         console.log("Error in Apis.InsertWish: " + e.message);
@@ -20,7 +24,6 @@ async function GetWishes() {
                 ({ $oid: id } = arrayItem._id);
                 arrayItem._id = id;
             }
-
         });
         return respdata;
     }

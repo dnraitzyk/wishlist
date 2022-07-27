@@ -54,11 +54,17 @@
     margin-bottom: 0;
   }
 
-  
+
+
 .righthand {
   float:right;
   margin-top: .25em;
   margin-right: 7em;
+}
+
+.righthandSection {
+  display: flex; 
+  justify-content: flex-end;
 }
   
 .wish {
@@ -76,7 +82,10 @@ padding-left: .5em;
 margin-right: 3em;
 }
   .wishatt {
+  }
 
+  .capital {
+    text-transform: capitalize;
   }
 
 .typicalbutton {

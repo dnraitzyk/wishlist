@@ -66,7 +66,7 @@ def mapWishToDBRecord(Wish):
         "category": Wish.category,
         "link": Wish.link,
         "wishlist": Wish.wishlist,
-        "_id": Wish.id,
+        "id": Wish.id,
         "source": "auto"
     }
     return recordDict
@@ -77,11 +77,11 @@ def saveWishesDB(recordList):
     logger.info("inserting " + str(len(recordList)) + " records")
     # bulkop = mycollection.bulk_write()
     # results = []
-    ids = [record.pop("_id") for record in recordList]
+    ids = [record.pop("id") for record in recordList]
 
     # for record in recordList:
 
-    operations = [UpdateOne({"_id": idn}, {'$set': data}, upsert=True)
+    operations = [UpdateOne({"id": idn}, {'$set': data}, upsert=True)
                   for idn, data in zip(ids, recordList)]
     mycollection.bulk_write(operations)
 

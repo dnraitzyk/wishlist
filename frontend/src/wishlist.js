@@ -1,6 +1,6 @@
 import axios from 'axios';
 import React, { useState, useEffect } from 'react';
-import { GetWishes } from './apis'
+import { GetWishes, InsertWish } from './apis'
 
 function Wishlist() {
 
@@ -11,6 +11,7 @@ function Wishlist() {
     const [wishesToShow, setWishesToShow] = useState([]);
     const [loading, setLoading] = useState("initial");
     const [wishlist, setWishlist] = useState("default");
+    const [wishcount, setWishCount] = useState(0);
 
     // only runs once because of []
     useEffect(() => {
@@ -44,43 +45,203 @@ function Wishlist() {
         return newurl;
     };
 
-    function ShowEdit(props) {
-        if (props.source === 'manual') {
-            console.log("manual");
-            return (
-
-                <span>
-                    <button className="typicalbutton righthand" type="button" onClick={(e) => handleEdit(e)}>
-                        Edit
-                    </button>
-                </span>
-
-            );
-        }
-        return null;
-    }
 
     // TODO need to save all _id as object and hexdecimal, create new variable for id unique 
     function ShowWishes() {
-        const uiWishes = wishesToShow
+
+        const [showlist, setShowList] = useState(wishesToShow);
+        const [prevWish, setPrevWish] = useState();
+
+
+        // setWishCount(wishesToShow.length);
+
+        const ShowEdit = ({ item }) => {
+
+            const handleEdit = () => {
+                item.isReadOnly = false;
+                let wishlist = [...wishesToShow]
+                setShowList(wishlist);
+                setPrevWish({ ...item });
+            };
+
+            if (item.source === 'manual') {
+                return (
+
+                    <span>
+                        <button className="typicalbutton righthand" type="button" onClick={() => handleEdit(item)}>
+                            Edit
+                        </button>
+                    </span>
+
+                );
+            }
+            return null;
+        };
+
+        function pushItemToWishlist(item, wishlist) {
+            // console.log("item is ", item);
+            // console.log("wishlist is ", wishlist);
+
+            wishlist.forEach(function (elem, index, wishlist) {
+                // console.log("wishlist item ", wishlist[index]._id);
+                // console.log("item ", item._id);
+                if (item._id === wishlist[index]._id) {
+                    wishlist.splice(index, 1, item);
+
+                }
+                // setWishCount(wishlist.length);
+                setShowList(wishlist);
+            });
+        };
+
+
+        // const handleCancel = (e, prevItem, item) => {
+        //     item.isReadOnly = true;
+
+        //     item = JSON.parse(JSON.stringify(prevItem));
+        //     console.log("item ", item);
+
+        //     let wishlist = [...wishesToShow]
+        //     setShowList(wishlist);
+        // }
+
+        const Cancel = (props) => {
+
+            var [prevItem, item] = props.props;
+
+            const handleCancel = () => {
+
+                prevItem.isReadOnly = true;
+                let wishlist = wishesToShow.map(check => check._id !== item._id ? check : prevItem);
+                setShowList(wishlist);
+            };
+
+            if (!item.isReadOnly) {
+                return (
+
+                    <span >
+                        <button className="typicalbutton" type="button" onClick={(e) => handleCancel(e, prevItem, item)}>
+                            Cancel
+                        </button>
+                    </span>
+
+                );
+            }
+            return null;
+        }
+
+        const Submit = ({ item }) => {
+
+            const handleSubmit = () => {
+                insertWish(item);
+                item.isReadOnly = true;
+                let wishlist = [...wishesToShow]
+                setShowList(wishlist);
+            };
+
+            async function insertWish(item) {
+                try {
+                    await InsertWish(item);
+                }
+                catch (e) {
+                    console.log("Error in wishlist.insertWish: " + e.message);
+                }
+
+            }
+
+
+            if (!item.isReadOnly) {
+                return (
+
+                    <span>
+                        <button className="typicalbutton" type="button" onClick={() => handleSubmit(item)}>
+                            Submit
+                        </button>
+                    </span>
+
+                );
+            }
+            return null;
+        };
+
+        const handleCategoryChange = (e, item) => {
+
+            item.category = e.target.value;
+            let wishlist = [...wishesToShow]
+            setShowList(wishlist);
+        };
+
+        function handleChange(e, item) {
+            const { name, value } = e.target;
+            // let tempitem = { ...item, [name]: value };
+            // pushItemToWishlist(tempitem, wishesToShow);
+            item[name] = value;
+            let wishlist = [...wishesToShow];
+            setShowList(wishlist);
+
+            //special cases
+            // if (setter === setVideo) {
+            //     setInvalidVideo(!ReactPlayer.canPlay(value))
+            // }
+
+        }
+
         return (
             < div >
                 {
-                    uiWishes == null ? null :
-                        uiWishes.map(({ name, quantity, cost, description, category, link, wishlist, _id, source }) => (
-                            <div>
+                    showlist == null ? null :
+                        showlist.map((item) => (
+                            <div key={item._id}>
+                                <div className='wish' >
+                                    <div className="wishatt">
+                                        {item.isReadOnly ? (
+                                            <div>
+                                                <span className="wishatt capital" >Category: {item.category}</span>
+                                                <ShowEdit item={item} />
+                                                <div className="wishatt">Item Name: {item.name}</div>
+                                                <div className="wishatt">Description: {item.description}</div>
+                                                <div className="wishatt">Cost: {item.cost}</div>
+                                                <span>Link: </span><a className="wishatt" href="" onClick={(e) => goToLink(item.link)}>{item.link}</a>
+                                                <div className="wishatt">Quantity: {item.quantity}</div>
+                                            </div>
+                                        ) :
+                                            (<span>
+                                                <label>
+                                                    Category:
+                                                    <select name="category" onChange={(e) => handleCategoryChange(e, item)} value={item.category}>
+                                                        <option value="default">Default</option>
+                                                        <option value="camping">Camping</option>
+                                                        <option value="hendrix">Hendrix</option>
+                                                        <option value="decor">Decor</option>
+                                                    </select>
+                                                </label>
+                                                <span className="righthandSection">
+                                                    <Submit item={item} />
+                                                    <Cancel props={[prevWish, item]} />
+                                                </span>
+                                                <div>
+                                                    <div><label>
+                                                        Item Name:
+                                                    </label><input className="wishatt" name="name" placeholder="Name" onChange={(e) => handleChange(e, item)} value={item.name} /></div>
+                                                    <div><label>
+                                                        Description:
+                                                    </label><input className="wishatt" name="description" placeholder="Name" onChange={(e) => handleChange(e, item)} value={item.description} /></div>
+                                                    <div><label>
+                                                        Cost:
+                                                    </label><input className="wishatt" name="cost" placeholder="Cost" onChange={(e) => handleChange(e, item)} value={item.cost} /></div>
+                                                    <div><label>
+                                                        Link:
+                                                    </label><input className="wishatt" name="link" placeholder="Link" onChange={(e) => handleChange(e, item)} value={item.link} /></div>
+                                                    <div><label>
+                                                        Quantity:
+                                                    </label><input className="wishatt" name="quantity" placeholder="Quantity" onChange={(e) => handleChange(e, item)} value={item.quantity} /></div>
+                                                    <div className="wishatt">Wishlist: {item.wishlist}</div>
+                                                </div>
+                                            </span>)
+                                        }
 
-                                <div className='wish' key={_id}>
-                                    <div>
-                                        <span className="wishatt">Category: {category}</span>
-                                        <ShowEdit source={source} />
                                     </div>
-                                    <div className="wishatt">Item name: {name}</div>
-                                    <div className="wishatt">Description: {description}</div>
-                                    <div className="wishatt">Cost: {cost}</div>
-                                    <span>Link: </span><a className="wishatt" href="" onClick={(e) => goToLink(link)}>{link}</a>
-                                    <div className="wishatt">Quantity: {quantity}</div>
-                                    <div className="wishatt">Wishlist: {wishlist}</div>
+
                                 </div>
                             </div>
                         ))
@@ -118,12 +279,20 @@ function Wishlist() {
         }
     }
 
+    const Wish = (item) => {
+        const [wish, setWish] = useState(item);
+    }
+
     async function GetWishesList() {
         try {
             let apiresp = await GetWishes();
             apiresp.sort(dynamicSort("-source"));
-            setWishes(apiresp);
-            setWishesToShow(apiresp);
+            var goodlist = apiresp.map(function (item) {
+                return { ...item, isReadOnly: true };
+            })
+
+            setWishes(goodlist);
+            setWishesToShow(goodlist);
             setLoading('false');
         }
         catch (e) {
@@ -139,18 +308,12 @@ function Wishlist() {
         return <h2 className="content">Loading...</h2>;
     }
 
-    const mywishes = ShowWishes();
-
-
-    const handleEdit = (event) => {
-
-    }
-
+    // const mywishes = ShowWishes();
 
     return (
         <div className="contentwrapper">
             <div className="contentBanner">
-                <h1 className="wishTitle">Wishes:</h1>
+                <h1 className="wishTitle">Wishes: {wishcount}</h1>
                 <label>
                     <p className="bannerFilter">Category</p>
                     <select name="category" value={filter} onChange={(e) => HandleFilterChange(e)}>
@@ -162,7 +325,7 @@ function Wishlist() {
                 </label>
             </div>
             <div className="content">
-                {mywishes}
+                <ShowWishes />
             </div>
         </div>
     );

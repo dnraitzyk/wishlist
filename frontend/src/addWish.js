@@ -6,7 +6,7 @@ function AddWish() {
     const [description, setDescription] = useState("");
     const [cost, setCost] = useState("");
     const [quantity, setQuantity] = useState("1");
-    const [category, setCategory] = useState("");
+    const [category, setCategory] = useState("default");
     const [link, setLink] = useState("");
     const [wishlist, setWishlist] = useState("Default");
     const [errors, setErrors] = useState({});
@@ -17,17 +17,15 @@ function AddWish() {
     };
 
     function clearFields() {
-        return { "name": "", "description": "", "cost": "", "quantity": "1", "link": "", "category": "Default" }
+        return { "name": "", "description": "", "cost": "", "quantity": "1", "link": "", "category": "default" }
     };
 
 
     let source = "manual";
 
     async function insertWish(insertFields) {
-        let { name, description, cost, quantity, link, category, wishlist, source } = insertFields;
         try {
-            await InsertWish({ name, description, cost, quantity, link, category, wishlist, source });
-            // await InsertWish({ name, description, cost, quantity, category, link, wishlist, source })
+            await InsertWish(insertFields);
         }
         catch (e) {
             console.log("Error in addWish.insertWish: " + e.message);

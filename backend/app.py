@@ -6,6 +6,7 @@ import logging
 import json
 from bson import json_util
 from pymongo import MongoClient
+from bson.objectid import ObjectId
 from backend.api.HelloApiHandler import HelloApiHandler
 from flask import Flask, jsonify, render_template, request, redirect, url_for
 from flask_restful import Api, Resource, reqparse
@@ -48,7 +49,7 @@ def serve(path):
 
 @app.route("/submitwish", methods=["POST"], strict_slashes=False)
 def addWish():
-    logger.info("json is ", len(request.json))
+    reqdict = request.get_json()
     itemname = request.json['name']
     quantity = request.json['quantity']
     cost = request.json['cost']
@@ -57,7 +58,9 @@ def addWish():
     description = request.json['description']
     wishlist = request.json['wishlist']
     source = request.json['source']
+    _id = reqdict.get("_id")
     modified_date = datetime.today()
+    objid = ObjectId(_id)
 
     client = MongoClient('localhost', 27017)
     mydatabase = client.wish
@@ -75,7 +78,7 @@ def addWish():
         'source': source
     }
 
-    rec = mycollection.insert_one(record)
+    rec = mycollection.replace_one({"_id": objid}, record, upsert=True)
 
     return jsonify("Successfully added wish")
 
@@ -93,7 +96,7 @@ def getWishlist():
     return json_util.dumps(wishes)
 
 
-@app.route('/go_outside_flask/<path:link>', strict_slashes=False)
+@ app.route('/go_outside_flask/<path:link>', strict_slashes=False)
 def go_outside_flask_method(link):
 
     return link
