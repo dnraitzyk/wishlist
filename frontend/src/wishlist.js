@@ -4,12 +4,13 @@ import axios from 'axios';
 import React, { useState, useEffect, useCallback } from 'react';
 import { GetWishes, InsertWish } from './apis';
 
-function Wishlist() {
-  const [filter, setFilter] = useState('all');
+const Wishlist = () => {
+  // const [filter, setFilter] = useState('all');
   const [loading, setLoading] = useState('initial');
   const [listOfWishes, setListOfWishes] = useState('default');
   const [wishcount, setWishCount] = useState(0);
   const [prevWish, setPrevWish] = useState();
+  // let prevList = [];
 
   function dynamicSort(property) {
     let sortOrder = 1;
@@ -29,9 +30,10 @@ function Wishlist() {
     };
   }
 
-  function getShowCount(list) {
-    return list.filter((item) => item.show === true).length;
+  function updateList(list) {
+    setListOfWishes([...list]);
   }
+
 
   async function GetWishesList() {
     try {
@@ -41,7 +43,7 @@ function Wishlist() {
 
       setListOfWishes(goodlist);
       setLoading('false');
-      setWishCount(getShowCount(goodlist));
+      // setWishCount(getShowCount(goodlist));
     } catch (e) {
       console.log(`Error in Wishlist.GetWishesList: ${e.message}`);
     }
@@ -66,16 +68,7 @@ function Wishlist() {
     return newurl;
   }
 
-  const goToLink = async (link) => {
-    let taburl = '';
-    try {
-      taburl = await getUrl(link);
-      return openInTab(taburl);
-    } catch (e) {
-      console.log(`Error getting url from link: ${link} ${e.message}`);
-      return window.location.href;
-    }
-  };
+
 
   function replaceWishInList(list, wishToUse) {
     for (let i = 0; i < list.length; i += 1) {
@@ -84,218 +77,6 @@ function Wishlist() {
       }
     }
     return [...list];
-  }
-
-  function ShowWishes({ currentList }) {
-    // console.log("props is ", currentList);
-    // const [prevList, setPrevList] = useState();
-    // const { listOfWishes } = props;
-    let prevList = [];
-    // let prevList = (function () {
-    //     if (prevList !== undefined && prevList.length > 0) {
-    //         return [...prevList];
-    //     }
-
-    //     return [...listOfWishes];
-    // }())
-
-    // useEffect(() => {
-    //     // setPrevList(listOfWishes.map((i) => (i)));
-    //     prevList = listOfWishes.map((i) => (i));
-    //     console.log("use effect prevlist", prevList);
-    // }, []);
-
-    function ShowEdit({ item }) {
-      const handleEdit = () => {
-        prevList = currentList.map((i) => ({ ...i, isReadOnly: true }));
-        item.isReadOnly = false;
-
-        setPrevWish({ ...item });
-        console.log('prevWish edit', { ...item });
-      };
-
-      if (item.source === 'manual') {
-        return (
-
-          <span>
-            <button className="typicalbutton righthand" type="button" onClick={() => handleEdit(item)}>
-              Edit
-            </button>
-          </span>
-
-        );
-      }
-      return null;
-    }
-
-    function Cancel(props) {
-      const [prevList, prevItem, item] = props.props;
-
-      const handleCancel = useCallback(() => {
-        prevItem.isReadOnly = true;
-        setListOfWishes(replaceWishInList(currentList, { ...prevItem }));
-      });
-
-      if (!item.isReadOnly) {
-        return (
-
-          <span>
-            <button className="typicalbutton" type="button" onClick={(e) => handleCancel(e, prevItem, item)}>
-              Cancel
-            </button>
-          </span>
-
-        );
-      }
-      return null;
-    }
-
-    function Submit({ item }) {
-      const handleSubmit = useCallback(() => {
-        insertWish(item);
-        item.isReadOnly = true;
-        setListOfWishes(currentList.map((i) => (i)));
-      }, []);
-
-      async function insertWish(item) {
-        try {
-          await InsertWish(item);
-        } catch (e) {
-          console.log(`Error in wishlist.insertWish: ${e.message}`);
-        }
-      }
-
-      if (!item.isReadOnly) {
-        return (
-
-          <span>
-            <button className="typicalbutton" type="button" onClick={() => handleSubmit(item)}>
-              Submit
-            </button>
-          </span>
-
-        );
-      }
-      return null;
-    }
-
-    const handleCategoryChange = (e, item) => {
-      item.category = e.target.value;
-      setListOfWishes(currentList.map((i) => (i)));
-    };
-    // TODO fix this so it doesnt stop after 1 character
-    const handleChange = (e, item) => {
-      const { name, value } = e.target;
-      item[name] = value;
-      console.log('list of wishes', currentList);
-      setListOfWishes(currentList.map((i) => (i)));
-      // special cases
-      // if (setter === setVideo) {
-      //     setInvalidVideo(!ReactPlayer.canPlay(value))
-      // }
-    };
-
-    return (
-      <div>
-        {
-          currentList == null ? null
-            : currentList.map((item) => (
-              <div key={item._id}>
-                {item.show ? (
-                  <div className="wish">
-                    <div className="wishatt">
-                      {
-                        item.isReadOnly ? (
-                          <div>
-                            <span className="wishatt capital">
-                              Category:
-                              {item.category}
-                            </span>
-                            <ShowEdit item={item} />
-                            <div className="wishatt">
-                              Item Name:
-                              {item.name}
-                            </div>
-                            <div className="wishatt">
-                              Description:
-                              {item.description}
-                            </div>
-                            <div className="wishatt">
-                              Cost:
-                              {item.cost}
-                            </div>
-                            <span>Link: </span>
-                            <a className="wishatt" href="" onClick={(e) => goToLink(item.link)}>{item.link}</a>
-                            <div className="wishatt">
-                              Quantity:
-                              {item.quantity}
-                            </div>
-                          </div>
-                        )
-                          : (
-                            <span>
-                              <label htmlFor="category">
-                                Category:
-                                <select name="category" onChange={(e) => handleCategoryChange(e, item)} value={item.category}>
-                                  <option value="default">Default</option>
-                                  <option value="camping">Camping</option>
-                                  <option value="hendrix">Hendrix</option>
-                                  <option value="decor">Decor</option>
-                                </select>
-                              </label>
-                              <span className="righthandSection">
-                                <Submit item={item} />
-                                <Cancel props={[prevList, prevWish, item]} />
-                              </span>
-                              <div>
-                                <div>
-                                  <label htmlFor="name">
-                                    Item Name:
-                                  </label>
-                                  <input className="wishatt" name="name" placeholder="Name" onChange={(e) => handleChange(e, item)} value={item.name} />
-                                </div>
-                                <div>
-                                  <label htmlFor="description">
-                                    Description:
-                                  </label>
-                                  <input className="wishatt" name="description" placeholder="Description" onChange={(e) => handleChange(e, item)} value={item.description} />
-                                </div>
-                                <div>
-                                  <label htmlFor="cost">
-                                    Cost:
-                                  </label>
-                                  <input className="wishatt" name="cost" placeholder="Cost" onChange={(e) => handleChange(e, item)} value={item.cost} />
-                                </div>
-                                <div>
-                                  <label htmlFor="link">
-                                    Link:
-                                  </label>
-                                  <input className="wishatt" name="link" placeholder="Link" onChange={(e) => handleChange(e, item)} value={item.link} />
-                                </div>
-                                <div>
-                                  <label htmlFor="quantity">
-                                    Quantity:
-                                  </label>
-                                  <input className="wishatt" name="quantity" placeholder="Quantity" onChange={(e) => handleChange(e, item)} value={item.quantity} />
-                                </div>
-                                <div className="wishatt">
-                                  Wishlist:
-                                  {item.wishlist}
-                                </div>
-                              </div>
-                            </span>
-                          )
-                      }
-
-                    </div>
-
-                  </div>
-                ) : null}
-              </div>
-            ))
-        }
-      </div>
-    );
   }
 
   function HandleFilterChange(e) {
@@ -324,28 +105,477 @@ function Wishlist() {
 
   return (
     <div className="contentwrapper">
-      <div className="contentBanner">
-        <h1 className="wishTitle">
-          Wishes:
-          {' '}
-          {wishcount}
-        </h1>
-        <label htmlFor="category">
-          <p className="bannerFilter">Category</p>
-          <select id="category" name="category" value={filter} onChange={(e) => HandleFilterChange(e)}>
-            <option value="all">All</option>
-            <option value="default">Default</option>
-            <option value="camping">Camping</option>
-            <option value="hendrix">Hendrix</option>
-            <option value="decor">Decor</option>
-          </select>
-        </label>
-      </div>
-      <div className="content">
-        <ShowWishes currentList={listOfWishes} />
-      </div>
+      <WishlistHeader filteredList={listOfWishes} />
+      <WishTable filteredList={listOfWishes} updateList={updateList} />
     </div>
   );
 }
+
+const WishlistHeader = (props) => {
+  const [filter, setFilter] = useState('all');
+
+  let list = props.filteredList;
+
+  function getShowCount(list) {
+    return list.filter((item) => item.show === true).length;
+  }
+
+  return (
+    <div className="contentBanner">
+      <h1 className="wishTitle">
+        Wishes:
+        {' '}
+        {getShowCount(list)}
+      </h1>
+      <label htmlFor="category">
+        <p className="bannerFilter">Category</p>
+        <select id="category" name="category" value={filter} onChange={(e) => HandleFilterChange(e)}>
+          <option value="all">All</option>
+          <option value="default">Default</option>
+          <option value="camping">Camping</option>
+          <option value="hendrix">Hendrix</option>
+          <option value="decor">Decor</option>
+        </select>
+      </label>
+    </div>
+  );
+}
+
+
+
+function WishTable(props) {
+  const rows = [];
+  let { filteredList, updateList } = props;
+  let currentList = filteredList;
+  console.log('currentList: ', currentList);
+
+  if (currentList === null) {
+    console.log('currentList is null');
+  } else {
+    currentList.forEach(function (item) {
+      rows.push(<WishRow item={item} currentList={currentList} updateList={updateList} />)
+    })
+  }
+
+  // {
+  //     currentList == null ? null
+  //       : currentList.forEach(function (item) {
+  //         rows.push(<WishRow item={item} />)
+  //       })
+  //   });
+
+  return (
+    <div className="content">
+      {rows}
+    </div>
+  );
+
+}
+{/* <ShowWishes currentList={listOfWishes} /> */ }
+
+{/* rows.push(<WishRow item={item} />) */ }
+
+const WishRow = (props) => {
+  let item = props.item;
+  let currentList = props.currentList;
+  let setter = props.setter;
+  let prevList = [];
+  const [currItem, setCurrItem] = useState()
+
+  const handleEdit = () => {
+    let { item, currentList, updateList } = props;
+    // const currentList = props.currentList;
+
+    console.log("currentList check", currentList);
+    // prevList = currentList.map((i) => ({ ...i, isReadOnly: true }));
+    // console.log("new list", currentList.map(i => {
+    //   if (i._id === item._id) {
+    //     return { ...i, isReadOnly: false }
+    //   } else {
+    //     return { ...i }
+    //   }
+    // }))
+
+    const newlist = currentList.map(i => {
+      if (i._id === item._id) {
+        return { ...i, isReadOnly: false }
+      }
+      return { i };
+
+
+    });
+    // TODO find out why clicking edit removes all items except edited one
+    updateList(newlist);
+    // console.log("new list", currentList.map((i) => ({ ...i, isReadOnly: true })));
+
+    // setCurrItem({ ...item, isReadOnly: false });
+    // setter({ ...item });
+    // console.log('prevWish edit', { ...item });
+  };
+
+  // const renderEdit = useCallback(props => {
+
+  //   return (
+  //     <span  >
+  //       <button className="typicalbutton righthand" type="button" onClick={() => handleEdit(props.item, props.currentList)}>
+  //         Edit
+  //       </button>
+  //     </span>
+  //   );
+  // }, [props.item]);
+
+  function ShowEdit(item) {
+    // const handleEdit = () => {
+    //   prevList = currentList.map((i) => ({ ...i, isReadOnly: true }));
+    //   item.isReadOnly = false;
+
+    //   setPrevWish({ ...item });
+    //   console.log('prevWish edit', { ...item });
+    // };
+
+    if (item.source === 'manual') {
+      return (
+        // renderEdit({ item })
+        <span  >
+          <button className="typicalbutton righthand" type="button" onClick={() => handleEdit(item, props.currentList)}>
+            Edit
+          </button>
+        </span>
+        // <span>
+        //   <button className="typicalbutton righthand" type="button" onClick={() => handleEdit(item)}>
+        //     Edit
+        //   </button>
+        // </span>
+
+      );
+    }
+    return null;
+  }
+
+
+  return (
+    <div key={item._id}>
+      {item.show ? (
+        <div className="wish">
+          <div className="wishatt">
+            {
+              item.isReadOnly ? (
+                <div>
+                  <span className="wishatt capital">
+                    Category:
+                    {item.category}
+                  </span>
+                  {ShowEdit(item)}
+                  {/* <ShowEdit item={item} /> */}
+                  <div className="wishatt">
+                    Item Name:
+                    {item.name}
+                  </div>
+                  <div className="wishatt">
+                    Description:
+                    {item.description}
+                  </div>
+                  <div className="wishatt">
+                    Cost:
+                    {item.cost}
+                  </div>
+                  <span>Link: </span>
+                  {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                  <a className="wishatt" href="" onClick={(e) => goToLink(item.link)}>{item.link}</a>
+                  <div className="wishatt">
+                    Quantity:
+                    {item.quantity}
+                  </div>
+                </div>
+              )
+                : (
+                  <span>
+                    <label htmlFor="category">
+                      Category:
+                      <select name="category" onChange={(e) => handleCategoryChange(e, item)} value={item.category}>
+                        <option value="default">Default</option>
+                        <option value="camping">Camping</option>
+                        <option value="hendrix">Hendrix</option>
+                        <option value="decor">Decor</option>
+                      </select>
+                    </label>
+                    <span className="righthandSection">
+                      {/* TODO fix submit and cancel like edit */}
+                      <Submit item={item} />
+                      <Cancel props={[prevList, prevWish, item]} />
+                    </span>
+                    <div>
+                      <div>
+                        <label htmlFor="name">
+                          Item Name:
+                        </label>
+                        <input className="wishatt" name="name" placeholder="Name" onChange={(e) => handleChange(e, item)} value={item.name} />
+                      </div>
+                      <div>
+                        <label htmlFor="description">
+                          Description:
+                        </label>
+                        <input className="wishatt" name="description" placeholder="Description" onChange={(e) => handleChange(e, item)} value={item.description} />
+                      </div>
+                      <div>
+                        <label htmlFor="cost">
+                          Cost:
+                        </label>
+                        <input className="wishatt" name="cost" placeholder="Cost" onChange={(e) => handleChange(e, item)} value={item.cost} />
+                      </div>
+                      <div>
+                        <label htmlFor="link">
+                          Link:
+                        </label>
+                        <input className="wishatt" name="link" placeholder="Link" onChange={(e) => handleChange(e, item)} value={item.link} />
+                      </div>
+                      <div>
+                        <label htmlFor="quantity">
+                          Quantity:
+                        </label>
+                        <input className="wishatt" name="quantity" placeholder="Quantity" onChange={(e) => handleChange(e, item)} value={item.quantity} />
+                      </div>
+                      <div className="wishatt">
+                        Wishlist:
+                        {item.wishlist}
+                      </div>
+                    </div>
+                  </span>
+                )
+            }
+
+          </div>
+
+        </div>
+      ) : null}
+    </div>
+  )
+}
+// let prevList = [];
+
+function ShowWishes({ currentList }) {
+  // console.log("props is ", currentList);
+  // const [prevList, setPrevList] = useState();
+  // const { listOfWishes } = props;
+  // const prevList = [];
+  // let prevList = (function () {
+  //     if (prevList !== undefined && prevList.length > 0) {
+  //         return [...prevList];
+  //     }
+
+  //     return [...listOfWishes];
+  // }())
+
+  // useEffect(() => {
+  //     // setPrevList(listOfWishes.map((i) => (i)));
+  //     prevList = listOfWishes.map((i) => (i));
+  //     console.log("use effect prevlist", prevList);
+  // }, []);
+
+  const goToLink = async (link) => {
+    let taburl = '';
+    try {
+      taburl = await getUrl(link);
+      return openInTab(taburl);
+    } catch (e) {
+      console.log(`Error getting url from link: ${link} ${e.message}`);
+      return window.location.href;
+    }
+  };
+
+  function Cancel(props) {
+    const [prevList, prevItem, item] = props.props;
+
+    const handleCancel = useCallback(() => {
+      prevItem.isReadOnly = true;
+      setListOfWishes(replaceWishInList(currentList, { ...prevItem }));
+    });
+
+    if (!item.isReadOnly) {
+      return (
+
+        <span>
+          <button className="typicalbutton" type="button" onClick={(e) => handleCancel(e, prevItem, item)}>
+            Cancel
+          </button>
+        </span>
+
+      );
+    }
+    return null;
+  }
+
+  function Submit({ item }) {
+    const handleSubmit = useCallback(() => {
+      insertWish(item);
+      item.isReadOnly = true;
+      setListOfWishes(currentList.map((i) => (i)));
+    }, []);
+
+    async function insertWish(item) {
+      try {
+        await InsertWish(item);
+      } catch (e) {
+        console.log(`Error in wishlist.insertWish: ${e.message}`);
+      }
+    }
+
+    if (!item.isReadOnly) {
+      return (
+
+        <span>
+          <button className="typicalbutton" type="button" onClick={() => handleSubmit(item)}>
+            Submit
+          </button>
+        </span>
+
+      );
+    }
+    return null;
+  }
+
+  function ShowEdit({ item }) {
+    // const handleEdit = () => {
+    //   prevList = currentList.map((i) => ({ ...i, isReadOnly: true }));
+    //   item.isReadOnly = false;
+
+    //   setPrevWish({ ...item });
+    //   console.log('prevWish edit', { ...item });
+    // };
+
+    if (item.source === 'manual') {
+      return (
+        renderEdit({ item })
+        // <span>
+        //   <button className="typicalbutton righthand" type="button" onClick={() => handleEdit(item)}>
+        //     Edit
+        //   </button>
+        // </span>
+
+      );
+    }
+    return null;
+  }
+
+  const handleCategoryChange = (e, item) => {
+    item.category = e.target.value;
+    setListOfWishes(currentList.map((i) => (i)));
+  };
+  // TODO fix this so it doesnt stop after 1 character
+  const handleChange = (e, item) => {
+    const { name, value } = e.target;
+    item[name] = value;
+    console.log('list of wishes', currentList);
+    setListOfWishes(currentList.map((i) => (i)));
+    // special cases
+    // if (setter === setVideo) {
+    //     setInvalidVideo(!ReactPlayer.canPlay(value))
+    // }
+  };
+
+  return (
+    <div>
+      {
+        currentList == null ? null
+          : currentList.map((item) => (
+            <div key={item._id}>
+              {item.show ? (
+                <div className="wish">
+                  <div className="wishatt">
+                    {
+                      item.isReadOnly ? (
+                        <div>
+                          <span className="wishatt capital">
+                            Category:
+                            {item.category}
+                          </span>
+                          <ShowEdit item={item} />
+                          <div className="wishatt">
+                            Item Name:
+                            {item.name}
+                          </div>
+                          <div className="wishatt">
+                            Description:
+                            {item.description}
+                          </div>
+                          <div className="wishatt">
+                            Cost:
+                            {item.cost}
+                          </div>
+                          <span>Link: </span>
+                          {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+                          <a className="wishatt" href="" onClick={(e) => goToLink(item.link)}>{item.link}</a>
+                          <div className="wishatt">
+                            Quantity:
+                            {item.quantity}
+                          </div>
+                        </div>
+                      )
+                        : (
+                          <span>
+                            <label htmlFor="category">
+                              Category:
+                              <select name="category" onChange={(e) => handleCategoryChange(e, item)} value={item.category}>
+                                <option value="default">Default</option>
+                                <option value="camping">Camping</option>
+                                <option value="hendrix">Hendrix</option>
+                                <option value="decor">Decor</option>
+                              </select>
+                            </label>
+                            <span className="righthandSection">
+                              <Submit item={item} />
+                              <Cancel props={[prevList, prevWish, item]} />
+                            </span>
+                            <div>
+                              <div>
+                                <label htmlFor="name">
+                                  Item Name:
+                                </label>
+                                <input className="wishatt" name="name" placeholder="Name" onChange={(e) => handleChange(e, item)} value={item.name} />
+                              </div>
+                              <div>
+                                <label htmlFor="description">
+                                  Description:
+                                </label>
+                                <input className="wishatt" name="description" placeholder="Description" onChange={(e) => handleChange(e, item)} value={item.description} />
+                              </div>
+                              <div>
+                                <label htmlFor="cost">
+                                  Cost:
+                                </label>
+                                <input className="wishatt" name="cost" placeholder="Cost" onChange={(e) => handleChange(e, item)} value={item.cost} />
+                              </div>
+                              <div>
+                                <label htmlFor="link">
+                                  Link:
+                                </label>
+                                <input className="wishatt" name="link" placeholder="Link" onChange={(e) => handleChange(e, item)} value={item.link} />
+                              </div>
+                              <div>
+                                <label htmlFor="quantity">
+                                  Quantity:
+                                </label>
+                                <input className="wishatt" name="quantity" placeholder="Quantity" onChange={(e) => handleChange(e, item)} value={item.quantity} />
+                              </div>
+                              <div className="wishatt">
+                                Wishlist:
+                                {item.wishlist}
+                              </div>
+                            </div>
+                          </span>
+                        )
+                    }
+
+                  </div>
+
+                </div>
+              ) : null}
+            </div>
+          ))
+      }
+    </div>
+  );
+}
+// TODO determine if this needs to take in specific state from wishlist or showwishes, take in item context, also set value of prevlist
 
 export default Wishlist;
