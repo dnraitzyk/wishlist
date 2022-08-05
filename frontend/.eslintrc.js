@@ -16,7 +16,9 @@ module.exports = {
   },
   plugins: [
     'react',
+    'prettier',
   ],
   rules: {
+    'prettier/prettier': 2
   },
 };
