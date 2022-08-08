@@ -19,16 +19,21 @@ async function GetWishes() {
         let getdbresp = await axios.get("http://localhost:5000/getwishlists");
         let respdata = getdbresp.data;
         respdata.forEach(function (arrayItem) {
-            var id = "";
+            let id = "";
+            let date;
             if (typeof arrayItem._id === "object") {
                 ({ $oid: id } = arrayItem._id);
                 arrayItem._id = id;
+            }
+            if (typeof arrayItem.modified_date === "object") {
+                ({ $date: date } = arrayItem.modified_date);
+                arrayItem.modified_date = date;
             }
         });
         return respdata;
     }
     catch (e) {
-        console.log("Error in Apis.GetWishes" + e.message);
+        console.log("Error in Apis.GetWishes " + e.message);
     }
 };
 

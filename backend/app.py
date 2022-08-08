@@ -91,6 +91,7 @@ def getWishlist():
     mycollection = mydatabase.wishes
 
     getReiWishes()
+    getAmazonWishes()
     wishes = mycollection.find({})
     # logger.info(json_util.dumps(wishes))
     return json_util.dumps(wishes)
