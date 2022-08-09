@@ -71,7 +71,7 @@ def getReiWishes():
         itemquantity = row.find(
             "div", class_="list-item__quantity").p.contents[0].strip()
         mappedwish = mapWishToDBRecord(
-            Wish(namestring, itemdesc, itemcost, itemquantity, link=itemlink, wishlist="rei"))
+            Wish(namestring, itemdesc, itemcost, itemquantity, link=itemlink, wishlist="rei", wishlistLink=wishlistlink, availability=""))
         reiWishObjs.append(mappedwish)
     saveWishesDB(reiWishObjs)
     # logger.info("logging reiWishObjs")
@@ -80,25 +80,48 @@ def getReiWishes():
 
 def getAmazonWishes():
     wishlistlink = "https://www.amazon.com/hz/wishlist/ls/3M5WRZQLL8Z1U?ref_=wl_share"
+    baselink = "https://www.amazon.com"
 
     amazwishlist = requests.get(wishlistlink)
 
     soup = BeautifulSoup(amazwishlist.content, 'html.parser')
     amazitemslist = soup.find("ul", {"id": "g-items"})
-
+    logger.info(amazitemslist)
     amazitems = ""
-    try:
-        amazitems = list(amazitemslist.find_all(
-            "li", attrs={"data-id": True}))
-    except AttributeError:
-        getAmazonWishes()
+    for i in range(0, 20):
+
+        try:
+            amazitems = list(amazitemslist.find_all(
+                "li", attrs={"data-id": True}))
+
+        except Exception:
+            # getAmazonWishes()
+            print("error getting items$$$$$$$$$$$$$$$$$$$$$")
+            continue
+        print("continue getting items$$$$$$$$$$$$$$$$$$$$$")
+        break
     amazWishObjs = list()
 
     for i in amazitems:
         itemname = i.find("a", id=re.compile("^itemName_"))['title']
+        relitemlink = i.find("a", id=re.compile("^itemName_"))['href']
+        itemlink = baselink + relitemlink
+        itemcost = 0
+        itemavail = "Out"
+        try:
+            itemcost = int(
+                str(i.find("a", id=re.compile("^itemPrice_")).span.string).replace('$', ""))
+        except AttributeError:
+            logger.info("No cost found for " + itemname)
+        try:
+            if str(i.find("span", re.compile("add_to_cart$")).span.span.a.string):
+                itemavail = "In"
+        except AttributeError:
+            logger.info("No add to cart found for " + itemname)
         print(itemname)
 
-        mappedwish = mapWishToDBRecord(Wish(itemname, wishlist="amazon"))
+        mappedwish = mapWishToDBRecord(Wish(
+            itemname, cost=itemcost, link=itemlink, wishlist="amazon", wishlistLink=wishlistlink, availability=itemavail))
         amazWishObjs.append(mappedwish)
     # print(amazitems)
     # for row in amazitems:
@@ -119,6 +142,8 @@ def mapWishToDBRecord(Wish):
         "category": Wish.category,
         "link": Wish.link,
         "wishlist": Wish.wishlist,
+        "wishlistLink": Wish.wishlistLink,
+        "availability": Wish.availability,
         "id": Wish.id,
         "source": "auto",
         "modified_date": Wish.modified_date
@@ -137,18 +162,18 @@ def saveWishesDB(recordList):
     mycollection.bulk_write(operations)
 
 
-amazonwishlist = requests.get(
-    "https://www.amazon.com/hz/wishlist/ls/3M5WRZQLL8Z1U?ref_=wl_share")
+# amazonwishlist = requests.get(
+#     "https://www.amazon.com/hz/wishlist/ls/3M5WRZQLL8Z1U?ref_=wl_share")
 
-# with open("index.html") as fp:
-#     soup = BeautifulSoup(fp, 'html.parser')
+# # with open("index.html") as fp:
+# #     soup = BeautifulSoup(fp, 'html.parser')
 
-soup = BeautifulSoup(amazonwishlist.content, 'html.parser')
-amazitems = soup.find_all("a", id=re.compile('^itemName_'))
-# logger.info(soup)
-# logger.info(len(amazitems))
+# soup = BeautifulSoup(amazonwishlist.content, 'html.parser')
+# amazitems = soup.find_all("a", id=re.compile('^itemName_'))
+# # logger.info(soup)
+# # logger.info(len(amazitems))
 
-for row in amazitems:
-    itemname = row.string
-    unicode_string = str(itemname).strip()
-    logger.info(unicode_string)
+# for row in amazitems:
+#     itemname = row.string
+#     unicode_string = str(itemname).strip()
+#     logger.info(unicode_string)

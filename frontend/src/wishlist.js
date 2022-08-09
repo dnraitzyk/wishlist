@@ -426,27 +426,27 @@ const WishRow = (props) => {
                 <div>
                   <span className="wishatt capital">
                     Category:
-                    {item.category}
+                    <span className="emphasize">{item.category}</span>
                   </span>
                   {ShowEdit(item)}
                   <div className="wishatt capital">
                     Item Name:
-                    {item.name}
+                    {/* <span className="emphasize">{item.name}</span> */}
+                    <a className="" href="#" onClick={(e) => goToLink(item.link)}>{item.name}</a>
                   </div>
                   <div className="wishatt">
                     Description:
-                    {item.description}
+                    <span className="emphasize">{item.description}</span>
                   </div>
                   <div className="wishatt">
                     Cost:
-                    {item.cost}
+                    <span className="emphasize">{item.cost}</span>
                   </div>
-                  <span>Link: </span>
-                  {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
-                  <a className="wishatt" href="#" onClick={(e) => goToLink(item.link)}>{item.link}</a>
+                  {/* <span>Link: </span>
+                  <a className="wishatt" href="#" onClick={(e) => goToLink(item.link)}>{item.link}</a> */}
                   <div className="wishatt ">
                     Quantity:
-                    {item.quantity}
+                    <span className="emphasize">{item.quantity}</span>
                   </div>
                 </div>
               )
@@ -500,9 +500,9 @@ const WishRow = (props) => {
                   </span>
                 )
             }
-            <div className="wishatt capital">
+            <div className="wishatt capital ">
               Wishlist:
-              {item.wishlist}
+              <span className="emphasize">{item.wishlist}</span>
             </div>
             <div className="wishatt">
               Last Modified:
