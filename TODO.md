@@ -1,3 +1,5 @@
+General
+- merge refactoring into main
 
 Functionality
 - prompt in case trying to save invalid wishlist item
