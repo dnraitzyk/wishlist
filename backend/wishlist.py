@@ -42,7 +42,7 @@ def getReiWishes():
     wishlistlink = "https://www.rei.com/lists/415791132"
     reiwishlist = requests.get(wishlistlink)
     baselink = "https://www.rei.com"
-    soup = BeautifulSoup(reiwishlist.content, 'html.parser')
+    soup = BeautifulSoup(reiwishlist.content, 'lxml')
     reiitems = soup.find_all("tr", class_="list-item list-body-item")
 
     reiWishObjs = list()
@@ -84,7 +84,7 @@ def getAmazonWishes():
 
     amazwishlist = requests.get(wishlistlink)
 
-    soup = BeautifulSoup(amazwishlist.content, 'html.parser')
+    soup = BeautifulSoup(amazwishlist.content, 'lxml')
     amazitemslist = soup.find("ul", {"id": "g-items"})
     logger.info(amazitemslist)
     amazitems = ""
