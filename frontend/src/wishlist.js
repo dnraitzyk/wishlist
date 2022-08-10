@@ -297,7 +297,7 @@ const WishRow = (props) => {
 
   // Return content for edit button
   function ShowEdit(item) {
-    if (item.source === 'manual') {
+    if (item.source === 'manual' || item.source === 'auto') {
       return (
         <span  >
           <button className="typicalbutton righthand" type="button" onClick={() => handleEdit(item, props.currentList)}>
@@ -449,28 +449,28 @@ const WishRow = (props) => {
                     <span className="emphasize">{item.quantity}</span>
                   </div>
                 </div>
+
               )
-                : (
-                  <span>
-                    <label htmlFor="category">
-                      Category:
-                      <select name="category" onChange={(e) => handleCategoryChange(e, item)} value={item.category}>
-                        <option value="default">Default</option>
-                        <option value="camping">Camping</option>
-                        <option value="hendrix">Hendrix</option>
-                        <option value="decor">Decor</option>
-                      </select>
-                    </label>
-                    <span className="righthandSection">
-                      {Submit(item)}
-                      {Cancel(item)}
-                    </span>
+                :
+                (
+                  item.source === "auto" ? (
                     <div>
-                      <div>
-                        <label htmlFor="name">
-                          Item Name:
-                        </label>
-                        <input className="wishatt capital" name="name" placeholder="Name" onChange={(e) => handleChange(e, item)} value={item.name} />
+                      <label htmlFor="category">
+                        Category:
+                        <select name="category" onChange={(e) => handleCategoryChange(e, item)} value={item.category}>
+                          <option value="default">Default</option>
+                          <option value="camping">Camping</option>
+                          <option value="hendrix">Hendrix</option>
+                          <option value="decor">Decor</option>
+                        </select>
+                      </label>
+                      <span className="righthandSection">
+                        {Submit(item)}
+                        {Cancel(item)}
+                      </span>
+                      <div className="wishatt capital">
+                        Item Name:
+                        <a className="" href="#" onClick={(e) => goToLink(item.link)}>{item.name}</a>
                       </div>
                       <div>
                         <label htmlFor="description">
@@ -478,17 +478,9 @@ const WishRow = (props) => {
                         </label>
                         <input className="wishatt" name="description" placeholder="Description" onChange={(e) => handleChange(e, item)} value={item.description} />
                       </div>
-                      <div>
-                        <label htmlFor="cost">
-                          Cost:
-                        </label>
-                        <input className="wishatt" name="cost" placeholder="Cost" onChange={(e) => handleChange(e, item)} value={item.cost} />
-                      </div>
-                      <div>
-                        <label htmlFor="link">
-                          Link:
-                        </label>
-                        <input className="wishatt" name="link" placeholder="Link" onChange={(e) => handleChange(e, item)} value={item.link} />
+                      <div className="wishatt">
+                        Cost:
+                        <span className="emphasize">{item.cost}</span>
                       </div>
                       <div>
                         <label htmlFor="quantity">
@@ -497,7 +489,56 @@ const WishRow = (props) => {
                         <input className="wishatt" name="quantity" placeholder="Quantity" onChange={(e) => handleChange(e, item)} value={item.quantity} />
                       </div>
                     </div>
-                  </span>
+                  ) :
+                    (
+                      <span>
+                        <label htmlFor="category">
+                          Category:
+                          <select name="category" onChange={(e) => handleCategoryChange(e, item)} value={item.category}>
+                            <option value="default">Default</option>
+                            <option value="camping">Camping</option>
+                            <option value="hendrix">Hendrix</option>
+                            <option value="decor">Decor</option>
+                          </select>
+                        </label>
+                        <span className="righthandSection">
+                          {Submit(item)}
+                          {Cancel(item)}
+                        </span>
+                        <div>
+                          <div>
+                            <label htmlFor="name">
+                              Item Name:
+                            </label>
+                            <input className="wishatt capital" name="name" placeholder="Name" onChange={(e) => handleChange(e, item)} value={item.name} />
+                          </div>
+                          <div>
+                            <label htmlFor="description">
+                              Description:
+                            </label>
+                            <input className="wishatt" name="description" placeholder="Description" onChange={(e) => handleChange(e, item)} value={item.description} />
+                          </div>
+                          <div>
+                            <label htmlFor="cost">
+                              Cost:
+                            </label>
+                            <input className="wishatt" name="cost" placeholder="Cost" onChange={(e) => handleChange(e, item)} value={item.cost} />
+                          </div>
+                          <div>
+                            <label htmlFor="link">
+                              Link:
+                            </label>
+                            <input className="wishatt" name="link" placeholder="Link" onChange={(e) => handleChange(e, item)} value={item.link} />
+                          </div>
+                          <div>
+                            <label htmlFor="quantity">
+                              Quantity:
+                            </label>
+                            <input className="wishatt" name="quantity" placeholder="Quantity" onChange={(e) => handleChange(e, item)} value={item.quantity} />
+                          </div>
+                        </div>
+                      </span>
+                    )
                 )
             }
             <div className="wishatt capital ">

@@ -12,19 +12,19 @@ client = MongoClient('localhost', 27017)
 mydatabase = client.wish
 mycollection = mydatabase.wishes
 
-desc = ""
-cost = 0
-location = ""
-quantity = 0
+# desc = ""
+# cost = 0
+# location = ""
+# quantity = 0
 
-record = {
-    'description': desc,
-    'cost': cost,
-    'location': location,
-    'quantity': quantity
-}
+# record = {
+#     'description': desc,
+#     'cost': cost,
+#     'location': location,
+#     'quantity': quantity
+# }
 
-rec = mycollection.insert_one(record)
+# rec = mycollection.insert_one(record)
 
 
 # Create and configure logger
@@ -84,53 +84,51 @@ def getAmazonWishes():
 
     amazwishlist = requests.get(wishlistlink)
 
-    soup = BeautifulSoup(amazwishlist.content, 'lxml')
-    amazitemslist = soup.find("ul", {"id": "g-items"})
-    logger.info(amazitemslist)
-    amazitems = ""
-    for i in range(0, 20):
+    soup = BeautifulSoup(amazwishlist.text, 'lxml')
 
+    if soup.find("input", {"id": "captchacharacters"}) is None:
+        logger.info("Encountered captcha, wait 1 minute")
+    else:
+        amazitemslist = soup.find("ul", {"id": "g-items"})
+        amazitems = ""
         try:
             amazitems = list(amazitemslist.find_all(
                 "li", attrs={"data-id": True}))
 
-        except Exception:
+        except Exception as e:
             # getAmazonWishes()
-            print("error getting items$$$$$$$$$$$$$$$$$$$$$")
-            continue
-        print("continue getting items$$$$$$$$$$$$$$$$$$$$$")
-        break
-    amazWishObjs = list()
+            logger.info("Exception in getAmazonWishes ", e)
+        amazWishObjs = list()
 
-    for i in amazitems:
-        itemname = i.find("a", id=re.compile("^itemName_"))['title']
-        relitemlink = i.find("a", id=re.compile("^itemName_"))['href']
-        itemlink = baselink + relitemlink
-        itemcost = 0
-        itemavail = "Out"
-        try:
-            itemcost = int(
-                str(i.find("a", id=re.compile("^itemPrice_")).span.string).replace('$', ""))
-        except AttributeError:
-            logger.info("No cost found for " + itemname)
-        try:
-            if str(i.find("span", re.compile("add_to_cart$")).span.span.a.string):
-                itemavail = "In"
-        except AttributeError:
-            logger.info("No add to cart found for " + itemname)
-        print(itemname)
+        for i in amazitems:
+            itemname = i.find("a", id=re.compile("^itemName_"))['title']
+            relitemlink = i.find("a", id=re.compile("^itemName_"))['href']
+            itemlink = baselink + relitemlink
+            itemcost = 0
+            itemavail = "Out"
+            try:
+                itemcost = int(
+                    str(i.find("a", id=re.compile("^itemPrice_")).span.string).replace('$', ""))
+            except AttributeError:
+                logger.info("No cost found for " + itemname)
+            try:
+                if str(i.find("span", re.compile("add_to_cart$")).span.span.a.string):
+                    itemavail = "In"
+            except AttributeError:
+                logger.info("No add to cart found for " + itemname)
+            print(itemname)
 
-        mappedwish = mapWishToDBRecord(Wish(
-            itemname, cost=itemcost, link=itemlink, wishlist="amazon", wishlistLink=wishlistlink, availability=itemavail))
-        amazWishObjs.append(mappedwish)
-    # print(amazitems)
-    # for row in amazitems:
-    #     print()
-    # itemname = row.td.find_all("p", class_="product__title")
-    # unicode_string = str(itemname[0].string).strip()
-    # logger.info(unicode_string)
-
-    saveWishesDB(amazWishObjs)
+            mappedwish = mapWishToDBRecord(Wish(
+                itemname, cost=itemcost, link=itemlink, wishlist="amazon", wishlistLink=wishlistlink, availability=itemavail))
+            amazWishObjs.append(mappedwish)
+        # print(amazitems)
+        # for row in amazitems:
+        #     print()
+        # itemname = row.td.find_all("p", class_="product__title")
+        # unicode_string = str(itemname[0].string).strip()
+        # logger.info(unicode_string)
+        logger.info("amaz objects are ", amazWishObjs)
+        saveWishesDB(amazWishObjs)
 
 
 def mapWishToDBRecord(Wish):
@@ -153,6 +151,14 @@ def mapWishToDBRecord(Wish):
 
 
 def saveWishesDB(recordList):
+    recordListGood = []
+    for record in recordList:
+        logger.info("record name ", record["name"])
+        if record["name"] != "":
+            recordListGood.append(record)
+            logger.info("appending record ", record["name"])
+        else:
+            logger.info("not appending record ", record["name"])
     logger.info("inserting " + str(len(recordList)) + " records")
 
     ids = [record.pop("id") for record in recordList]

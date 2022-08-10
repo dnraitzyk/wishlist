@@ -1,5 +1,4 @@
 General
-- merge refactoring into main
 
 Functionality
 - prompt in case trying to save invalid wishlist item
@@ -13,8 +12,12 @@ Functionality
 Backend
 - find common elements to simplify html parsing
 - parse Etsy
+- figure out Amazon captcha or refresh on frontend
+- handle rei stock and cost
 
 UI
+- show add wish wishlist dropdown
+  - items are built from distinct wishlist select from db
 - show out of stock items as error and collapse them?
 - add stock indicator
 - banner
@@ -24,8 +27,11 @@ UI
 Validation
 -
 
+BUGS
+-
 ========================================================================
 DONE
+- merge refactoring into main
 - add wishlistLink
 - button CSS
 - fields CSS

@@ -89,9 +89,15 @@ def getWishlist():
     client = MongoClient('localhost', 27017)
     mydatabase = client.wish
     mycollection = mydatabase.wishes
+    try:
+        getReiWishes()
+    except Exception as e:
+        logger.info("Error getting rei wishlist", e)
+    try:
+        getAmazonWishes()
+    except Exception as e:
+        logger.info("Error getting amazon wishlist", e)
 
-    getReiWishes()
-    getAmazonWishes()
     wishes = mycollection.find({})
     # logger.info(json_util.dumps(wishes))
     return json_util.dumps(wishes)
