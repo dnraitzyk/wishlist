@@ -2,7 +2,7 @@
 /* eslint-disable no-underscore-dangle */
 import axios from 'axios';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { GetWishes, InsertWish } from './apis';
+import { GetAllWishes, InsertWish, GetDistinctWishlists } from './apis';
 // import caret-sort-down 
 
 function dynamicSort(property, sortOrderWord = 'asc') {
@@ -30,11 +30,42 @@ function dynamicSort(property, sortOrderWord = 'asc') {
   };
 }
 
+let wishlistOptions = [];
+
+async function RetrieveWishlistOptions() {
+  try {
+    const apiresp = await GetDistinctWishlists();
+    const options = apiresp.sort();
+    wishlistOptions = (options.map(function (option) {
+      return (
+        <option key={option} value={option}>{option}</option>
+      )
+    }
+    ));
+    console.log("options: ", wishlistOptions);
+
+    // return options.map(function (option) {
+    //   return (
+    //     <option value={option}>{option}</option>
+    //   )
+    // }
+    // )
+
+  } catch (e) {
+    console.log(`Error in Wishlist.GetWishlistOptions: ${e.message}`);
+  }
+}
+const GetWishlistOptions = () => {
+  RetrieveWishlistOptions();
+}
+
+GetWishlistOptions();
+
+
 // Main component, acts a wrapper for the entire screen content
 const Wishlist = () => {
   const [loading, setLoading] = useState('initial');
   const [listOfWishes, setListOfWishes] = useState('default');
-
   // Passed down to update the main list state
   function updateListOfWishes(list) {
     setListOfWishes([...list]);
@@ -44,23 +75,36 @@ const Wishlist = () => {
 
 
   // Get all items from DB, this is main list
-  async function GetWishesList() {
+  async function GetWishes() {
     try {
-      const apiresp = await GetWishes();
+      const apiresp = await GetAllWishes();
       apiresp.sort(dynamicSort('wishlist'));
       const goodlist = apiresp.map((item) => ({ ...item, isReadOnly: true, show: true }));
 
       setListOfWishes(goodlist);
       setLoading('false');
     } catch (e) {
-      console.log(`Error in Wishlist.GetWishesList: ${e.message}`);
+      console.log(`Error in Wishlist.GetWishes: ${e.message}`);
     }
   }
+
+  // const wishlistOptions = (options) => {
+  //   return (
+  //     options.forEach(function (option) {
+  //       return (
+  //         <option value={option}>{option}</option>
+  //       )
+  //     }
+  //     )
+  //   )
+  // }
+
+
 
   // Only once, get items and set loading state
   useEffect(() => {
     setLoading('true');
-    GetWishesList();
+    GetWishes();
   }, []);
 
   if (loading === 'initial') {
@@ -267,6 +311,7 @@ const WishRow = (props) => {
     }
   };
 
+
   // Send current item info to DB and mark read only
   const handleSubmit = () => {
     let { item, currentList, updateListOfWishes } = props;
@@ -359,6 +404,17 @@ const WishRow = (props) => {
     updateListOfWishes(newlist);
   };
 
+  // Update item for wishlist change
+  const handleWishlistChange = (e) => {
+    const { value } = e.target;
+    let { item, currentList, updateListOfWishes } = props;
+    item.wishlist = value;
+    const newlist = currentList.map(i => {
+      return { ...i };
+    });
+    updateListOfWishes(newlist);
+  };
+
   // Open url in new tab  
   const openInTab = (url) => {
     const newWindow = window.open(url, '_blank', 'noopener,noreferrer');
@@ -432,7 +488,12 @@ const WishRow = (props) => {
                   <div className="wishatt capital">
                     Item Name:
                     {/* <span className="emphasize">{item.name}</span> */}
-                    <a className="" href="#" onClick={(e) => goToLink(item.link)}>{item.name}</a>
+                    {item.link ? (
+                      <a className="" href="#" onClick={(e) => goToLink(item.link)}>{item.name}</a>
+                    )
+                      : (
+                        <span className="">{item.name}</span>
+                      )}
                   </div>
                   <div className="wishatt">
                     Description:
@@ -442,14 +503,15 @@ const WishRow = (props) => {
                     Cost:
                     <span className="emphasize">{item.cost}</span>
                   </div>
-                  {/* <span>Link: </span>
-                  <a className="wishatt" href="#" onClick={(e) => goToLink(item.link)}>{item.link}</a> */}
                   <div className="wishatt ">
                     Quantity:
                     <span className="emphasize">{item.quantity}</span>
                   </div>
+                  <div className="wishatt capital ">
+                    Wishlist:
+                    <span className="emphasize">{item.wishlist}</span>
+                  </div>
                 </div>
-
               )
                 :
                 (
@@ -488,6 +550,7 @@ const WishRow = (props) => {
                         </label>
                         <input className="wishatt" name="quantity" placeholder="Quantity" onChange={(e) => handleChange(e, item)} value={item.quantity} />
                       </div>
+
                     </div>
                   ) :
                     (
@@ -536,15 +599,18 @@ const WishRow = (props) => {
                             </label>
                             <input className="wishatt" name="quantity" placeholder="Quantity" onChange={(e) => handleChange(e, item)} value={item.quantity} />
                           </div>
+                          <label htmlFor="wishlist">
+                            Wishlist:
+                            <select name="wishlist" onChange={(e) => handleWishlistChange(e, item)} value={item.wishlist}>
+                              {wishlistOptions}
+                            </select>
+                          </label>
                         </div>
                       </span>
                     )
                 )
             }
-            <div className="wishatt capital ">
-              Wishlist:
-              <span className="emphasize">{item.wishlist}</span>
-            </div>
+
             <div className="wishatt">
               Last Modified:
               <span className='emphasize'>

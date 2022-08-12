@@ -1,11 +1,42 @@
-import React, { useState } from 'react';
-import { InsertWish } from './apis';
+import React, { useState, useEffect, useRef } from 'react';
+import Popup from 'reactjs-popup';
+import { InsertWish, GetDistinctWishlists } from './apis';
+
+
+function isEmpty(str) {
+    return (!str || str.length === 0);
+}
+
+let wishlistOptions = [];
+
+async function RetrieveWishlistOptions() {
+    try {
+        const apiresp = await GetDistinctWishlists();
+        const options = apiresp.sort();
+        wishlistOptions = (options.map(function (option) {
+            return (
+                <option key={option} value={option}>{option}</option>
+            )
+        }
+        ));
+        console.log("options: ", wishlistOptions);
+    } catch (e) {
+        console.log(`Error in AddWish.GetWishlistOptions: ${e.message}`);
+    }
+}
+
+const GetWishlistOptions = () => {
+    RetrieveWishlistOptions();
+}
+
+GetWishlistOptions();
+
 
 function AddWish() {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
-    const [cost, setCost] = useState("");
-    const [quantity, setQuantity] = useState("1");
+    const [cost, setCost] = useState(0);
+    const [quantity, setQuantity] = useState(1);
     const [category, setCategory] = useState("default");
     const [link, setLink] = useState("");
     const [wishlist, setWishlist] = useState("Default");
@@ -13,12 +44,18 @@ function AddWish() {
     const [fields, setFields] = useState(setInitialFields());
 
     function setInitialFields() {
-        return { "name": name, "description": description, "cost": cost, "quantity": quantity, "link": link, "category": category }
+        return { "name": name, "description": description, "cost": cost, "quantity": quantity, "link": link, "category": category, "wishlist": wishlist };
     };
 
     function clearFields() {
-        return { "name": "", "description": "", "cost": "", "quantity": "1", "link": "", "category": "default" }
+        return { "name": "", "description": "", "cost": 0, "quantity": 1, "link": "", "category": "default", "wishlist": "Default" }
     };
+
+    // useEffect(() => {
+    // }, []);
+
+
+
 
 
     let source = "manual";
@@ -33,24 +70,48 @@ function AddWish() {
 
     }
 
-    function isValidPrice(price) {
-        const priceregex = new RegExp(/(?=(?:\.)?\d{1,})^\d{0,}(?:\.)?(?:\d{0,2})$/);
+    function isValidQuantity(quantity) {
         let isValid = true;
-        if (price === "") {
+        quantity = parseInt(quantity);
+        isNaN(quantity) ? null : setQuantity(quantity);
+
+        if (quantity > 0) {
             return isValid
-        }
-        if (priceregex.test(price)) {
-            return isValid;
         }
         else {
             return false
         }
+    }
+
+    function isValidPrice(price) {
+        const priceregex = new RegExp(/(?=(?:\.)?\d{1,})^\d{0,}(?:\.)?(?:\d{0,2})$/);
+        let isValid = true;
+        price = parseFloat(price);
+        isNaN(price) ? null : setCost(price);
+        if (price >= 0) {
+            return isValid
+        }
+        else {
+            return false
+        }
+
+        // if (price === "") {
+        //     return isValid
+        // }
+        // if (priceregex.test(price)) {
+        //     return isValid;
+        // }
+        // else {
+        //     return false
+        // }
     };
 
     const handleSubmit = (event) => {
         event.preventDefault()
 
         if (handleValidation(fields)) {
+
+
             alert("Form submitted");
             let newlink = "";
 
@@ -62,7 +123,7 @@ function AddWish() {
 
             setName("");
             setDescription("");
-            setCost("");
+            setCost(0);
             setQuantity("1");
             setLink("");
             setCategory("default");
@@ -79,7 +140,7 @@ function AddWish() {
         let errors = {};
         let formIsValid = true;
 
-        if (!fields["name"]) {
+        if (isEmpty(fields["name"])) {
             formIsValid = false;
             errors["name"] = "Cannot be empty";
         }
@@ -89,11 +150,16 @@ function AddWish() {
             errors["cost"] = "Must be a valid price"
         }
 
-        const intregex = new RegExp(/^\d{1,}$/);
-        if (!intregex.test(fields['quantity'])) {
+        if (!isValidQuantity(fields['quantity'])) {
             formIsValid = false;
             errors["quantity"] = "Must be a valid quantity"
         }
+
+        // const intregex = new RegExp(/^\d{1,}$/);
+        // if (!intregex.test(fields['quantity'])) {
+        //     formIsValid = false;
+        //     errors["quantity"] = "Must be a valid quantity"
+        // }
         setErrors(errors);
         return formIsValid;
     }
@@ -111,6 +177,7 @@ function AddWish() {
     }
 
     return (
+
         <div className='contentwrapper'>
             <form>
                 <fieldset>
@@ -150,6 +217,13 @@ function AddWish() {
                     <label>
                         <p>Link</p>
                         <input name="link" placeholder="URL" value={link} onChange={handleChange(setLink)} />
+                    </label>
+                    <br />
+                    <label className="topmargin" htmlFor="wishlist">
+                        <p>Wishlist:</p>
+                        <select name="wishlist" onChange={(e) => handleChange(e, setWishlist)} value={wishlist}>
+                            {wishlistOptions}
+                        </select>
                     </label>
                 </fieldset>
                 <button className="typicalbutton" type="submit" onClick={(e) => handleSubmit(e)}>

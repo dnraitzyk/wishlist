@@ -29,11 +29,11 @@ mycollection = mydatabase.wishes
 
 # Create and configure logger
 logging.basicConfig(filename="app.log",
-                    format='%(message)s',
+                    format='%(asctime)s %(message)s',
                     filemode='w')
 
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.ERROR)
 
 # TODO clean up and try to find common element to stem from
 
@@ -71,10 +71,10 @@ def getReiWishes():
         itemquantity = row.find(
             "div", class_="list-item__quantity").p.contents[0].strip()
         mappedwish = mapWishToDBRecord(
-            Wish(namestring, itemdesc, itemcost, itemquantity, link=itemlink, wishlist="rei", wishlistLink=wishlistlink, availability=""))
+            Wish(namestring, itemdesc, itemcost, itemquantity, link=itemlink, wishlist="Rei", wishlistLink=wishlistlink, availability=""))
         reiWishObjs.append(mappedwish)
     saveWishesDB(reiWishObjs)
-    # logger.info("logging reiWishObjs")
+    logger.info("logging reiWishObjs")
     # logger.info(reiWishObjs)
 
 
@@ -85,10 +85,8 @@ def getAmazonWishes():
     amazwishlist = requests.get(wishlistlink)
 
     soup = BeautifulSoup(amazwishlist.text, 'lxml')
-
     if soup.find("input", {"id": "captchacharacters"}) is None:
-        logger.info("Encountered captcha, wait 1 minute")
-    else:
+
         amazitemslist = soup.find("ul", {"id": "g-items"})
         amazitems = ""
         try:
@@ -97,7 +95,7 @@ def getAmazonWishes():
 
         except Exception as e:
             # getAmazonWishes()
-            logger.info("Exception in getAmazonWishes ", e)
+            logger.info("Exception in getAmazonWishes %s", e)
         amazWishObjs = list()
 
         for i in amazitems:
@@ -107,19 +105,20 @@ def getAmazonWishes():
             itemcost = 0
             itemavail = "Out"
             try:
-                itemcost = int(
-                    str(i.find("a", id=re.compile("^itemPrice_")).span.string).replace('$', ""))
-            except AttributeError:
-                logger.info("No cost found for " + itemname)
+                itemcost = float(
+                    str(i.find("span", id=re.compile("^itemPrice_")).span.string).replace('$', ''))
+            except AttributeError as e:
+                logger.error("No cost found for " + itemname)
+                logger.error("Cost error %s ", e)
             try:
-                if str(i.find("span", re.compile("add_to_cart$")).span.span.a.string):
+                if str(i.find("a", string=re.compile("Add to Cart")).string):
                     itemavail = "In"
-            except AttributeError:
-                logger.info("No add to cart found for " + itemname)
-            print(itemname)
+            except AttributeError as e:
+                logger.error("No add to cart found for " + itemname)
+                logger.error("itemavail error %s ", e)
 
             mappedwish = mapWishToDBRecord(Wish(
-                itemname, cost=itemcost, link=itemlink, wishlist="amazon", wishlistLink=wishlistlink, availability=itemavail))
+                itemname, cost=itemcost, link=itemlink, wishlist="Amazon", wishlistLink=wishlistlink, availability=itemavail))
             amazWishObjs.append(mappedwish)
         # print(amazitems)
         # for row in amazitems:
@@ -127,8 +126,10 @@ def getAmazonWishes():
         # itemname = row.td.find_all("p", class_="product__title")
         # unicode_string = str(itemname[0].string).strip()
         # logger.info(unicode_string)
-        logger.info("amaz objects are ", amazWishObjs)
+        logger.info("amaz objects are %s", amazWishObjs)
         saveWishesDB(amazWishObjs)
+    else:
+        logger.info("Encountered captcha, wait 1 minute")
 
 
 def mapWishToDBRecord(Wish):
@@ -153,12 +154,12 @@ def mapWishToDBRecord(Wish):
 def saveWishesDB(recordList):
     recordListGood = []
     for record in recordList:
-        logger.info("record name ", record["name"])
+        logger.info("record name %s", record["name"])
         if record["name"] != "":
             recordListGood.append(record)
-            logger.info("appending record ", record["name"])
+            logger.info("appending record %s", record["name"])
         else:
-            logger.info("not appending record ", record["name"])
+            logger.info("not appending record %s", record["name"])
     logger.info("inserting " + str(len(recordList)) + " records")
 
     ids = [record.pop("id") for record in recordList]

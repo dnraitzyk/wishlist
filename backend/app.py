@@ -29,7 +29,7 @@ CORS(app)  # comment this on deployment
 api = Api(app)
 
 logging.basicConfig(filename="app.log",
-                    format='%(message)s',
+                    format='%(asctime)s %(message)s',
                     filemode='w')
 
 logger = logging.getLogger()
@@ -83,8 +83,8 @@ def addWish():
     return jsonify("Successfully added wish")
 
 
-@app.route("/getwishlists", methods=["GET"], strict_slashes=False)
-def getWishlist():
+@app.route("/GetWishes", methods=["GET"], strict_slashes=False)
+def getWishes():
 
     client = MongoClient('localhost', 27017)
     mydatabase = client.wish
@@ -92,15 +92,31 @@ def getWishlist():
     try:
         getReiWishes()
     except Exception as e:
-        logger.info("Error getting rei wishlist", e)
+        logger.info("Error getting rei wishlist %s", e)
     try:
         getAmazonWishes()
     except Exception as e:
-        logger.info("Error getting amazon wishlist", e)
+        logger.info("Error getting amazon wishlist %s", e)
 
     wishes = mycollection.find({})
     # logger.info(json_util.dumps(wishes))
     return json_util.dumps(wishes)
+
+
+@app.route("/GetWishlists", methods=["GET"], strict_slashes=False)
+def getWishlists():
+
+    client = MongoClient('localhost', 27017)
+    mydatabase = client.wish
+    mycollection = mydatabase.wishes
+    try:
+        lists = mycollection.distinct("wishlist")
+    except Exception as e:
+        logger.info("Error getting distinct wishlists %s", e)
+
+    # wishes = mycollection.find({})
+    # logger.info(json_util.dumps(wishes))
+    return json_util.dumps(lists)
 
 
 @ app.route('/go_outside_flask/<path:link>', strict_slashes=False)

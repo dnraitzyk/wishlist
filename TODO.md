@@ -1,8 +1,8 @@
 General
 
 Functionality
-- prompt in case trying to save invalid wishlist item
-- Create a new wishlist
+- Create a new wishlist from add button on add wish, cant be in current list
+  - maybe validate on entering values, not on submit (when lose focus?)
 - Modify auto wishes and have them still save and be updated (only certain fields)
   - have to retrieve from backend once we know which we have or dont update certain values in DB
 - add login
@@ -11,8 +11,6 @@ Functionality
 
 Backend
 - find common elements to simplify html parsing
-- parse Etsy
-- figure out Amazon captcha or refresh on frontend
 - handle rei stock and cost
 
 UI
@@ -28,9 +26,11 @@ Validation
 -
 
 BUGS
--
 ========================================================================
 DONE
+- Amazon never returning 
+  - SOLUTION: fix parsing tags, check if captcha is none then show
+- prompt in case trying to save invalid wishlist item
 - merge refactoring into main
 - add wishlistLink
 - button CSS
@@ -39,3 +39,9 @@ DONE
 - add edit button on each wishlist item
 - need something in name and cost field
 - only numbers in cost/quantity
+
+MAYBE LATER:
+- figure out Amazon captcha or refresh on frontend
+
+NOT ANYMORE:
+- parse Etsy
