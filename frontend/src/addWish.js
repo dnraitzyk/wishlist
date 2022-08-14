@@ -127,6 +127,7 @@ function AddWish() {
             setQuantity("1");
             setLink("");
             setCategory("default");
+            setWishlist("Default");
             setFields(clearFields());
         } else {
             alert("Form has errors.");
@@ -165,7 +166,7 @@ function AddWish() {
     }
 
     const handleChange = setter => event => {
-
+        console.log("running change")
         const { name, value } = event.target;
         setFields({ ...fields, [name]: value });
         //special cases
@@ -219,12 +220,16 @@ function AddWish() {
                         <input name="link" placeholder="URL" value={link} onChange={handleChange(setLink)} />
                     </label>
                     <br />
-                    <label className="topmargin" htmlFor="wishlist">
-                        <p>Wishlist:</p>
-                        <select name="wishlist" onChange={(e) => handleChange(e, setWishlist)} value={wishlist}>
-                            {wishlistOptions}
-                        </select>
-                    </label>
+                    <span>
+                        <label className="topmargin" htmlFor="wishlist">
+                            <p>Wishlist:</p>
+                            <input name="wishlist" autoComplete="off" onChange={handleChange(setWishlist)} value={wishlist} list="wishlists" />
+                            <datalist id="wishlists">
+                                {wishlistOptions}
+                            </datalist>
+                        </label>
+                        {/* <button className="button-79">Add New Wishlist</button> */}
+                    </span>
                 </fieldset>
                 <button className="typicalbutton" type="submit" onClick={(e) => handleSubmit(e)}>
                     Submit

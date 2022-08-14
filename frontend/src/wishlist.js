@@ -443,28 +443,31 @@ const WishRow = (props) => {
 
   function dateFormat(date) {
     const d = new Date(date);
-    const dstr = date;
 
-    const month = d.getMonth();
+    const month = d.getMonth() + 1;
     const day = d.getDate();
     let suffix = 'AM';
     let hour = d.getUTCHours().toString();
 
     if (hour > 12) {
+      hour = String(hour - 12);
       suffix = 'PM';
-    }
-    if (hour > 12) {
-      hour = hour - 12;
     }
 
     let mins = d.getUTCMinutes().toString();
 
-
     let sec = d.getUTCSeconds().toString();
+
+    if (hour.length === 1) {
+      hour = '0' + hour;
+    }
+
+    if (mins.length === 1) {
+      mins = '0' + mins;
+    }
 
     if (sec.length === 1) {
       sec = '0' + sec;
-
     }
     const monthString = month >= 10 ? month : `0${month}`;
     const dayString = day >= 10 ? day : `0${day}`;
@@ -550,7 +553,10 @@ const WishRow = (props) => {
                         </label>
                         <input className="wishatt" name="quantity" placeholder="Quantity" onChange={(e) => handleChange(e, item)} value={item.quantity} />
                       </div>
-
+                      <div className="wishatt capital ">
+                        Wishlist:
+                        <span className="emphasize">{item.wishlist}</span>
+                      </div>
                     </div>
                   ) :
                     (
