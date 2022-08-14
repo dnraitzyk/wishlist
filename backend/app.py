@@ -7,7 +7,6 @@ import json
 from bson import json_util
 from pymongo import MongoClient
 from bson.objectid import ObjectId
-from backend.api.HelloApiHandler import HelloApiHandler
 from flask import Flask, jsonify, render_template, request, redirect, url_for
 from flask_restful import Api, Resource, reqparse
 from flask_cors import CORS
@@ -16,6 +15,7 @@ import os
 import pathlib
 from wishlist import *
 from datetime import datetime
+print("running app.py name is + ", __name__)
 
 
 load_dotenv()
@@ -28,12 +28,32 @@ app = Flask("app", root_path="wishlist",
 CORS(app)  # comment this on deployment
 api = Api(app)
 
+
+# if app.use_reloader:
+#     print("run german thing")
+# The app is not in debug mode or we are in the reloaded process
+
+
 logging.basicConfig(filename="app.log",
                     format='%(asctime)s %(message)s',
                     filemode='w')
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
+# app.config.from_object('config')
+
+
+connstring = os.environ.get('MONGODB_URI')
+try:
+    if connstring is None:
+        client = MongoClient('localhost', 27017)
+    else:
+        client = MongoClient(connstring)
+
+    print(client.server_info())
+except Exception as e:
+    print("Unable to connect to the server.", e)
+    logger.error("Unable to connect to the server.", e)
 
 
 @app.route('/', defaults={'path': ''})
@@ -62,7 +82,6 @@ def addWish():
     modified_date = datetime.today()
     objid = ObjectId(_id)
 
-    client = MongoClient('localhost', 27017)
     mydatabase = client.wish
     mycollection = mydatabase.wishes
 
@@ -123,3 +142,6 @@ def getWishlists():
 def go_outside_flask_method(link):
 
     return link
+
+
+print("end of app")
