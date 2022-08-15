@@ -7,7 +7,7 @@ import json
 from bson import json_util
 from pymongo import MongoClient
 from bson.objectid import ObjectId
-from flask import Flask, jsonify, render_template, request, redirect, url_for
+from flask import Flask, jsonify, render_template, request, redirect, url_for, send_from_directory
 from flask_restful import Api, Resource, reqparse
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -20,6 +20,7 @@ print("running app.py name is + ", __name__)
 
 load_dotenv()
 template_dir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
+backenddir = os.path.join(template_dir, 'backend')
 template_dir = os.path.join(template_dir, 'frontend')
 template_dir = os.path.join(template_dir, 'build')
 app = Flask("app", root_path="wishlist",
@@ -56,13 +57,21 @@ except Exception as e:
     logger.error("Unable to connect to the server.", e)
 
 
+@app.route('/favicon.ico')
+def favicon():
+    # statpath = app.static_folder
+
+    # return render_template('index.html')
+    return send_from_directory(backenddir, 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 @app.errorhandler(404)
 def serve(path):
     statpath = app.static_folder
 
-    print(statpath)
+    # print(statpath)
 
     return render_template('index.html')
 
