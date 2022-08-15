@@ -152,6 +152,3 @@ def getWishlists():
 def go_outside_flask_method(link):
 
     return link
-
-
-print("end of app")
