@@ -23,11 +23,11 @@ template_dir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
 backenddir = os.path.join(template_dir, 'backend')
 template_dir = os.path.join(template_dir, 'frontend')
 template_dir = os.path.join(template_dir, 'build')
-app = Flask("app", root_path="wishlist",
-            template_folder=template_dir, static_folder=template_dir, static_url_path='/')
+flaskapp = Flask("app", root_path="wishlist",
+                 template_folder=template_dir, static_folder=template_dir, static_url_path='/')
 
-CORS(app)  # comment this on deployment
-api = Api(app)
+CORS(flaskapp)  # comment this on deployment
+api = Api(flaskapp)
 
 
 # if app.use_reloader:
@@ -52,13 +52,13 @@ try:
     else:
         client = MongoClient(connstring)
 
-    print(client.server_info())
+    # print(client.server_info())
 except Exception as e:
     print("Unable to connect to the server.", e)
     logger.error("Unable to connect to the server.", e)
 
 
-@app.route('/favicon.ico')
+@flaskapp.route('/favicon.ico')
 def favicon():
     # statpath = app.static_folder
 
@@ -66,18 +66,18 @@ def favicon():
     return send_from_directory(backenddir, 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
-@app.route('/', defaults={'path': ''})
-@app.route('/<path:path>')
-@app.errorhandler(404)
+@flaskapp.route('/', defaults={'path': ''})
+@flaskapp.route('/<path:path>')
+@flaskapp.errorhandler(404)
 def serve(path):
-    statpath = app.static_folder
+    statpath = flaskapp.static_folder
 
     # print(statpath)
 
     return render_template('index.html')
 
 
-@app.route("/submitwish", methods=["POST"], strict_slashes=False)
+@flaskapp.route("/submitwish", methods=["POST"], strict_slashes=False)
 def addWish():
     reqdict = request.get_json()
     itemname = request.json['name']
@@ -112,7 +112,7 @@ def addWish():
     return jsonify("Successfully added wish")
 
 
-@app.route("/GetWishes", methods=["GET"], strict_slashes=False)
+@flaskapp.route("/GetWishes", methods=["GET"], strict_slashes=False)
 def getWishes():
 
     client = MongoClient('localhost', 27017)
@@ -132,7 +132,7 @@ def getWishes():
     return json_util.dumps(wishes)
 
 
-@app.route("/GetWishlists", methods=["GET"], strict_slashes=False)
+@flaskapp.route("/GetWishlists", methods=["GET"], strict_slashes=False)
 def getWishlists():
 
     client = MongoClient('localhost', 27017)
@@ -148,7 +148,7 @@ def getWishlists():
     return json_util.dumps(lists)
 
 
-@ app.route('/go_outside_flask/<path:link>', strict_slashes=False)
+@ flaskapp.route('/go_outside_flask/<path:link>', strict_slashes=False)
 def go_outside_flask_method(link):
 
     return link
