@@ -1,7 +1,7 @@
 import time
 import argparse
 from tkinter import W
-from backend.Wish import Wish
+# from backend.Wish import Wish
 import logging
 import json
 from bson import json_util
