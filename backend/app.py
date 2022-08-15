@@ -45,6 +45,7 @@ logger.setLevel(logging.INFO)
 
 
 connstring = os.environ.get('MONGODB_URI')
+print("connstring is ", connstring)
 try:
     if connstring is None:
         client = MongoClient('localhost', 27017)
