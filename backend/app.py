@@ -12,6 +12,7 @@ from flask_restful import Api, Resource, reqparse
 from flask_cors import CORS
 from dotenv import load_dotenv
 import os
+import sys
 import pathlib
 from wishlist import *
 from datetime import datetime
@@ -39,7 +40,9 @@ logging.basicConfig(filename="app.log",
                     format='%(asctime)s %(message)s',
                     filemode='w')
 
-logger = logging.getLogger()
+# logger = logging.getLogger()
+app.logger.addHandler(logging.StreamHandler(sys.stdout))
+
 logger.setLevel(logging.INFO)
 # app.config.from_object('config')
 
