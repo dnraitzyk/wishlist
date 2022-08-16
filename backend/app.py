@@ -23,7 +23,7 @@ load_dotenv()
 isheroku = os.environ.get('ISHEROKU')
 
 if isheroku:
-    logging.info("isheroku")
+    print("isheroku")
     currdir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
     template_dir = os.path.dirname(
         os.path.abspath(os.path.dirname(__file__) + "/../"))
