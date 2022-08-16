@@ -137,7 +137,7 @@ def addWish():
 @ flaskapp.route("/GetWishes", methods=["GET"], strict_slashes=False)
 def getWishes():
 
-    client = MongoClient('localhost', 27017)
+    # client = MongoClient('localhost', 27017)
     mydatabase = client.wish
     mycollection = mydatabase.wishes
     try:
@@ -157,7 +157,7 @@ def getWishes():
 @ flaskapp.route("/GetWishlists", methods=["GET"], strict_slashes=False)
 def getWishlists():
 
-    client = MongoClient('localhost', 27017)
+    # client = MongoClient('localhost', 27017)
     mydatabase = client.wish
     mycollection = mydatabase.wishes
     try:

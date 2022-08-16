@@ -5,10 +5,21 @@ from bs4 import BeautifulSoup
 import app
 import requests
 import re
+import os
 from pymongo import MongoClient, UpdateOne
 
 
-client = MongoClient('localhost', 27017)
+# client = MongoClient('localhost', 27017)
+connstring = os.environ.get('MONGODB_URI')
+try:
+    if connstring is None:
+        client = MongoClient('localhost', 27017)
+    else:
+        client = MongoClient(connstring)
+
+except Exception as e:
+    print("Unable to connect to the server.", e)
+    logger.error("Unable to connect to the server.", e)
 mydatabase = client.wish
 mycollection = mydatabase.wishes
 
