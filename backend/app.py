@@ -20,10 +20,22 @@ print("running app.py name is + ", __name__)
 
 
 load_dotenv()
-template_dir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
-backenddir = os.path.join(template_dir, 'backend')
-template_dir = os.path.join(template_dir, 'frontend')
-template_dir = os.path.join(template_dir, 'build')
+isheroku = os.environ.get('ISHEROKU')
+
+if isheroku:
+    template_dir = os.path.dirname(
+        os.path.abspath(os.path.dirname(__file__) + "/../"))
+    template_dir = os.path.join(template_dir, 'frontend')
+
+else:
+    template_dir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
+    backenddir = os.path.join(template_dir, 'backend')
+    template_dir = os.path.join(template_dir, 'frontend')
+    template_dir = os.path.join(template_dir, 'build')
+
+
+# template_dir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
+
 flaskapp = Flask("app", root_path="wishlist",
                  template_folder=template_dir, static_folder=template_dir, static_url_path='/')
 
