@@ -2,7 +2,7 @@ import argparse
 from Wish import *
 import logging
 from bs4 import BeautifulSoup
-import app
+# import app
 import requests
 import re
 import os

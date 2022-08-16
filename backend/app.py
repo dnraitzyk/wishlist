@@ -13,7 +13,7 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 import os
 import sys
-import pathlib
+# import pathlib
 from wishlist import *
 from datetime import datetime
 print("running app.py name is + ", __name__)
@@ -58,7 +58,7 @@ logging.basicConfig(filename="app.log",
                     filemode='w')
 
 # logger = logging.getLogger()
-app.logger.addHandler(logging.StreamHandler(sys.stdout))
+flaskapp.logger.addHandler(logging.StreamHandler(sys.stdout))
 
 logger.setLevel(logging.INFO)
 # app.config.from_object('config')
