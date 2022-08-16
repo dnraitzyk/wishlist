@@ -23,24 +23,26 @@ load_dotenv()
 isheroku = os.environ.get('ISHEROKU')
 
 if isheroku:
+    logging.info("isheroku")
     template_dir = os.path.dirname(
         os.path.abspath(os.path.dirname(__file__) + "/../"))
-    template_dir = os.path.join(template_dir, 'frontend')
+    backenddir = os.path.join(os.path.dirname(os.path.abspath(os.path.dirname(__file__)), 'backend')
+    template_dir=os.path.join(template_dir, 'frontend')
 
 else:
-    template_dir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
-    backenddir = os.path.join(template_dir, 'backend')
-    template_dir = os.path.join(template_dir, 'frontend')
-    template_dir = os.path.join(template_dir, 'build')
+    template_dir=os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
+    backenddir=os.path.join(template_dir, 'backend')
+    template_dir=os.path.join(template_dir, 'frontend')
+    template_dir=os.path.join(template_dir, 'build')
 
 
 # template_dir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
 
-flaskapp = Flask("app", root_path="wishlist",
+flaskapp=Flask("app", root_path="wishlist",
                  template_folder=template_dir, static_folder=template_dir, static_url_path='/')
 
 CORS(flaskapp)  # comment this on deployment
-api = Api(flaskapp)
+api=Api(flaskapp)
 
 
 # if app.use_reloader:
@@ -61,13 +63,13 @@ logger.info("template dir is ")
 logger.info(template_dir)
 
 
-connstring = os.environ.get('MONGODB_URI')
+connstring=os.environ.get('MONGODB_URI')
 print("connstring is ", connstring)
 try:
     if connstring is None:
-        client = MongoClient('localhost', 27017)
+        client=MongoClient('localhost', 27017)
     else:
-        client = MongoClient(connstring)
+        client=MongoClient(connstring)
 
     # print(client.server_info())
 except Exception as e:
@@ -87,7 +89,7 @@ def favicon():
 @ flaskapp.route('/<path:path>')
 @ flaskapp.errorhandler(404)
 def serve(path):
-    statpath = flaskapp.static_folder
+    statpath=flaskapp.static_folder
 
     # print(statpath)
 
@@ -96,23 +98,23 @@ def serve(path):
 
 @ flaskapp.route("/submitwish", methods=["POST"], strict_slashes=False)
 def addWish():
-    reqdict = request.get_json()
-    itemname = request.json['name']
-    quantity = request.json['quantity']
-    cost = request.json['cost']
-    link = request.json['link']
-    category = request.json['category']
-    description = request.json['description']
-    wishlist = request.json['wishlist']
-    source = request.json['source']
-    _id = reqdict.get("_id")
-    modified_date = datetime.today()
-    objid = ObjectId(_id)
+    reqdict=request.get_json()
+    itemname=request.json['name']
+    quantity=request.json['quantity']
+    cost=request.json['cost']
+    link=request.json['link']
+    category=request.json['category']
+    description=request.json['description']
+    wishlist=request.json['wishlist']
+    source=request.json['source']
+    _id=reqdict.get("_id")
+    modified_date=datetime.today()
+    objid=ObjectId(_id)
 
-    mydatabase = client.wish
-    mycollection = mydatabase.wishes
+    mydatabase=client.wish
+    mycollection=mydatabase.wishes
 
-    record = {
+    record={
         'description': description,
         'name': itemname,
         'cost': cost,
@@ -124,17 +126,17 @@ def addWish():
         'source': source
     }
 
-    rec = mycollection.replace_one({"_id": objid}, record, upsert=True)
+    rec=mycollection.replace_one({"_id": objid}, record, upsert=True)
 
     return jsonify("Successfully added wish")
 
 
-@flaskapp.route("/GetWishes", methods=["GET"], strict_slashes=False)
+@ flaskapp.route("/GetWishes", methods=["GET"], strict_slashes=False)
 def getWishes():
 
-    client = MongoClient('localhost', 27017)
-    mydatabase = client.wish
-    mycollection = mydatabase.wishes
+    client=MongoClient('localhost', 27017)
+    mydatabase=client.wish
+    mycollection=mydatabase.wishes
     try:
         getReiWishes()
     except Exception as e:
@@ -144,19 +146,19 @@ def getWishes():
     except Exception as e:
         logger.info("Error getting amazon wishlist %s", e)
 
-    wishes = mycollection.find({})
+    wishes=mycollection.find({})
     # logger.info(json_util.dumps(wishes))
     return json_util.dumps(wishes)
 
 
-@flaskapp.route("/GetWishlists", methods=["GET"], strict_slashes=False)
+@ flaskapp.route("/GetWishlists", methods=["GET"], strict_slashes=False)
 def getWishlists():
 
-    client = MongoClient('localhost', 27017)
-    mydatabase = client.wish
-    mycollection = mydatabase.wishes
+    client=MongoClient('localhost', 27017)
+    mydatabase=client.wish
+    mycollection=mydatabase.wishes
     try:
-        lists = mycollection.distinct("wishlist")
+        lists=mycollection.distinct("wishlist")
     except Exception as e:
         logger.info("Error getting distinct wishlists %s", e)
 
