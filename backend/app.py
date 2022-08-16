@@ -45,6 +45,8 @@ app.logger.addHandler(logging.StreamHandler(sys.stdout))
 
 logger.setLevel(logging.INFO)
 # app.config.from_object('config')
+logger.info("template dir is ")
+logger.info(template_dir)
 
 
 connstring = os.environ.get('MONGODB_URI')
@@ -61,7 +63,7 @@ except Exception as e:
     logger.error("Unable to connect to the server.", e)
 
 
-@flaskapp.route('/favicon.ico')
+@ flaskapp.route('/favicon.ico')
 def favicon():
     # statpath = app.static_folder
 
@@ -69,9 +71,9 @@ def favicon():
     return send_from_directory(backenddir, 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
-@flaskapp.route('/', defaults={'path': ''})
-@flaskapp.route('/<path:path>')
-@flaskapp.errorhandler(404)
+@ flaskapp.route('/', defaults={'path': ''})
+@ flaskapp.route('/<path:path>')
+@ flaskapp.errorhandler(404)
 def serve(path):
     statpath = flaskapp.static_folder
 
@@ -80,7 +82,7 @@ def serve(path):
     return render_template('index.html')
 
 
-@flaskapp.route("/submitwish", methods=["POST"], strict_slashes=False)
+@ flaskapp.route("/submitwish", methods=["POST"], strict_slashes=False)
 def addWish():
     reqdict = request.get_json()
     itemname = request.json['name']
