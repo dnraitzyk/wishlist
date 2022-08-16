@@ -5,7 +5,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: 'bundle.js',
-    clean: true
+    clean: true,
   },
   devtool: "source-map",
   devServer: {
