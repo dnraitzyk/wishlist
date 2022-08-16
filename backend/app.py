@@ -25,6 +25,7 @@ isheroku = os.environ.get('ISHEROKU')
 if isheroku:
     print("isheroku")
     currdir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
+    print(currdir)
     template_dir = os.path.dirname(
         os.path.abspath(os.path.dirname(__file__) + "/../"))
     backenddir = os.path.join(currdir, 'backend')
