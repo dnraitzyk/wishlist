@@ -24,10 +24,10 @@ isheroku = os.environ.get('ISHEROKU')
 
 if isheroku:
     logging.info("isheroku")
+    currdir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
     template_dir = os.path.dirname(
         os.path.abspath(os.path.dirname(__file__) + "/../"))
-    backenddir = os.path.join(os.path.dirname(
-        os.path.abspath(os.path.dirname(__file__)), 'backend'))
+    backenddir = os.path.join(currdir, 'backend')
     template_dir = os.path.join(template_dir, 'frontend')
 
 else:
