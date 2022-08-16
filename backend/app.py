@@ -45,7 +45,7 @@ else:
 flaskapp = Flask("app", root_path="wishlist",
                  template_folder=template_dir, static_folder=template_dir, static_url_path='/')
 
-CORS(flaskapp)  # comment this on deployment
+# CORS(flaskapp)  # comment this on deployment
 api = Api(flaskapp)
 
 
@@ -81,7 +81,7 @@ except Exception as e:
     logger.error("Unable to connect to the server.", e)
 
 
-@ flaskapp.route('/favicon.ico')
+@flaskapp.route('/favicon.ico')
 def favicon():
     # statpath = app.static_folder
 
