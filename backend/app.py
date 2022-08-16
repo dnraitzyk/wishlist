@@ -97,6 +97,8 @@ def serve(path):
     statpath = flaskapp.static_folder
     print("flaskapp.template_folder")
     print(flaskapp.template_folder)
+    print("flaskapp.template_folder files are")
+    print(os.listdir(flaskapp.template_folder))
     # print(statpath)
 
     return render_template('index.html')
