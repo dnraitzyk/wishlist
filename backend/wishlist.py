@@ -1,5 +1,5 @@
 import argparse
-from Wish import *
+from .Wish import *
 import logging
 from bs4 import BeautifulSoup
 # import app

@@ -1,7 +1,7 @@
 import time
 import argparse
 # from tkinter import W
-from Wish import *
+from backend import Wish
 import logging
 import json
 from bson import json_util
@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 import os
 import sys
 # import pathlib
-from wishlist import *
+from backend import wishlist
 from datetime import datetime
 print("running app.py name is + ", __name__)
 
@@ -24,7 +24,7 @@ isheroku = os.environ.get('ISHEROKU')
 
 if isheroku:
     print("isheroku")
-    currdir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
+    currdir = os.path.dirname(os.path.dirname(__file__))
     print(currdir)
     template_dir = os.path.abspath("../../frontend/src/")
     # template_dir = os.path.dirname(
@@ -35,7 +35,9 @@ if isheroku:
     # template_dir = os.path.join(template_dir, 'frontend')
 
 else:
-    template_dir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
+    template_dir = os.path.dirname(os.path.abspath(__file__))
+    print("template_dir")
+    print(template_dir)
     backenddir = os.path.join(template_dir, 'backend')
     template_dir = os.path.join(template_dir, 'frontend')
     template_dir = os.path.join(template_dir, 'build')
@@ -59,13 +61,11 @@ logging.basicConfig(filename="app.log",
                     format='%(asctime)s %(message)s',
                     filemode='w')
 
-# logger = logging.getLogger()
-flaskapp.logger.addHandler(logging.StreamHandler(sys.stdout))
+logger = logging.getLogger()
+# flaskapp.logger.addHandler(logging.StreamHandler(sys.stdout))
 
 logger.setLevel(logging.INFO)
 # app.config.from_object('config')
-logger.info("template dir is ")
-logger.info(template_dir)
 
 
 connstring = os.environ.get('MONGODB_URI')
