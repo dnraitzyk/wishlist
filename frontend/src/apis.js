@@ -2,7 +2,7 @@ import axios from 'axios';
 
 async function InsertWish(body) {
     try {
-        let postdbresp = axios.post(`http://localhost:5000/submitwish`, body, {
+        let postdbresp = axios.post(process.env.REACT_APP_BASE_URL + '/submitwish', body, {
             headers: {
                 'content-type': 'application/json'
             }
@@ -40,7 +40,7 @@ async function GetAllWishes() {
 
 async function GetDistinctWishlists() {
     try {
-        let getdbresp = await axios.get("http://localhost:5000/GetWishlists");
+        let getdbresp = await axios.get(process.env.REACT_APP_BASE_URL + "/GetWishlists");
         let respdata = getdbresp.data;
         respdata = respdata.map((elem) => elem.trim().toLowerCase().replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase())))
         );
