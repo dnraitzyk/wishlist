@@ -73,7 +73,6 @@ const Wishlist = () => {
 
   // Sorting lists dynamically
 
-
   // Get all items from DB, this is main list
   async function GetWishes() {
     try {
