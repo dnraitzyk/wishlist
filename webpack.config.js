@@ -1,5 +1,6 @@
 const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
+const webpack = require('webpack');
 console.log("__dirname", __dirname)
 module.exports = {
   context: path.resolve(__dirname, 'frontend'),
@@ -62,5 +63,8 @@ module.exports = {
     new HtmlWebPackPlugin({
       template: path.resolve(__dirname, 'frontend', 'src') + '/index.html',
     }),
+    new webpack.EnvironmentPlugin({
+      REACT_APP_BASE_URL: 'http://localhost:5000',
+    })
   ],
 };
