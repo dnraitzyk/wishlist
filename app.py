@@ -49,7 +49,7 @@ print(os.listdir(template_dir+"/"))
 flaskapp = Flask("app", root_path="wishlist",
                  template_folder=template_dir, static_folder=template_dir, static_url_path='/')
 
-# CORS(flaskapp)  # comment this on deployment
+cors = CORS(flaskapp)  # comment this on deployment
 api = Api(flaskapp)
 
 
