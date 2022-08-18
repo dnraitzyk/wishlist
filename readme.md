@@ -14,3 +14,4 @@ runtime.txt
 running heroku in bash
 - winpty /c/"Program Files"/heroku/bin/heroku.cmd
 - heroku local -f Procfile.windows
+- git push heroku main

@@ -1,23 +1,25 @@
 const path = require('path');
 const HtmlWebPackPlugin = require('html-webpack-plugin');
-
+console.log("__dirname", __dirname)
 module.exports = {
+  context: path.resolve(__dirname, 'frontend'),
+
   output: {
-    path: path.resolve(__dirname, 'build'),
-    filename: 'bundle.js',
+    path: path.resolve(__dirname, 'frontend', 'build'),
+    filename: '[name].bundle.js',
     clean: true,
   },
   devtool: "source-map",
   devServer: {
-    static: './build/',
+    static: './frontend/build/',
     hot: true,
-    devMiddleware: {
-      publicPath: '/build/',
-      writeToDisk: true,
-    }
+    // devMiddleware: {
+    //   publicPath: 'auto',
+    //   // writeToDisk: true,
+    // }
   },
   resolve: {
-    modules: [path.join(__dirname, 'src'), 'node_modules'],
+    modules: [path.resolve(__dirname, 'frontend', 'src'), 'node_modules'],
     alias: {
       react: path.join(__dirname, 'node_modules', 'react'),
     },
@@ -48,7 +50,7 @@ module.exports = {
           {
             loader: 'file-loader',
             options: {
-              name: './src/images/[hash]-[name].[ext]',
+              name: './frontend/src/images/[hash]-[name].[ext]',
             },
           },
         ],
@@ -57,7 +59,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebPackPlugin({
-      template: './src/index.html',
+      template: path.resolve(__dirname, 'frontend', 'src') + '/index.html',
     }),
   ],
 };
