@@ -5,9 +5,10 @@ module.exports = {
   context: path.resolve(__dirname, 'frontend'),
 
   output: {
-    path: path.resolve(__dirname, 'frontend', 'build'),
+    path: path.resolve(__dirname, 'build'),
+    // path: path.resolve(__dirname, 'frontend', 'build'),
     filename: '[name].bundle.js',
-    clean: true,
+    // clean: true,
   },
   devtool: "source-map",
   devServer: {
