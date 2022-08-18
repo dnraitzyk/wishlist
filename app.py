@@ -42,7 +42,7 @@ else:
     template_dir = os.path.join(template_dir, 'frontend')
     template_dir = os.path.join(template_dir, 'build')
 
-print(os.listdir(template_dir))
+print(os.listdir(template_dir+"/"))
 
 # template_dir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
 
