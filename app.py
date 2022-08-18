@@ -18,7 +18,6 @@ from backend import wishlist
 from datetime import datetime
 print("running app.py name is + ", __name__)
 
-
 load_dotenv()
 isheroku = os.environ.get('ISHEROKU')
 
