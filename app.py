@@ -142,7 +142,7 @@ def addWish():
 
 @flaskapp.route("/GetWishes", methods=["GET"], strict_slashes=False)
 def getWishes():
-
+    print("running flask route getwishes")
     # client = MongoClient('localhost', 27017)
     mydatabase = client.wish
     mycollection = mydatabase.wishes
