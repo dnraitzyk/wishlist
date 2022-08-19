@@ -157,11 +157,13 @@ def getWishes():
     mydatabase = client.wish
     mycollection = mydatabase.wishes
     try:
-        getReiWishes()
+        # getReiWishes()
+        print("run REI")
     except Exception as e:
         logger.info("Error getting rei wishlist %s", e)
     try:
-        getAmazonWishes()
+        print("run amazon")
+        # getAmazonWishes()
     except Exception as e:
         logger.info("Error getting amazon wishlist %s", e)
 
