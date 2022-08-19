@@ -84,6 +84,13 @@ except Exception as e:
     print("Unable to connect to the server.", e)
     logger.error("Unable to connect to the server.", e)
 
+try:
+    client.database_names()
+    print('Data Base Connection Established........')
+
+except Exception as err:
+    print(f"Data Base Connection failed. Error: {err}")
+
 
 @flaskapp.route('/favicon.ico')
 def favicon():
