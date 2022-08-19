@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 import os
 import sys
 # import pathlib
-from backend import wishlist
+from backend.wishlist import *
 from datetime import datetime
 print("running app.py name is + ", __name__)
 
