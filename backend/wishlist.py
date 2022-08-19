@@ -51,7 +51,12 @@ logger.setLevel(logging.ERROR)
 
 def getReiWishes():
     wishlistlink = "https://www.rei.com/lists/415791132"
-    reiwishlist = requests.get(wishlistlink)
+
+    try:
+        reiwishlist = requests.get(wishlistlink)
+    except Exception as e:
+        logger.error("Exception in getReiWishes to website%s", e)
+        return
     baselink = "https://www.rei.com"
     soup = BeautifulSoup(reiwishlist.content, 'lxml')
     reiitems = soup.find_all("tr", class_="list-item list-body-item")
