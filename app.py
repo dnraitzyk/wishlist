@@ -157,7 +157,7 @@ def getWishes():
     mydatabase = client.wish
     mycollection = mydatabase.wishes
     try:
-        # getReiWishes()
+        getReiWishes()
         print("run REI")
     except Exception as e:
         logger.info("Error getting rei wishlist %s", e)
