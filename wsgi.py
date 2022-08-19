@@ -1,6 +1,7 @@
 from app import flaskapp as application
 import os
 # print("python path ", os.environ['PYTHONPATH'])
+import sys
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -15,7 +16,9 @@ if __name__ == "__main__":
         port = int(os.environ.get('PORT', 5000))
         print("$$$$$$$$$$$$$$$$port ")
         print(port)
+    sys.stdout.flush()
+
     # app.run(host='0.0.0.0', port=port)
     print("$$$$$$$$$$$$$$$$running wsgi app ")
-    application.run(host='0.0.0.0', port=port)
+    application.run(host='0.0.0.0', port=port, debug=True)
     # application.run()
