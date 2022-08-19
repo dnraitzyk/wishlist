@@ -71,7 +71,6 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 # app.config.from_object('config')
 
-
 connstring = os.environ.get('MONGODB_URI')
 print("connstring is ", connstring)
 try:
