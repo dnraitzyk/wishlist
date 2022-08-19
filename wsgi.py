@@ -9,10 +9,13 @@ if __name__ == "__main__":
 
     if isheroku:
         port = int(os.environ.get('PORT'))
-        print("port: ", port)
+        print("heroku$$$$$$$$$$$$$$$$port ")
+        print(port)
     else:
         port = int(os.environ.get('PORT', 5000))
-
+        print("$$$$$$$$$$$$$$$$port ")
+        print(port)
     # app.run(host='0.0.0.0', port=port)
+    print("$$$$$$$$$$$$$$$$running wsgi app ")
     application.run(host='0.0.0.0', port=port)
     # application.run()
