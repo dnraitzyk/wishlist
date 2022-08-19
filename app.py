@@ -9,7 +9,7 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 from flask import Flask, jsonify, render_template, request, redirect, url_for, send_from_directory
 from flask_restful import Api, Resource, reqparse
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from dotenv import load_dotenv
 import os
 import sys
@@ -51,7 +51,7 @@ print(os.listdir(template_dir+"/"))
 flaskapp = Flask("app", root_path="wishlist",
                  template_folder=template_dir, static_folder=template_dir, static_url_path='/')
 
-# cors = CORS(flaskapp)  # comment this on deployment
+cors = CORS(flaskapp)  # comment this on deployment
 api = Api(flaskapp)
 
 
@@ -143,6 +143,7 @@ def addWish():
 
 
 @flaskapp.route("/GetWishes", methods=["GET"], strict_slashes=False)
+@cross_origin()
 def getWishes():
     print("running flask route getwishes")
     # client = MongoClient('localhost', 27017)
@@ -163,6 +164,7 @@ def getWishes():
 
 
 @flaskapp.route("/GetWishlists", methods=["GET"], strict_slashes=False)
+@cross_origin()
 def getWishlists():
 
     # client = MongoClient('localhost', 27017)
