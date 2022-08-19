@@ -9,6 +9,7 @@ if __name__ == "__main__":
 
     if isheroku:
         port = int(os.environ.get('PORT'))
+        print("port: ", port)
     else:
         port = int(os.environ.get('PORT', 5000))
 
