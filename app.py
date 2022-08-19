@@ -6,6 +6,7 @@ import logging
 import json
 from bson import json_util
 from pymongo import MongoClient
+from pymongo.errors import ConnectionFailure
 from bson.objectid import ObjectId
 from flask import Flask, jsonify, render_template, request, redirect, url_for, send_from_directory
 from flask_restful import Api, Resource, reqparse
@@ -85,10 +86,10 @@ except Exception as e:
     logger.error("Unable to connect to the server.", e)
 
 try:
-    client.database_names()
+    client.admin.command('ping')
     print('Data Base Connection Established........')
 
-except Exception as err:
+except ConnectionFailure as err:
     print(f"Data Base Connection failed. Error: {err}")
 
 
