@@ -20,7 +20,9 @@ print("running app.py name is + ", __name__)
 
 load_dotenv()
 isheroku = os.environ.get('ISHEROKU')
-
+port = int(os.environ.get('PORT'))
+print("$$$$$$$$$$$$$$$$port ")
+print(port)
 if isheroku:
     print("isheroku")
     currdir = os.path.dirname(os.path.dirname(__file__))

@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 isheroku = os.environ.get('ISHEROKU')
+print("running wsgi")
 if __name__ == "__main__":
 
     if isheroku:
