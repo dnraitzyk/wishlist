@@ -20,6 +20,5 @@ if __name__ == "__main__":
     sys.stdout.flush()
 
     # app.run(host='0.0.0.0', port=port)
-    print("$$$$$$$$$$$$$$$$running wsgi app ")
     application.run(host='0.0.0.0', port=port, debug=True)
     # application.run()
