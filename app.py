@@ -83,9 +83,8 @@ try:
         connect(db="wish")
         client = MongoClient('localhost', 27017)
     else:
-        connect(connstring)
+        connect(host=connstring)
         client = MongoClient(connstring)
-
 # print(client.server_info())
 except Exception as e:
     print("Unable to connect to the server.", e)
