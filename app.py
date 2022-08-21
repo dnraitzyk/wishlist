@@ -83,7 +83,7 @@ try:
         connect(db="wish")
         client = MongoClient('localhost', 27017)
     else:
-        connect(connstring)
+        # connect(connstring)
         client = MongoClient(connstring)
 
 # print(client.server_info())
@@ -96,7 +96,7 @@ try:
     print('Data Base Connection Established........')
 
 except ConnectionFailure as err:
-    print(f"Data Base Connection failed. Error: {err}")
+    print("Data Base Connection failed. Error: {err}")
 
 # if IS_DEV:
 #     proxy(WEBPACK_DEV_SERVER_HOST, request.path)
