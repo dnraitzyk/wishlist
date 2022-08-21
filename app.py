@@ -179,7 +179,12 @@ def addWish():
     #     'modified_date': modified_date,
     #     'source': source
     # }
-    wishToSave.save()
+    try:
+        wishToSave.save()
+    except Exception as e:
+        print("Error saving wish %s", e)
+        logger.error("Error saving wish %s", e)
+        return jsonify({"status": "error", "message": "Error saving wish"})
     # rec = mycollection.replace_one({"_id": objid}, record, upsert=True)
 
     return jsonify("Successfully added wish")
