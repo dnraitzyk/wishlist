@@ -102,13 +102,13 @@ except ConnectionFailure as err:
 #     proxy(WEBPACK_DEV_SERVER_HOST, request.path)
 try:
     print("run REI")
-    getReiWishes()
+    # getReiWishes()
 except Exception as e:
     logger.info("Error getting rei wishlist %s", e)
 
 try:
     print("run amazon")
-    getAmazonWishes()
+    # getAmazonWishes()
 except Exception as e:
     logger.info("Error getting amazon wishlist %s", e)
 
