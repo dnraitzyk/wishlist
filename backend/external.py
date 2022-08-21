@@ -8,10 +8,11 @@ logger.setLevel(logging.INFO)
 
 def getReiWishes():
     wishlistlink = "https://www.rei.com/lists/415791132"
-
+    wishlist = "Rei"
     try:
         reiwishlist = requests.get(wishlistlink)
     except Exception as e:
+        print("Exception in getReiWishes to website%s", e)
         logger.error("Exception in getReiWishes to website%s", e)
         return
     baselink = "https://www.rei.com"
@@ -43,18 +44,21 @@ def getReiWishes():
 
         itemquantity = row.find(
             "div", class_="list-item__quantity").p.contents[0].strip()
-        mappedwish = mapWishToDBRecord(
-            Wish(namestring, itemdesc, itemcost, itemquantity, link=itemlink, wishlist="Rei", wishlistLink=wishlistlink, availability=""))
-        reiWishObjs.append(mappedwish)
+        # mappedwish = mapWishToDBRecord(
+        #     Wish(namestring, itemdesc, itemcost, itemquantity, link=itemlink, wishlist="Rei", wishlistLink=wishlistlink, availability=""))
+        # reiWishObjs.append(mappedwish)
+        id = wishlist + "_" + namestring.replace(" ", "_").lower()
+        wishToSave = Wish(name=namestring, description=itemdesc, cost=itemcost, quantity=itemquantity, link=itemlink,
+                          wishlist=wishlist, wishlistLink=wishlistlink, id=id, availability=itemstock, source="auto", modified_date=datetime.today())
+        reiWishObjs.append(wishToSave)
     saveWishesDB(reiWishObjs)
-    logger.info("logging reiWishObjs")
     # logger.info(reiWishObjs)
 
 
 def getAmazonWishes():
     wishlistlink = "https://www.amazon.com/hz/wishlist/ls/3M5WRZQLL8Z1U?ref_=wl_share"
     baselink = "https://www.amazon.com"
-
+    wishlist = "Amazon"
     amazwishlist = requests.get(wishlistlink)
 
     soup = BeautifulSoup(amazwishlist.text, 'lxml')
@@ -90,16 +94,19 @@ def getAmazonWishes():
                 logger.error("No add to cart found for " + itemname)
                 logger.error("itemavail error %s ", e)
 
-            mappedwish = mapWishToDBRecord(Wish(
-                itemname, cost=itemcost, link=itemlink, wishlist="Amazon", wishlistLink=wishlistlink, availability=itemavail))
-            amazWishObjs.append(mappedwish)
+            # mappedwish = mapWishToDBRecord(Wish(
+            #     itemname, cost=itemcost, link=itemlink, wishlist="Amazon", wishlistLink=wishlistlink, availability=itemavail))
+            id = wishlist + "_" + itemname.replace(" ", "_").lower()
+            wishToSave = Wish(name=itemname, cost=itemcost, link=itemlink,
+                              wishlist=wishlist, wishlistLink=wishlistlink, id=id, availability=itemavail, source="auto", modified_date=datetime.today())
+            amazWishObjs.append(wishToSave)
+
         # print(amazitems)
         # for row in amazitems:
         #     print()
         # itemname = row.td.find_all("p", class_="product__title")
         # unicode_string = str(itemname[0].string).strip()
         # logger.info(unicode_string)
-        logger.info("amaz objects are %s", amazWishObjs)
         saveWishesDB(amazWishObjs)
     else:
         logger.info("Encountered captcha, wait 1 minute")

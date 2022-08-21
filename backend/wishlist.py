@@ -69,21 +69,22 @@ def mapWishToDBRecord(Wish):
 
 
 def saveWishesDB(recordList):
-    recordListGood = []
-    for record in recordList:
-        logger.info("record name %s", record["name"])
-        if record["name"] != "":
-            recordListGood.append(record)
-            logger.info("appending record %s", record["name"])
-        else:
-            logger.info("not appending record %s", record["name"])
+    # recordListGood = []
+    # for record in recordList:
+    #     logger.info("record name %s", record["name"])
+    #     if record["name"] != "":
+    #         recordListGood.append(record)
+    #         logger.info("appending record %s", record["name"])
+    #     else:
+    #         logger.info("not appending record %s", record["name"])
     logger.info("inserting " + str(len(recordList)) + " records")
 
-    ids = [record.pop("id") for record in recordList]
+    # ids = [record.pop("id") for record in recordList]
 
-    operations = [UpdateOne({"id": idn}, {'$set': data}, upsert=True)
-                  for idn, data in zip(ids, recordList)]
-    mycollection.bulk_write(operations)
+    # operations = [UpdateOne({"id": idn}, {'$set': data}, upsert=True)
+    #               for idn, data in zip(ids, recordList)]
+    # mycollection.bulk_write(operations)
+    Wish.objects.insert(recordList)
 
 
 # amazonwishlist = requests.get(

@@ -101,13 +101,13 @@ except ConnectionFailure as err:
 #     proxy(WEBPACK_DEV_SERVER_HOST, request.path)
 try:
     print("run REI")
-    # getReiWishes()
+    getReiWishes()
 except Exception as e:
     logger.info("Error getting rei wishlist %s", e)
 
 try:
     print("run amazon")
-    # getAmazonWishes()
+    getAmazonWishes()
 except Exception as e:
     logger.info("Error getting amazon wishlist %s", e)
 
@@ -209,7 +209,6 @@ def getWishes():
 
     # wishes = mycollection.find({})
     wishes = Wish.objects.to_json()
-    print("mongo wishes is ", wishes)
     # logger.info(json_util.dumps(wishes))
     return wishes
     # return json_util.dumps(wishes)
@@ -218,12 +217,13 @@ def getWishes():
 @ flaskapp.route("/GetWishlists", methods=["GET"], strict_slashes=False)
 @ cross_origin()
 def getWishlists():
-
     # client = MongoClient('localhost', 27017)
-    mydatabase = client.wish
-    mycollection = mydatabase.wishes
+    # mydatabase = client.wish
+    # mycollection = mydatabase.wishes
     try:
-        lists = mycollection.distinct("wishlist")
+        # lists = mycollection.distinct("wishlist")
+        lists = Wish.objects.distinct("wishlist")
+
     except Exception as e:
         logger.info("Error getting distinct wishlists %s", e)
 
