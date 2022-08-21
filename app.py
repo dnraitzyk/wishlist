@@ -83,7 +83,7 @@ try:
         connect(db="wish")
         client = MongoClient('localhost', 27017)
     else:
-        # connect(connstring)
+        connect(connstring)
         client = MongoClient(connstring)
 
 # print(client.server_info())
