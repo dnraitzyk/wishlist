@@ -2,6 +2,7 @@ import time
 import argparse
 # from tkinter import W
 from backend import Wish
+from backend.external import *
 import logging
 import json
 from bson import json_util
@@ -12,6 +13,7 @@ from flask import Flask, jsonify, render_template, request, redirect, url_for, s
 from flask_restful import Api, Resource, reqparse
 from flask_cors import CORS, cross_origin
 from dotenv import load_dotenv
+from mongoengine import connect
 import os
 import sys
 # import pathlib
@@ -51,6 +53,7 @@ print(os.listdir(template_dir+"/"))
 
 flaskapp = Flask("app", root_path="wishlist",
                  template_folder=template_dir, static_folder=template_dir, static_url_path='/')
+flaskapp.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 
 cors = CORS(flaskapp)  # comment this on deployment
 api = Api(flaskapp)
@@ -71,15 +74,19 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 # app.config.from_object('config')
 
+IS_DEV = os.environ.get('FLASK_ENV') == "development"
+
 connstring = os.environ.get('MONGODB_URI')
 print("connstring is ", connstring)
 try:
     if connstring is None:
+        connect(db="wish")
         client = MongoClient('localhost', 27017)
     else:
+        connect(connstring)
         client = MongoClient(connstring)
 
-    # print(client.server_info())
+# print(client.server_info())
 except Exception as e:
     print("Unable to connect to the server.", e)
     logger.error("Unable to connect to the server.", e)
@@ -90,6 +97,20 @@ try:
 
 except ConnectionFailure as err:
     print(f"Data Base Connection failed. Error: {err}")
+
+# if IS_DEV:
+#     proxy(WEBPACK_DEV_SERVER_HOST, request.path)
+try:
+    print("run REI")
+    getReiWishes()
+except Exception as e:
+    logger.info("Error getting rei wishlist %s", e)
+
+try:
+    print("run amazon")
+    getAmazonWishes()
+except Exception as e:
+    logger.info("Error getting amazon wishlist %s", e)
 
 
 @flaskapp.route('/favicon.ico')
@@ -116,7 +137,12 @@ def serve(path):
 
 @flaskapp.route("/submitwish", methods=["POST"], strict_slashes=False)
 def addWish():
+    wishlistlink = ""
+    availability = ""
+    id = ""
+
     reqdict = request.get_json()
+    print("reqdict is ", reqdict)
     itemname = request.json['name']
     quantity = request.json['quantity']
     cost = request.json['cost']
@@ -125,55 +151,68 @@ def addWish():
     description = request.json['description']
     wishlist = request.json['wishlist']
     source = request.json['source']
-    _id = reqdict.get("_id")
+    if 'wishlistlink' in reqdict:
+        wishlistlink = request.json['wishlistlink']
+    if 'availability' in reqdict:
+        availability = request.json['availability']
+    if '_id' in reqdict:
+        id = request.json['_id']
     modified_date = datetime.today()
-    objid = ObjectId(_id)
+    # objid = ObjectId(id)
+    if id is None or id == "":
+        id = wishlist+"_" + itemname.replace(" ", "_").lower()
+    print("id is ", id)
+    wishToSave = Wish(name=itemname, description=description, cost=cost, quantity=quantity, category=category, link=link,
+                      wishlist=wishlist, wishlistLink=wishlistlink, id=id, availability=availability, source=source, modified_date=modified_date)
 
-    mydatabase = client.wish
-    mycollection = mydatabase.wishes
+    # mydatabase = client.wish
+    # mycollection = mydatabase.wishes
 
-    record = {
-        'description': description,
-        'name': itemname,
-        'cost': cost,
-        'link': link,
-        'quantity': quantity,
-        'category': category,
-        'wishlist': wishlist,
-        'modified_date': modified_date,
-        'source': source
-    }
-
-    rec = mycollection.replace_one({"_id": objid}, record, upsert=True)
+    # record = {
+    #     'description': description,
+    #     'name': itemname,
+    #     'cost': cost,
+    #     'link': link,
+    #     'quantity': quantity,
+    #     'category': category,
+    #     'wishlist': wishlist,
+    #     'modified_date': modified_date,
+    #     'source': source
+    # }
+    wishToSave.save()
+    # rec = mycollection.replace_one({"_id": objid}, record, upsert=True)
 
     return jsonify("Successfully added wish")
 
 
-@flaskapp.route("/GetWishes", methods=["GET"], strict_slashes=False)
-@cross_origin()
+@ flaskapp.route("/GetWishes", methods=["GET"], strict_slashes=False)
+@ cross_origin()
 def getWishes():
     print("running flask route getwishes")
     # client = MongoClient('localhost', 27017)
-    mydatabase = client.wish
-    mycollection = mydatabase.wishes
-    try:
-        # getReiWishes()
-        print("run REI")
-    except Exception as e:
-        logger.info("Error getting rei wishlist %s", e)
-    try:
-        print("run amazon")
-        # getAmazonWishes()
-    except Exception as e:
-        logger.info("Error getting amazon wishlist %s", e)
+    # mydatabase = client.wish
+    # mycollection = mydatabase.wishes
+    # try:
+    #     # getReiWishes()
+    #     print("run REI")
+    # except Exception as e:
+    #     logger.info("Error getting rei wishlist %s", e)
+    # try:
+    #     print("run amazon")
+    #     # getAmazonWishes()
+    # except Exception as e:
+    #     logger.info("Error getting amazon wishlist %s", e)
 
-    wishes = mycollection.find({})
+    # wishes = mycollection.find({})
+    wishes = Wish.objects.to_json()
+    print("mongo wishes is ", wishes)
     # logger.info(json_util.dumps(wishes))
-    return json_util.dumps(wishes)
+    return wishes
+    # return json_util.dumps(wishes)
 
 
-@flaskapp.route("/GetWishlists", methods=["GET"], strict_slashes=False)
-@cross_origin()
+@ flaskapp.route("/GetWishlists", methods=["GET"], strict_slashes=False)
+@ cross_origin()
 def getWishlists():
 
     # client = MongoClient('localhost', 27017)
@@ -189,7 +228,7 @@ def getWishlists():
     return json_util.dumps(lists)
 
 
-@flaskapp.route('/go_outside_flask/<path:link>', strict_slashes=False)
+@ flaskapp.route('/go_outside_flask/<path:link>', strict_slashes=False)
 def go_outside_flask_method(link):
 
     return link

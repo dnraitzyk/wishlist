@@ -9,16 +9,16 @@ module.exports = {
     path: path.resolve(__dirname, 'build'),
     // path: path.resolve(__dirname, 'frontend', 'build'),
     filename: '[name].bundle.js',
-    // clean: true,
+    clean: true,
   },
   devtool: "source-map",
   devServer: {
-    static: './frontend/build/',
+    static: './build/',
     hot: true,
-    // devMiddleware: {
-    //   publicPath: 'auto',
-    //   // writeToDisk: true,
-    // }
+    devMiddleware: {
+      publicPath: 'auto',
+      writeToDisk: true,
+    }
   },
   resolve: {
     modules: [path.resolve(__dirname, 'frontend', 'src'), 'node_modules'],

@@ -16,9 +16,9 @@ async function InsertWish(body) {
 
 async function GetAllWishes() {
     try {
-        console.log("baseurl is " + process.env.REACT_APP_BASE_URL)
         let getdbresp = await axios.get(process.env.REACT_APP_BASE_URL + "/GetWishes");
         let respdata = getdbresp.data;
+        console.log("respdata is ", typeof respdata);
         respdata.forEach(function (arrayItem) {
             let id = "";
             let date;
