@@ -1,4 +1,5 @@
 General
+- 
 
 Functionality
 - Create a new wishlist from add button on add wish, cant be in current list
@@ -14,6 +15,9 @@ Backend
 - move refresh from websites into separate runnable file
   - refresh only asynchronously and on manual button
 - handle rei stock and cost
+- group isdev and isheroku logic
+- only call db connect once
+- only make logger once
 
 UI
 - show add wish wishlist dropdown
