@@ -1,4 +1,28 @@
 from .external import *
+from pymongo import MongoClient
+from pymongo.errors import ConnectionFailure
+from mongoengine import connect
+import os
+
+connstring = os.environ.get('MONGODB_URI')
+try:
+    if connstring is None:
+        connect(db="wish")
+        client = MongoClient('localhost', 27017)
+    else:
+        connect(host=connstring)
+        client = MongoClient(connstring)
+# print(client.server_info())
+except Exception as e:
+    print("Unable to connect to the server from job.", e)
+    logger.error("Unable to connect to the server from job.", e)
+
+try:
+    client.admin.command('ping')
+    print('Data Base Connection Established during job........')
+
+except ConnectionFailure as err:
+    print("Data Base Connection failed from job. Error: {err}")
 
 try:
     getAllExternal()
