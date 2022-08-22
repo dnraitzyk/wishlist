@@ -1,4 +1,4 @@
-from external import *
+from .external import *
 
 try:
     getAllExternal()
