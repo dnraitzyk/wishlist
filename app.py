@@ -69,7 +69,6 @@ logging.basicConfig(filename="app.log",
                     filemode='w')
 
 logger = logging.getLogger()
-# flaskapp.logger.addHandler(logging.StreamHandler(sys.stdout))
 
 logger.setLevel(logging.INFO)
 # app.config.from_object('config')
