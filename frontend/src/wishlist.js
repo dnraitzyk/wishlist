@@ -2,7 +2,7 @@
 /* eslint-disable no-underscore-dangle */
 import axios from 'axios';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { GetAllWishes, InsertWish, GetDistinctWishlists } from './apis';
+import { GetAllWishes, InsertWish, GetDistinctWishlists, GetExternalWishes } from './apis';
 // import caret-sort-down 
 
 function dynamicSort(property, sortOrderWord = 'asc') {
@@ -13,12 +13,7 @@ function dynamicSort(property, sortOrderWord = 'asc') {
   else {
     sortOrder = -1;
   }
-  // let sortOrder = 1;
-  // let newprop = '';
-  // if (property[0] === '-') {
-  //   sortOrder = -1;
-  //   newprop = property.substr(1);
-  // }
+
   return (a, b) => {
     let result = 0;
     if ((a[property] < b[property])) {
@@ -42,14 +37,7 @@ async function RetrieveWishlistOptions() {
       )
     }
     ));
-    console.log("options: ", wishlistOptions);
 
-    // return options.map(function (option) {
-    //   return (
-    //     <option value={option}>{option}</option>
-    //   )
-    // }
-    // )
 
   } catch (e) {
     console.log(`Error in Wishlist.GetWishlistOptions: ${e.message}`);
@@ -86,18 +74,6 @@ const Wishlist = () => {
       console.log(`Error in Wishlist.GetWishes: ${e.message}`);
     }
   }
-
-  // const wishlistOptions = (options) => {
-  //   return (
-  //     options.forEach(function (option) {
-  //       return (
-  //         <option value={option}>{option}</option>
-  //       )
-  //     }
-  //     )
-  //   )
-  // }
-
 
 
   // Only once, get items and set loading state
@@ -165,24 +141,6 @@ const WishlistHeader = (props) => {
 
     setSortBy(value);
 
-    // if (value === 'modified_date') {
-    //   value = 'modified_date.$date';
-    // }
-    // for (let i = fullList.length - 1; i >= 0; i -= 1) {
-    //   fullList[i].isReadOnly = true;
-    //   fullList[i].show = true;
-    //   if (value !== 'all' && fullList[i].category !== value) {
-    //     fullList[i].show = false;
-    //   }
-    // }
-    // let sortConcat;
-
-    // if (sortOrder === 'desc') {
-    //   sortConcat = '-' + value;
-    // }
-    // else {
-    //   sortConcat = value;
-    // }
     fullList.sort(dynamicSort(value, sortOrder));
     const newlist = fullList.map(i => {
       return { ...i };
@@ -192,9 +150,7 @@ const WishlistHeader = (props) => {
   }
 
   const HandleSortOrderChange = (sortOrder, sortBy) => {
-    // if (sortBy === 'modified_date') {
-    //   sortBy = 'modified_date.$date';
-    // }
+
     const { fullList, updateListOfWishes } = props;
     flipSortOrder(sortOrder);
     fullList.sort(dynamicSort(sortBy, sortOrder));
@@ -221,17 +177,42 @@ const WishlistHeader = (props) => {
     }
   }
 
+  const HandleRefreshWishes = () => {
+    FetchExternalWishes();
+  }
+
+  async function FetchExternalWishes() {
+    let { fullList, updateListOfWishes } = props;
+
+    try {
+      fullList = await GetExternalWishes();
+      fullList.sort(dynamicSort('wishlist'));
+
+      const goodlist = fullList.map((item) => ({ ...item, isReadOnly: true, show: true }));
+
+      updateListOfWishes(goodlist);
+
+    } catch (e) {
+      console.log(`Error in Wishlist.HandleRefreshWishes: ${e.message}`);
+    }
+
+
+  }
+
 
   // Return header component content
   return (
     <div className="contentBanner">
-      <h1 className="wishTitle">
+      <h1 className="wishTitle bannerItem5">
         Wishes:
         {' '}
         {getShowCount(list)}
       </h1>
-      <label htmlFor="category">
-        <p className="bannerFilter">Category:</p>
+      <button className="typicalbutton bannerItem5" type="button" onClick={() => HandleRefreshWishes()}>
+        Get Wishes
+      </button>
+      <label className="bannerItem5" htmlFor="category">
+        <p>Category:</p>
         <select id="category" name="category" value={filter} onChange={(e) => HandleFilterChange(e)}>
           <option value="all">All</option>
           <option value="default">Default</option>
@@ -240,8 +221,8 @@ const WishlistHeader = (props) => {
           <option value="decor">Decor</option>
         </select>
       </label>
-      <label htmlFor="sortBy">
-        <p className="bannerFilter">Sort By:</p>
+      <label className="bannerItem5" htmlFor="sortBy">
+        <p>Sort By:</p>
         <select id="sortBy" name="sortBy" value={sortBy} onChange={(e) => HandleSortChange(e)}>
           <option value="" disabled>Sort by...</option>
           <option value="link">Link</option>
@@ -254,7 +235,7 @@ const WishlistHeader = (props) => {
       </label>
       <p className="fitText">Sort
       </p>
-      <button className='sortButton' onClick={() => HandleSortOrderChange(sortOrder, sortBy)}>{showSortArrow(sortOrder)}</button>
+      <button className='sortButton bannerItem5' onClick={() => HandleSortOrderChange(sortOrder, sortBy)}>{showSortArrow(sortOrder)}</button>
 
     </div>
   );
@@ -489,7 +470,6 @@ const WishRow = (props) => {
                   {ShowEdit(item)}
                   <div className="wishatt capital">
                     Item Name:
-                    {/* <span className="emphasize">{item.name}</span> */}
                     {item.link ? (
                       <a className="" href="#" onClick={(e) => goToLink(item.link)}>{item.name}</a>
                     )

@@ -99,17 +99,6 @@ except ConnectionFailure as err:
 
 # if IS_DEV:
 #     proxy(WEBPACK_DEV_SERVER_HOST, request.path)
-try:
-    print("run REI")
-    getReiWishes()
-except Exception as e:
-    logger.info("Error getting rei wishlist %s", e)
-
-try:
-    print("run amazon")
-    getAmazonWishes()
-except Exception as e:
-    logger.info("Error getting amazon wishlist %s", e)
 
 
 @flaskapp.route('/favicon.ico')
@@ -230,6 +219,19 @@ def getWishlists():
     # wishes = mycollection.find({})
     # logger.info(json_util.dumps(wishes))
     return json_util.dumps(lists)
+
+
+@ flaskapp.route("/FetchExternalWishes", methods=["GET"], strict_slashes=False)
+@ cross_origin()
+def fetchExternalWishes():
+    print("running flask route FetchExternalWishes")
+    try:
+        getAllExternal()
+    except Exception as e:
+        logger.info("Error getting external wishes %s", e)
+
+    wishes = Wish.objects.to_json()
+    return wishes
 
 
 @ flaskapp.route('/go_outside_flask/<path:link>', strict_slashes=False)

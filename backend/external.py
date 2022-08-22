@@ -6,6 +6,20 @@ logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 
+def getAllExternal():
+    try:
+        print("run REI")
+        getReiWishes()
+    except Exception as e:
+        logger.info("Error getting rei wishlist %s", e)
+
+    try:
+        print("run amazon")
+        getAmazonWishes()
+    except Exception as e:
+        logger.info("Error getting amazon wishlist %s", e)
+
+
 def getReiWishes():
     wishlistlink = "https://www.rei.com/lists/415791132"
     wishlist = "Rei"
@@ -102,11 +116,7 @@ def getAmazonWishes():
             amazWishObjs.append(wishToSave)
 
         # print(amazitems)
-        # for row in amazitems:
-        #     print()
-        # itemname = row.td.find_all("p", class_="product__title")
-        # unicode_string = str(itemname[0].string).strip()
-        # logger.info(unicode_string)
+
         saveWishesDB(amazWishObjs)
     else:
         logger.info("Encountered captcha, wait 1 minute")

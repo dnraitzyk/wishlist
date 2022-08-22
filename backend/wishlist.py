@@ -23,20 +23,6 @@ except Exception as e:
 mydatabase = client.wish
 mycollection = mydatabase.wishes
 
-# desc = ""
-# cost = 0
-# location = ""
-# quantity = 0
-
-# record = {
-#     'description': desc,
-#     'cost': cost,
-#     'location': location,
-#     'quantity': quantity
-# }
-
-# rec = mycollection.insert_one(record)
-
 
 # Create and configure logger
 logging.basicConfig(filename="app.log",
@@ -85,20 +71,3 @@ def saveWishesDB(recordList):
     #               for idn, data in zip(ids, recordList)]
     # mycollection.bulk_write(operations)
     Wish.objects.insert(recordList)
-
-
-# amazonwishlist = requests.get(
-#     "https://www.amazon.com/hz/wishlist/ls/3M5WRZQLL8Z1U?ref_=wl_share")
-
-# # with open("index.html") as fp:
-# #     soup = BeautifulSoup(fp, 'html.parser')
-
-# soup = BeautifulSoup(amazonwishlist.content, 'html.parser')
-# amazitems = soup.find_all("a", id=re.compile('^itemName_'))
-# # logger.info(soup)
-# # logger.info(len(amazitems))
-
-# for row in amazitems:
-#     itemname = row.string
-#     unicode_string = str(itemname).strip()
-#     logger.info(unicode_string)

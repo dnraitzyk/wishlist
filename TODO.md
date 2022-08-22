@@ -11,6 +11,8 @@ Functionality
 
 Backend
 - find common elements to simplify html parsing
+- move refresh from websites into separate runnable file
+  - refresh only asynchronously and on manual button
 - handle rei stock and cost
 
 UI

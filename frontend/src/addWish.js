@@ -51,13 +51,6 @@ function AddWish() {
         return { "name": "", "description": "", "cost": 0, "quantity": 1, "link": "", "category": "default", "wishlist": "Default" }
     };
 
-    // useEffect(() => {
-    // }, []);
-
-
-
-
-
     let source = "manual";
 
     async function insertWish(insertFields) {
@@ -95,15 +88,6 @@ function AddWish() {
             return false
         }
 
-        // if (price === "") {
-        //     return isValid
-        // }
-        // if (priceregex.test(price)) {
-        //     return isValid;
-        // }
-        // else {
-        //     return false
-        // }
     };
 
     const handleSubmit = (event) => {
@@ -156,11 +140,7 @@ function AddWish() {
             errors["quantity"] = "Must be a valid quantity"
         }
 
-        // const intregex = new RegExp(/^\d{1,}$/);
-        // if (!intregex.test(fields['quantity'])) {
-        //     formIsValid = false;
-        //     errors["quantity"] = "Must be a valid quantity"
-        // }
+
         setErrors(errors);
         return formIsValid;
     }
@@ -169,10 +149,6 @@ function AddWish() {
         console.log("running change")
         const { name, value } = event.target;
         setFields({ ...fields, [name]: value });
-        //special cases
-        // if (setter === setVideo) {
-        //     setInvalidVideo(!ReactPlayer.canPlay(value))
-        // }
 
         setter(value)
     }
