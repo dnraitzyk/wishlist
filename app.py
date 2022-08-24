@@ -36,7 +36,7 @@ if isheroku:
     # template_dir = os.path.dirname(
     #     os.path.abspath(os.path.dirname(__file__) + "/../"))
     print("template_dir")
-    lprint(template_dir)
+    print(template_dir)
     backenddir = os.path.join(currdir, 'backend')
     # template_dir = os.path.join(template_dir, 'frontend')
     LOGGING_CONFIG = {
