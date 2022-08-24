@@ -38,6 +38,10 @@ if isheroku:
     print(template_dir)
     backenddir = os.path.join(currdir, 'backend')
     # template_dir = os.path.join(template_dir, 'frontend')
+    logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(message)s')
+
+    logger = logging.getLogger()
+    logger.setLevel(logging.INFO)
 
 else:
     template_dir = os.path.dirname(os.path.abspath(__file__))
@@ -47,7 +51,10 @@ else:
     # template_dir = os.path.join(template_dir, 'frontend')
     template_dir = os.path.join(template_dir, 'build')
 
-print(os.listdir(template_dir+"/"))
+    logging.basicConfig(filename="app.log",
+                        format='%(asctime)s %(message)s',
+                        filemode='w')
+# print(os.listdir(template_dir+"/"))
 
 # template_dir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
 
@@ -63,10 +70,6 @@ api = Api(flaskapp)
 #     print("run german thing")
 # The app is not in debug mode or we are in the reloaded process
 
-
-logging.basicConfig(filename="app.log",
-                    format='%(asctime)s %(message)s',
-                    filemode='w')
 
 logger = logging.getLogger()
 

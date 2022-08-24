@@ -3,6 +3,11 @@ from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 from mongoengine import connect
 import os
+import sys
+
+logging.basicConfig(stream=sys.stdout)
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
 
 connstring = os.environ.get('MONGODB_URI')
 try:
@@ -28,3 +33,4 @@ try:
     getAllExternal()
 except Exception as e:
     logger.info("Error getting external wishes during job %s", e)
+    print("Error getting external wishes during job %s", e)

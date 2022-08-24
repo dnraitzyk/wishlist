@@ -2,8 +2,8 @@ import logging
 from .Wish import *
 from .wishlist import *
 
-logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+# logger = logging.getLogger()
+# logger.setLevel(logging.INFO)
 
 
 def getAllExternal():
