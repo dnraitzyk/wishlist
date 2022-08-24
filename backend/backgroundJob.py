@@ -5,9 +5,37 @@ from mongoengine import connect
 import os
 import sys
 
-logging.basicConfig(stream=sys.stdout)
+LOGGING_CONFIG = {
+    'version': 1,
+    'loggers': {
+        '': {  # root logger
+            'level': 'INFO',
+            'handlers': ['debug_console_handler'],
+        }
+        # ,
+        # 'my.package': {
+        #     'level': 'WARNING',
+        #     'propagate': False,
+        #     'handlers': ['info_rotating_file_handler', 'error_file_handler'],
+        # },
+    },
+    'handlers': {
+        'debug_console_handler': {
+            'level': 'DEBUG',
+            'formatter': 'info',
+            'class': 'logging.StreamHandler',
+            'stream': 'ext://sys.stdout',
+        }
+    },
+    'formatters': {
+        'info': {
+            'format': '%(asctime)s-%(levelname)s-%(name)s-%(process)d::%(module)s|%(lineno)s:: %(message)s'
+        },
+    },
+
+}
+
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
 
 connstring = os.environ.get('MONGODB_URI')
 try:
@@ -19,18 +47,16 @@ try:
         client = MongoClient(connstring)
 # print(client.server_info())
 except Exception as e:
-    print("Unable to connect to the server from job.", e)
     logger.error("Unable to connect to the server from job.", e)
 
 try:
     client.admin.command('ping')
-    print('Data Base Connection Established during job........')
+    logger.info('Data Base Connection Established during job........')
 
 except ConnectionFailure as err:
-    print("Data Base Connection failed from job. Error: {err}")
+    logger.error("Data Base Connection failed from job. Error: {err}")
 
 try:
     getAllExternal()
 except Exception as e:
-    logger.info("Error getting external wishes during job %s", e)
-    print("Error getting external wishes during job %s", e)
+    logger.error("Error getting external wishes during job %s", e)

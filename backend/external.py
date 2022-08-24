@@ -1,24 +1,26 @@
-import logging
+# import logging
+from bs4 import BeautifulSoup
 from .Wish import *
 from .wishlist import *
+import requests
+import re
 
 # logger = logging.getLogger()
 # logger.setLevel(logging.INFO)
 
 
 def getAllExternal():
-    logger.info("logging form other file")
     try:
         print("run REI")
         getReiWishes()
     except Exception as e:
-        logger.info("Error getting rei wishlist %s", e)
+        logger.error("Error getting rei wishlist %s", e)
 
     try:
         print("run amazon")
         getAmazonWishes()
     except Exception as e:
-        logger.info("Error getting amazon wishlist %s", e)
+        logger.error("Error getting amazon wishlist %s", e)
 
 
 def getReiWishes():
@@ -87,7 +89,7 @@ def getAmazonWishes():
 
         except Exception as e:
             # getAmazonWishes()
-            logger.info("Exception in getAmazonWishes %s", e)
+            logger.error("Exception in getAmazonWishes %s", e)
         amazWishObjs = list()
 
         for i in amazitems:
@@ -120,4 +122,4 @@ def getAmazonWishes():
 
         saveWishesDB(amazWishObjs)
     else:
-        logger.info("Encountered captcha, wait 1 minute")
+        logger.error("Encountered captcha, wait 1 minute")

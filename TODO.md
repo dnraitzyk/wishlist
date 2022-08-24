@@ -12,12 +12,9 @@ Functionality
 
 Backend
 - find common elements to simplify html parsing
-- move refresh from websites into separate runnable file
-  - refresh only asynchronously and on manual button
 - handle rei stock and cost
 - group isdev and isheroku logic
 - only call db connect once
-- only make logger once
 
 UI
 - show add wish wishlist dropdown
@@ -34,6 +31,9 @@ Validation
 BUGS
 ========================================================================
 DONE
+- move refresh from websites into separate runnable file
+  - refresh only asynchronously and on manual button
+- only make logger once
 - Amazon never returning 
   - SOLUTION: fix parsing tags, check if captcha is none then show
 - prompt in case trying to save invalid wishlist item

@@ -68,6 +68,8 @@ if isheroku:
         },
 
     }
+    dictConfig(LOGGING_CONFIG)
+
 
 else:
     template_dir = os.path.dirname(os.path.abspath(__file__))
@@ -134,6 +136,9 @@ else:
 
 # template_dir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
 
+IS_DEV = os.environ.get('FLASK_ENV') == "development"
+
+
 flaskapp = Flask("app", root_path="wishlist",
                  template_folder=template_dir, static_folder=template_dir, static_url_path='/')
 flaskapp.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
@@ -152,7 +157,6 @@ logger = logging.getLogger()
 # logger.setLevel(logging.INFO)
 # app.config.from_object('config')
 
-IS_DEV = os.environ.get('FLASK_ENV') == "development"
 
 connstring = os.environ.get('MONGODB_URI')
 logger.info("connstring is %s", connstring)
@@ -176,7 +180,6 @@ except ConnectionFailure as err:
 
 # if IS_DEV:
 #     proxy(WEBPACK_DEV_SERVER_HOST, request.path)
-logging.info("logging before routes")
 
 
 @flaskapp.route('/favicon.ico')
@@ -190,7 +193,6 @@ def favicon():
 @flaskapp.route('/<path:path>')
 @flaskapp.errorhandler(404)
 def serve(path):
-    logging.info("logging in routes")
     statpath = flaskapp.static_folder
     logger.info("flaskapp.template_folder")
     logger.info(flaskapp.template_folder)
