@@ -14,6 +14,7 @@ from flask_restful import Api, Resource, reqparse
 from flask_cors import CORS, cross_origin
 from dotenv import load_dotenv
 from mongoengine import connect
+from logging.config import dictConfig
 import os
 import sys
 # import pathlib
@@ -35,13 +36,38 @@ if isheroku:
     # template_dir = os.path.dirname(
     #     os.path.abspath(os.path.dirname(__file__) + "/../"))
     print("template_dir")
-    print(template_dir)
+    lprint(template_dir)
     backenddir = os.path.join(currdir, 'backend')
     # template_dir = os.path.join(template_dir, 'frontend')
-    logging.basicConfig(stream=sys.stdout, format='%(asctime)s %(message)s')
+    LOGGING_CONFIG = {
+        'version': 1,
+        'loggers': {
+            '': {  # root logger
+                'level': 'INFO',
+                'handlers': ['debug_console_handler'],
+            }
+            # ,
+            # 'my.package': {
+            #     'level': 'WARNING',
+            #     'propagate': False,
+            #     'handlers': ['info_rotating_file_handler', 'error_file_handler'],
+            # },
+        },
+        'handlers': {
+            'debug_console_handler': {
+                'level': 'DEBUG',
+                'formatter': 'info',
+                'class': 'logging.StreamHandler',
+                'stream': 'ext://sys.stdout',
+            }
+        },
+        'formatters': {
+            'info': {
+                'format': '%(asctime)s-%(levelname)s-%(name)s-%(process)d::%(module)s|%(lineno)s:: %(message)s'
+            },
+        },
 
-    logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
+    }
 
 else:
     template_dir = os.path.dirname(os.path.abspath(__file__))
@@ -51,10 +77,60 @@ else:
     # template_dir = os.path.join(template_dir, 'frontend')
     template_dir = os.path.join(template_dir, 'build')
 
-    logging.basicConfig(filename="app.log",
-                        format='%(asctime)s %(message)s',
-                        filemode='w')
-# print(os.listdir(template_dir+"/"))
+    LOGGING_CONFIG = {
+        'version': 1,
+        'loggers': {
+            '': {  # root logger
+                'level': 'INFO',
+                'handlers': ['debug_console_handler', 'rotating_file_handler', 'error_file_handler'],
+            }
+            # ,
+            # 'my.package': {
+            #     'level': 'WARNING',
+            #     'propagate': False,
+            #     'handlers': ['info_rotating_file_handler', 'error_file_handler'],
+            # },
+        },
+        'handlers': {
+            'debug_console_handler': {
+                'level': 'DEBUG',
+                'formatter': 'info',
+                'class': 'logging.StreamHandler',
+                'stream': 'ext://sys.stdout',
+            },
+            'rotating_file_handler': {
+                'level': 'INFO',
+                'formatter': 'info',
+                'class': 'logging.handlers.RotatingFileHandler',
+                'filename': 'app.log',
+                'mode': 'a',
+                'maxBytes': 1048576,
+                'backupCount': 2
+            },
+            'error_file_handler': {
+                'level': 'WARNING',
+                'formatter': 'error',
+                'class': 'logging.FileHandler',
+                'filename': 'error.log',
+                'mode': 'a',
+            }
+        },
+        'formatters': {
+            'info': {
+                'format': '%(asctime)s-%(levelname)s-%(name)s::%(module)s|%(lineno)s:: %(message)s'
+            },
+            'error': {
+                'format': '%(asctime)s-%(levelname)s-%(name)s-%(process)d::%(module)s|%(lineno)s:: %(message)s'
+            },
+        },
+
+    }
+
+    dictConfig(LOGGING_CONFIG)
+    # logging.basicConfig(filename="app.log",
+    #                     format='%(asctime)s %(message)s',
+    #                     filemode='w')
+# logger.info(os.listdir(template_dir+"/"))
 
 # template_dir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
 
@@ -67,19 +143,19 @@ api = Api(flaskapp)
 
 
 # if app.use_reloader:
-#     print("run german thing")
+#     logger.info("run german thing")
 # The app is not in debug mode or we are in the reloaded process
 
 
 logger = logging.getLogger()
 
-logger.setLevel(logging.INFO)
+# logger.setLevel(logging.INFO)
 # app.config.from_object('config')
 
 IS_DEV = os.environ.get('FLASK_ENV') == "development"
 
 connstring = os.environ.get('MONGODB_URI')
-print("connstring is ", connstring)
+logger.info("connstring is %s", connstring)
 try:
     if connstring is None:
         connect(db="wish")
@@ -87,26 +163,25 @@ try:
     else:
         connect(host=connstring)
         client = MongoClient(connstring)
-# print(client.server_info())
+# logger.info(client.server_info())
 except Exception as e:
-    print("Unable to connect to the server.", e)
     logger.error("Unable to connect to the server.", e)
 
 try:
     client.admin.command('ping')
-    print('Data Base Connection Established........')
+    logger.info('Data Base Connection Established........')
 
 except ConnectionFailure as err:
-    print("Data Base Connection failed. Error: {err}")
+    logger.error("Data Base Connection failed. Error: {err}")
 
 # if IS_DEV:
 #     proxy(WEBPACK_DEV_SERVER_HOST, request.path)
+logging.info("logging before routes")
 
 
 @flaskapp.route('/favicon.ico')
 def favicon():
     # statpath = app.static_folder
-
     # return render_template('index.html')
     return send_from_directory(backenddir, 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
@@ -115,24 +190,25 @@ def favicon():
 @flaskapp.route('/<path:path>')
 @flaskapp.errorhandler(404)
 def serve(path):
+    logging.info("logging in routes")
     statpath = flaskapp.static_folder
-    print("flaskapp.template_folder")
-    print(flaskapp.template_folder)
-    print("flaskapp.template_folder files are")
-    print(os.listdir(flaskapp.template_folder))
-    # print(statpath)
+    logger.info("flaskapp.template_folder")
+    logger.info(flaskapp.template_folder)
+    logger.info("flaskapp.template_folder files are")
+    logger.info(os.listdir(flaskapp.template_folder))
+    # logger.info(statpath)
 
     return render_template('index.html')
 
 
-@flaskapp.route("/submitwish", methods=["POST"], strict_slashes=False)
+@ flaskapp.route("/submitwish", methods=["POST"], strict_slashes=False)
 def addWish():
     wishlistlink = ""
     availability = ""
     id = ""
 
     reqdict = request.get_json()
-    print("reqdict is ", reqdict)
+    logger.info("reqdict is ", reqdict)
     itemname = request.json['name']
     quantity = request.json['quantity']
     cost = request.json['cost']
@@ -151,7 +227,7 @@ def addWish():
     # objid = ObjectId(id)
     if id is None or id == "":
         id = wishlist+"_" + itemname.replace(" ", "_").lower()
-    print("id is ", id)
+    logger.info("id is ", id)
     wishToSave = Wish(name=itemname, description=description, cost=cost, quantity=quantity, category=category, link=link,
                       wishlist=wishlist, wishlistLink=wishlistlink, id=id, availability=availability, source=source, modified_date=modified_date)
 
@@ -172,7 +248,6 @@ def addWish():
     try:
         wishToSave.save()
     except Exception as e:
-        print("Error saving wish %s", e)
         logger.error("Error saving wish %s", e)
         return jsonify({"status": "error", "message": "Error saving wish"})
     # rec = mycollection.replace_one({"_id": objid}, record, upsert=True)
@@ -183,17 +258,17 @@ def addWish():
 @ flaskapp.route("/GetWishes", methods=["GET"], strict_slashes=False)
 @ cross_origin()
 def getWishes():
-    print("running flask route getwishes")
+    logger.info("running flask route getwishes")
     # client = MongoClient('localhost', 27017)
     # mydatabase = client.wish
     # mycollection = mydatabase.wishes
     # try:
     #     # getReiWishes()
-    #     print("run REI")
+    #     logger.info("run REI")
     # except Exception as e:
     #     logger.info("Error getting rei wishlist %s", e)
     # try:
-    #     print("run amazon")
+    #     logger.info("run amazon")
     #     # getAmazonWishes()
     # except Exception as e:
     #     logger.info("Error getting amazon wishlist %s", e)
@@ -226,7 +301,7 @@ def getWishlists():
 @ flaskapp.route("/FetchExternalWishes", methods=["GET"], strict_slashes=False)
 @ cross_origin()
 def fetchExternalWishes():
-    print("running flask route FetchExternalWishes")
+    logger.info("running flask route FetchExternalWishes")
     try:
         getAllExternal()
     except Exception as e:

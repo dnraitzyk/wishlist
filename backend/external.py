@@ -7,6 +7,7 @@ from .wishlist import *
 
 
 def getAllExternal():
+    logger.info("logging form other file")
     try:
         print("run REI")
         getReiWishes()
