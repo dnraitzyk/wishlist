@@ -13,8 +13,6 @@ Functionality
 Backend
 - find common elements to simplify html parsing
 - handle rei stock and cost
-- group isdev and isheroku logic
-- only call db connect once
 
 UI
 - show add wish wishlist dropdown
@@ -31,6 +29,8 @@ Validation
 BUGS
 ========================================================================
 DONE
+- group isdev and isheroku logic
+- only call db connect once
 - move refresh from websites into separate runnable file
   - refresh only asynchronously and on manual button
 - only make logger once

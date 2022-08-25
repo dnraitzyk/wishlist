@@ -46,6 +46,10 @@ def getReiWishes():
         pricerdchildren = pricerd.find_all("p")
         if len(pricerdchildren) > 0:
             itemstock = str(pricerdchildren[0].string).strip()
+            if itemstock == "In stock":
+                itemstock = "In"
+            if itemstock == "No longer available":
+                itemstock = "Out"
         if len(pricerdchildren) > 1:
             itemcost = str(pricerdchildren[1].string).strip().replace("$", "")
         for i in range(0, len(rowdivs)):

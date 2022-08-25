@@ -3,6 +3,7 @@
 import axios from 'axios';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { GetAllWishes, InsertWish, GetDistinctWishlists, GetExternalWishes } from './apis';
+
 // import caret-sort-down 
 
 function dynamicSort(property, sortOrderWord = 'asc') {
@@ -199,6 +200,67 @@ const WishlistHeader = (props) => {
 
   }
 
+  const HandleExport = () => {
+    // FetchExternalWishes();
+    let fullList = props.fullList.filter((i) =>
+      i['show'] === true
+    );
+    fullList = fullList.map((i) => JSON.parse(JSON.stringify(i)))
+    let csv = 'Name,Availability,Description,Category,Cost,Link,Quantity,Wishlist,Wishlist Link\n';
+    fullList.forEach(function (obj) {
+      Object.keys(obj).forEach(function (e) {
+        if (typeof obj[e] === "string") {
+          obj[e] = "\"" + obj[e] + "\""
+          // .replace(",", "\",\"")
+        }
+      });
+    })
+    fullList = fullList.map(function (obj) {
+      let innerarr = []
+      // Object.keys(obj).forEach(function (e) {
+      //   innerarr.push(String(obj[e]))
+      // });
+      innerarr.push(String(obj['name']) === "undefined" ? "" : String(obj['name']))
+      innerarr.push(String(obj['availability']) === "undefined" ? "" : String(obj['availability']))
+      innerarr.push(String(obj['description']) === "undefined" ? "" : String(obj['description']))
+      innerarr.push(String(obj['category']) === "undefined" ? "" : String(obj['category']))
+      innerarr.push(String(obj['cost']) === "undefined" ? "" : String(obj['cost']))
+      innerarr.push(String(obj['link']) === "undefined" ? "" : String(obj['link']))
+      innerarr.push(String(obj['quantity']) === "undefined" ? "" : String(obj['quantity']))
+      innerarr.push(String(obj['wishlist']) === "undefined" ? "" : String(obj['wishlist']))
+      innerarr.push(String(obj['wishlistLink']) === "undefined" ? "" : String(obj['wishlistLink']))
+      return innerarr
+    })
+
+    fullList.forEach(function (row) {
+      // console.log(row)
+      csv += row.join(',');
+      csv += "\n";
+    });
+    console.log("csv is ", csv);
+    // document.write(csv);
+    var hiddenElement = document.createElement('a');
+
+    hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
+    // console.log(windows1252.encode(csv).toString())
+    // hiddenElement.href = 'data:text/csv,' + windows1252.encode(csv).toString();
+    hiddenElement.target = '_blank';
+
+    //provide the name for the CSV file to be downloaded  
+    const date = new Date().toLocaleDateString()
+    const time = new Date().toLocaleTimeString('en-US', {
+      hour12: false,
+      hour: "numeric",
+      minute: "numeric",
+      second: "numeric"
+    });
+
+    hiddenElement.download = 'WishlistExport' + date + time + '.csv';
+    hiddenElement.click();
+
+
+  }
+
 
   // Return header component content
   return (
@@ -210,6 +272,9 @@ const WishlistHeader = (props) => {
       </h1>
       <button className="typicalbutton bannerItem5" type="button" onClick={() => HandleRefreshWishes()}>
         Get Wishes
+      </button>
+      <button className="typicalbutton bannerItem5" type="button" onClick={() => HandleExport()}>
+        Export
       </button>
       <label className="bannerItem5" htmlFor="category">
         <p>Category:</p>
