@@ -3,6 +3,7 @@
 import axios from 'axios';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { GetAllWishes, InsertWish, GetDistinctWishlists, GetExternalWishes } from './apis';
+// import { utf8ToAnsi } from 'utf8-to-ansi';
 
 // import caret-sort-down 
 
@@ -200,7 +201,7 @@ const WishlistHeader = (props) => {
 
   }
 
-  const HandleExport = () => {
+  function HandleExport() {
     // FetchExternalWishes();
     let fullList = props.fullList.filter((i) =>
       i['show'] === true
@@ -215,6 +216,7 @@ const WishlistHeader = (props) => {
         }
       });
     })
+
     fullList = fullList.map(function (obj) {
       let innerarr = []
       // Object.keys(obj).forEach(function (e) {
@@ -233,17 +235,18 @@ const WishlistHeader = (props) => {
     })
 
     fullList.forEach(function (row) {
-      // console.log(row)
       csv += row.join(',');
       csv += "\n";
     });
-    console.log("csv is ", csv);
-    // document.write(csv);
+
     var hiddenElement = document.createElement('a');
 
-    hiddenElement.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv);
-    // console.log(windows1252.encode(csv).toString())
-    // hiddenElement.href = 'data:text/csv,' + windows1252.encode(csv).toString();
+    // csv = encodeURI(csv);
+    csv = csv.replaceAll('#', '%23')
+    // csv = csv.replaceAll("'", '%E2%80%99')
+    console.log("csv is ", JSON.stringify(csv))
+    hiddenElement.href = 'data:text/csv;charset=utf-8,' + csv;
+    // csv = encodeURI(csv);
     hiddenElement.target = '_blank';
 
     //provide the name for the CSV file to be downloaded  
@@ -254,12 +257,29 @@ const WishlistHeader = (props) => {
       minute: "numeric",
       second: "numeric"
     });
-
+    // let csvencoded = await sendCSVContent(csv)
+    // console.log("csvencoded ", csvencoded)
+    // hiddenElement.href = 'data:text/csv;' + csv
     hiddenElement.download = 'WishlistExport' + date + time + '.csv';
     hiddenElement.click();
 
 
   }
+
+  // async function sendCSVContent(csv) {
+  //   try {
+  //     // let resp = await SendCSVContent(csv).arrayBuffer()
+  //     // const decoder = new TextDecoder('windows-1252');
+  //     // const text = decoder.decode(resp);
+  //     // console.log("text ", text)
+  //     // return text
+  //     return await SendCSVContent(csv)
+  //   }
+  //   catch (e) {
+  //     console.log("Error in wishlist.sendCSVContent: " + e.message);
+  //   }
+
+  // }
 
 
   // Return header component content

@@ -9,7 +9,7 @@ from bson import json_util
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 from bson.objectid import ObjectId
-from flask import Flask, jsonify, render_template, request, redirect, url_for, send_from_directory
+from flask import Flask, jsonify, Response, render_template, request, send_file, redirect, url_for, send_from_directory
 from flask_restful import Api, Resource, reqparse
 from flask_cors import CORS, cross_origin
 from dotenv import load_dotenv
@@ -73,12 +73,12 @@ if isheroku:
 
 
 else:
-    template_dir = os.path.dirname(os.path.abspath(__file__))
-    print("template_dir")
-    print(template_dir)
-    backenddir = os.path.join(template_dir, 'backend')
+    maindir = os.path.dirname(os.path.abspath(__file__))
+    print("maindir")
+    print(maindir)
+    backenddir = os.path.join(maindir, 'backend')
     # template_dir = os.path.join(template_dir, 'frontend')
-    template_dir = os.path.join(template_dir, 'build')
+    template_dir = os.path.join(maindir, 'build')
 
     LOGGING_CONFIG = {
         'version': 1,
@@ -165,9 +165,11 @@ try:
     if connstring is None:
         connect(db="wish")
         client = MongoClient('localhost', 27017)
+        logger.info('Connected to local MongoDB')
     else:
         connect(host=connstring)
         client = MongoClient(connstring)
+        logger.info('Connected to Atlas MongoDB')
 # logger.info(client.server_info())
 except Exception as e:
     logger.error("Unable to connect to the server.", e)
@@ -198,7 +200,7 @@ def serve(path):
     logger.info("flaskapp.template_folder")
     logger.info(flaskapp.template_folder)
     logger.info("flaskapp.template_folder files are")
-    logger.info(os.listdir(flaskapp.template_folder))
+    # logger.info(os.listdir(flaskapp.template_folder))
     # logger.info(statpath)
 
     return render_template('index.html')
@@ -265,7 +267,8 @@ def getWishes():
     # client = MongoClient('localhost', 27017)
     # mydatabase = client.wish
     # mycollection = mydatabase.wishes
-    # try:
+    try:
+        wishes = Wish.objects.to_json()
     #     # getReiWishes()
     #     logger.info("run REI")
     # except Exception as e:
@@ -273,11 +276,10 @@ def getWishes():
     # try:
     #     logger.info("run amazon")
     #     # getAmazonWishes()
-    # except Exception as e:
-    #     logger.info("Error getting amazon wishlist %s", e)
+    except Exception as e:
+        logger.info("Error GetWishes %s", e)
 
     # wishes = mycollection.find({})
-    wishes = Wish.objects.to_json()
     # logger.info(json_util.dumps(wishes))
     return wishes
     # return json_util.dumps(wishes)
@@ -312,6 +314,26 @@ def fetchExternalWishes():
 
     wishes = Wish.objects.to_json()
     return wishes
+
+
+# @ flaskapp.route("/downloadCSV", methods=["POST"], strict_slashes=False)
+# def downloadCSVFile():
+#     filepath = maindir + "\\WishlistExport"
+#     try:
+#         print("running downloadCSV")
+#         data = request.form.get('csvFile')
+#         # print("reqdict ", reqdict)
+#         data.encode('cp1252')
+#     except Exception as e:
+#         logger.error("Error downloading CSV file: %s", e)
+#     # return send_file(filepath, as_attachment=True)
+#     resp = Response(
+#         data,
+#         mimetype="text/csv;charset=ANSI",
+#         headers={"Content-disposition":
+#                  "attachment; filename=WishlistExport" + str(datetime.today()) + ".csv"})
+#     resp.headers["Content-Type"] = "text/csv; charset=ANSI"
+#     return resp
 
 
 @ flaskapp.route('/go_outside_flask/<path:link>', strict_slashes=False)

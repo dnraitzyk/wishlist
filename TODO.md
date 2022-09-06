@@ -2,6 +2,7 @@ General
 - 
 
 Functionality
+- Add in "Manage wishlists" nav link and have backend loop through them based on site
 - Create a new wishlist from add button on add wish, cant be in current list
   - maybe validate on entering values, not on submit (when lose focus?)
 - Modify auto wishes and have them still save and be updated (only certain fields)
@@ -11,6 +12,8 @@ Functionality
 - add in verify in case an item changes or seems to have a matching item
 
 Backend
+- Fix duplicate key error bulk insert mongoengine or convert back to bulkpymongo
+- Parse special characters from description and name
 - find common elements to simplify html parsing
 - handle rei stock and cost
 
