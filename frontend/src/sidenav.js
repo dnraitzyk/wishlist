@@ -10,6 +10,9 @@ function Sidenav() {
             <div className="sidenavlink">
                 <Link to="/wishlists">Wishlists</Link>
             </div>
+            <div className="sidenavlink">
+                <Link to="/manageWishlists">Manage Wishlists</Link>
+            </div>
         </div>
     );
 }

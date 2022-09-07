@@ -6,6 +6,7 @@ import "./styles/app.css";
 import AddWish from './addWish';
 import Sidenav from './sidenav';
 import Wishlist from './wishlist';
+import ManageWishlist from './manageWishlist';
 
 const rootelem = document.getElementById('root');
 const root = createRoot(rootelem);
@@ -18,6 +19,7 @@ root.render(
             <Route path="/" element={<App />} />
             <Route path="/addwish" element={<AddWish />} />
             <Route path="/wishlists" element={<Wishlist />} />
+            <Route path="/manageWishlists" element={<ManageWishlist />} />
             <Route path="*" element={<App />} />
         </Routes>
     </BrowserRouter>

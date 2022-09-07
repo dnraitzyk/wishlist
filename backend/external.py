@@ -1,7 +1,7 @@
 # import logging
 from bs4 import BeautifulSoup
 from .Wish import *
-from .wishlist import *
+from .Utils import *
 import requests
 import re
 import traceback

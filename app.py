@@ -2,6 +2,7 @@ import time
 import argparse
 # from tkinter import W
 from backend import Wish
+from backend import Wishlist
 from backend.external import *
 import logging
 import json
@@ -19,8 +20,9 @@ import os
 import sys
 import csv
 # import pathlib
-from backend.wishlist import *
+from backend.Utils import *
 from datetime import datetime
+
 print("running app.py name is + ", __name__)
 
 load_dotenv()
@@ -288,12 +290,16 @@ def getWishes():
 @ flaskapp.route("/GetWishlists", methods=["GET"], strict_slashes=False)
 @ cross_origin()
 def getWishlists():
+    logger.info("running flask route getwishlists")
+
     # client = MongoClient('localhost', 27017)
     # mydatabase = client.wish
     # mycollection = mydatabase.wishes
     try:
         # lists = mycollection.distinct("wishlist")
-        lists = Wish.objects.distinct("wishlist")
+        # lists = Wish.objects.distinct("wishlist")
+        lists = Wishlist.objects.all()
+        print("lists is ", lists)
 
     except Exception as e:
         logger.info("Error getting distinct wishlists %s", e)
@@ -301,6 +307,39 @@ def getWishlists():
     # wishes = mycollection.find({})
     # logger.info(json_util.dumps(wishes))
     return json_util.dumps(lists)
+
+
+@ flaskapp.route("/AddWishlist", methods=["POST"], strict_slashes=False)
+@ cross_origin()
+def insertWishlist():
+    id = ""
+
+    reqdict = request.get_json()
+    logger.info("reqdict is ", reqdict)
+    name = request.json['name']
+
+    if 'link' in reqdict:
+        link = request.json['link']
+    if '_id' in reqdict:
+        id = request.json['_id']
+    added_date = datetime.today()
+
+    if id is None or id == "":
+        id = link.lower()
+
+    baseLink = link[:link.rfind(".com")]
+    logger.info("id is ", id)
+
+    wishlistToSave = Wishlist(name=name,  baseLink=baseLink,
+                              link=link, id=id, added_date=added_date)
+
+    try:
+        wishlistToSave.save()
+    except Exception as e:
+        logger.error("Error saving wishlist %s", e)
+        return jsonify({"status": "error", "message": "Error saving wishlist"})
+
+    return jsonify("Successfully added wishlist")
 
 
 @ flaskapp.route("/FetchExternalWishes", methods=["GET"], strict_slashes=False)
@@ -314,26 +353,6 @@ def fetchExternalWishes():
 
     wishes = Wish.objects.to_json()
     return wishes
-
-
-# @ flaskapp.route("/downloadCSV", methods=["POST"], strict_slashes=False)
-# def downloadCSVFile():
-#     filepath = maindir + "\\WishlistExport"
-#     try:
-#         print("running downloadCSV")
-#         data = request.form.get('csvFile')
-#         # print("reqdict ", reqdict)
-#         data.encode('cp1252')
-#     except Exception as e:
-#         logger.error("Error downloading CSV file: %s", e)
-#     # return send_file(filepath, as_attachment=True)
-#     resp = Response(
-#         data,
-#         mimetype="text/csv;charset=ANSI",
-#         headers={"Content-disposition":
-#                  "attachment; filename=WishlistExport" + str(datetime.today()) + ".csv"})
-#     resp.headers["Content-Type"] = "text/csv; charset=ANSI"
-#     return resp
 
 
 @ flaskapp.route('/go_outside_flask/<path:link>', strict_slashes=False)
