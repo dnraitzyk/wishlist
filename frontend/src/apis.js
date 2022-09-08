@@ -61,17 +61,49 @@ async function GetExternalWishes() {
     }
 }
 
+
+async function InsertWishlist(body) {
+    try {
+        let postdbresp = axios.post(process.env.REACT_APP_BASE_URL + '/AddWishlist', body, {
+            headers: {
+                'content-type': 'application/json'
+            }
+        });
+    }
+    catch (e) {
+        console.log("Error in Apis.InsertWishlist: " + e.message);
+    }
+}
+
 async function GetDistinctWishlists() {
     try {
         let getdbresp = await axios.get(process.env.REACT_APP_BASE_URL + "/GetWishlists");
         let respdata = getdbresp.data;
-        respdata = respdata.map((elem) => elem.trim().toLowerCase().replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase())))
-        );
+        // respdata = respdata.map((elem) => elem.trim().toLowerCase().replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase()))) );
 
         return respdata;
     }
     catch (e) {
         console.log("Error in Apis.GetDistinctWishlists " + e.message);
+    }
+}
+
+async function GetWishlists() {
+    try {
+        let getdbresp = await axios.get(process.env.REACT_APP_BASE_URL + "/GetWishlists");
+        let respdata = getdbresp.data;
+        // respdata = respdata.map((elem) => elem.trim().toLowerCase().replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase()))) );
+        respdata.forEach(function (arrayItem) {
+            let date;
+            if (typeof arrayItem.added_date === "object") {
+                ({ $date: date } = arrayItem.added_date);
+                arrayItem.added_date = date;
+            }
+        });
+        return respdata;
+    }
+    catch (e) {
+        console.log("Error in Apis.GetWishlists " + e.message);
     }
 }
 
@@ -102,4 +134,4 @@ async function GetDistinctWishlists() {
 //     return null
 // }
 
-export { GetAllWishes, InsertWish, GetDistinctWishlists, GetExternalWishes };
+export { GetAllWishes, InsertWish, GetDistinctWishlists, GetWishlists, GetExternalWishes, InsertWishlist };

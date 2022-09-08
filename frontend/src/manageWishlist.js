@@ -2,7 +2,7 @@
 /* eslint-disable no-underscore-dangle */
 import axios from 'axios';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { GetDistinctWishlists } from './apis';
+import { GetWishlists, InsertWishlist } from './apis';
 
 
 function dynamicSort(property, sortOrderWord = 'asc') {
@@ -25,48 +25,52 @@ function dynamicSort(property, sortOrderWord = 'asc') {
   };
 }
 
-let wishlistOptions = [];
-
-async function RetrieveWishlistOptions() {
-  try {
-    const apiresp = await GetDistinctWishlists();
-    const options = apiresp.sort();
-    wishlistOptions = (options.map(function (option) {
-      return (
-        <option key={option} value={option}>{option}</option>
-      )
-    }
-    ));
+// let wishlistOptions = [];
 
 
-  } catch (e) {
-    console.log(`Error in Wishlist.GetWishlistOptions: ${e.message}`);
-  }
-}
-const GetWishlistOptions = () => {
-  RetrieveWishlistOptions();
-}
 
-GetWishlistOptions();
+// GetWishlistOptions();
 
 
 // Main component, acts a wrapper for the entire screen content
 const ManageWishlist = () => {
-  const [listOfWishes, setListOfWishes] = useState('default');
+  const [wishlists, setWishlists] = useState();
   // Passed down to update the main list state
-  function updateListOfWishes(list) {
-    setListOfWishes([...list]);
+  function updateWishlists(list) {
+    setWishlists([...list]);
   }
+
+
+  async function RetrieveWishlistOptions() {
+    try {
+      const apiresp = await GetWishlists();
+      let options = apiresp.sort();
+      options = options.map((item) => ({ ...item, isReadOnly: true }));
+
+      console.log("options is ", options)
+      setWishlists(options)
+
+
+    } catch (e) {
+      console.log(`Error in Wishlist.GetWishlistOptions: ${e.message}`);
+    }
+  }
+
+  // function GetWishlistOptions() {
+  //   return RetrieveWishlistOptions();
+  // }
 
   // Only once,
   useEffect(() => {
+    RetrieveWishlistOptions()
   }, []);
 
+  console.log("wishlists ", wishlists)
   // Return header and content, pass down function for deep state update
   return (
     <div className="contentwrapper">
-      <WishlistHeader fullList={listOfWishes} updateListOfWishes={updateListOfWishes} />
-      <WishListTable fullList={listOfWishes} updateListOfWishes={updateListOfWishes} />
+      <WishlistHeader fullList={wishlists} updateWishlists={updateWishlists} />
+      <WishListTable fullList={wishlists} updateWishlists={updateWishlists} />
     </div>
   );
 }
@@ -74,10 +78,14 @@ const ManageWishlist = () => {
 // Header component
 const WishlistHeader = (props) => {
 
-  let list = props.fullList;
+  let { fullList, updateWishlists } = props;
 
   function AddWishlist() {
+    console.log("fullList is ", fullList)
 
+    fullList.unshift({ "name": "", "link": "", "baseLink": "", "_id": "", "added_date": "" })
+
+    updateWishlists(fullList)
   }
 
 
@@ -97,8 +105,24 @@ const WishlistHeader = (props) => {
 // Component to show list of items
 function WishListTable(props) {
 
+  console.log(props)
+
+  const rows = [];
+  let { fullList, updateWishlists } = props;
+  if (typeof fullList === "undefined") {
+    console.log('currentList is null');
+  } else {
+    fullList.forEach(function (item) {
+      rows.push(
+        <div key={item._id} >
+          <WishListRow item={item} currentList={fullList} updateWishlists={updateWishlists} />
+        </div>)
+    })
+  }
+
   return (
     <div className="content">
+      {rows}
     </div>
   );
 };
@@ -107,10 +131,10 @@ function WishListTable(props) {
 const WishListRow = (props) => {
   let item = props.item;
   let prevItem = useRef(item);
-
+  console.log("props is ", props)
   // Store unedited item in case of cancel, mark not read only
   const handleEdit = () => {
-    let { item, currentList, updateListOfWishes } = props;
+    let { item, currentList, updateWishlists } = props;
     prevItem.current = { ...item };
     const newlist = currentList.map(i => {
       if (i._id === item._id) {
@@ -119,30 +143,30 @@ const WishListRow = (props) => {
 
       return { ...i };
     });
-    updateListOfWishes(newlist);
+    updateWishlists(newlist);
   };
 
   // Send item to DB
-  async function insertWish(item) {
+  async function insertWishlist(item) {
     try {
-      await InsertWish(item);
+      await InsertWishlist(item);
     } catch (e) {
-      console.log(`Error in manageWishlist.insertWish: ${e.message}`);
+      console.log(`Error in manageWishlist.insertWishlist: ${e.message}`);
     }
   };
 
 
   // Send current item info to DB and mark read only
   const handleSubmit = () => {
-    let { item, currentList, updateListOfWishes } = props;
-    insertWish(item);
+    let { item, currentList, updateWishlists } = props;
+    insertWishlist(item);
     const newlist = currentList.map(i => {
       if (i._id === item._id) {
         return { ...i, isReadOnly: true };
       }
       return { ...i };
     });
-    updateListOfWishes(newlist);
+    updateWishlists(newlist);
   };
 
   // Return content for submit button
@@ -162,29 +186,27 @@ const WishListRow = (props) => {
 
   // Return content for edit button
   function ShowEdit(item) {
-    if (item.source === 'manual' || item.source === 'auto') {
-      return (
-        <span  >
-          <button className="typicalbutton righthand" type="button" onClick={() => handleEdit(item, props.currentList)}>
-            Edit
-          </button>
-        </span>
-      );
-    }
-    return null;
+    return (
+      <span  >
+        <button className="typicalbutton righthand" type="button" onClick={() => handleEdit(item, props.currentList)}>
+          Edit
+        </button>
+      </span>
+    );
+
   };
 
 
   // Revert to unedited item and mark read only
   const handleCancel = () => {
-    let { item, currentList, updateListOfWishes } = props;
+    let { item, currentList, updateWishlists } = props;
     const newlist = currentList.map(i => {
       if (i._id === item._id) {
         return { ...prevItem.current, isReadOnly: true }
       }
       return { ...i };
     });
-    updateListOfWishes(newlist);
+    updateWishlists(newlist);
   };
 
   // Return content for cancel button
@@ -204,35 +226,35 @@ const WishListRow = (props) => {
 
   // Update item when fields edited
   const handleChange = (e) => {
-    let { item, currentList, updateListOfWishes } = props;
+    let { item, currentList, updateWishlists } = props;
     const { name, value } = e.target;
     item[name] = value;
     const newlist = currentList.map(i => {
       return { ...i };
     });
-    updateListOfWishes(newlist);
+    updateWishlists(newlist);
   };
 
   // Update item for category change
   const handleCategoryChange = (e) => {
     const { value } = e.target;
-    let { item, currentList, updateListOfWishes } = props;
+    let { item, currentList, updateWishlists } = props;
     item.category = value;
     const newlist = currentList.map(i => {
       return { ...i };
     });
-    updateListOfWishes(newlist);
+    updateWishlists(newlist);
   };
 
   // Update item for wishlist change
   const handleWishlistChange = (e) => {
     const { value } = e.target;
-    let { item, currentList, updateListOfWishes } = props;
+    let { item, currentList, updateWishlists } = props;
     item.wishlist = value;
     const newlist = currentList.map(i => {
       return { ...i };
     });
-    updateListOfWishes(newlist);
+    updateWishlists(newlist);
   };
 
   // Open url in new tab  
@@ -264,9 +286,46 @@ const WishListRow = (props) => {
 
   // Row content, if read only show just fields, if not read only then show different buttons and editable fields
   return (
-    <div >
-
+    <div className="wish" >
+      {!item.isReadOnly ? (
+        <div>
+          <div className="wishatt capital">
+            <div>
+              <label htmlFor="name">
+                Wishlist Name:
+              </label>
+              <input className="wishatt" name="name" placeholder="name" onChange={(e) => handleChange(e, item)} value={item.name} />
+              <span className="righthandSection">
+                {Submit(item)}
+                {Cancel(item)}
+              </span>
+            </div>
+          </div>
+          <div>
+            <label htmlFor="description">
+              Link:
+            </label>
+            <input className="wishatt" name="link" placeholder="link" onChange={(e) => handleChange(e, item)} value={item.description} />
+          </div>
+        </div>
+      ) : (<div>
+        <span className="wishatt capital">
+          Wishlist Name:
+          <span className="emphasize">{item.name}</span>
+        </span>
+        {ShowEdit(item)}
+        <div className="wishatt">
+          Link:
+          <a className="" href="#" onClick={(e) => goToLink(item.link)}>{item.link}</a>
+        </div>
+      </div>
+      )}
+      <span className="wishatt capital">
+        Added Date:
+        <span className="emphasize">{item.added_date}</span>
+      </span>
     </div>
+
   )
 }
 

@@ -16,6 +16,7 @@ Backend
 - Parse special characters from description and name
 - find common elements to simplify html parsing
 - handle rei stock and cost
+- remove items from wishlists that are no longer there
 
 UI
 - show add wish wishlist dropdown

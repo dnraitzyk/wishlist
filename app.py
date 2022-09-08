@@ -2,7 +2,7 @@ import time
 import argparse
 # from tkinter import W
 from backend import Wish
-from backend import Wishlist
+from backend.Wishlist import Wishlist
 from backend.external import *
 import logging
 import json
@@ -298,15 +298,14 @@ def getWishlists():
     try:
         # lists = mycollection.distinct("wishlist")
         # lists = Wish.objects.distinct("wishlist")
-        lists = Wishlist.objects.all()
-        print("lists is ", lists)
+        lists = Wishlist.objects.to_json()
 
     except Exception as e:
         logger.info("Error getting distinct wishlists %s", e)
 
     # wishes = mycollection.find({})
     # logger.info(json_util.dumps(wishes))
-    return json_util.dumps(lists)
+    return lists
 
 
 @ flaskapp.route("/AddWishlist", methods=["POST"], strict_slashes=False)
@@ -327,7 +326,10 @@ def insertWishlist():
     if id is None or id == "":
         id = link.lower()
 
-    baseLink = link[:link.rfind(".com")]
+    if ".com" in link:
+        baseLink = link[:link.rfind(".com") + 4]
+    else:
+        baseLink = link
     logger.info("id is ", id)
 
     wishlistToSave = Wishlist(name=name,  baseLink=baseLink,
