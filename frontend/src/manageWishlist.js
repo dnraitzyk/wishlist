@@ -25,6 +25,41 @@ function dynamicSort(property, sortOrderWord = 'asc') {
   };
 }
 
+function dateFormat(date) {
+  console.log("d before is ", date);
+
+  const d = new Date(date);
+  console.log("d is ", d);
+  const month = d.getMonth() + 1;
+  const day = d.getDate();
+  let suffix = 'AM';
+  let hour = d.getUTCHours().toString();
+
+  if (hour > 12) {
+    hour = String(hour - 12);
+    suffix = 'PM';
+  }
+
+  let mins = d.getUTCMinutes().toString();
+
+  let sec = d.getUTCSeconds().toString();
+
+  if (hour.length === 1) {
+    hour = '0' + hour;
+  }
+
+  if (mins.length === 1) {
+    mins = '0' + mins;
+  }
+
+  if (sec.length === 1) {
+    sec = '0' + sec;
+  }
+  const monthString = month >= 10 ? month : `0${month}`;
+  const dayString = day >= 10 ? day : `0${day}`;
+  return `${monthString}/${dayString}/${d.getFullYear()} at ${hour}:${mins}${sec ? `:${sec}` : ''} ${suffix}`;
+}
+
 // let wishlistOptions = [];
 
 
@@ -131,7 +166,7 @@ function WishListTable(props) {
 const WishListRow = (props) => {
   let item = props.item;
   let prevItem = useRef(item);
-  console.log("props is ", props)
+  // console.log("props is ", props)
   // Store unedited item in case of cancel, mark not read only
   const handleEdit = () => {
     let { item, currentList, updateWishlists } = props;
@@ -159,6 +194,13 @@ const WishListRow = (props) => {
   // Send current item info to DB and mark read only
   const handleSubmit = () => {
     let { item, currentList, updateWishlists } = props;
+    if (!item['added_date']) {
+      let newdate = new Date()
+      newdate = newdate.getTime() - newdate.getTimezoneOffset() * 60000
+      item['added_date'] = newdate;
+      console.log("Submit date is ", item['added_date'])
+    }
+    console.log("time offset is ", new Date().getTimezoneOffset());
     insertWishlist(item);
     const newlist = currentList.map(i => {
       if (i._id === item._id) {
@@ -196,6 +238,30 @@ const WishListRow = (props) => {
 
   };
 
+
+  const handleDelete = () => {
+    let { item, currentList, updateWishlists } = props;
+    prevItem.current = { ...item };
+    const newlist = currentList.map(i => {
+      if (i._id === item._id) {
+        return { ...i, isReadOnly: false }
+      }
+
+      return { ...i };
+    });
+    updateWishlists(newlist);
+  };
+
+  function ShowDelete(item) {
+    return (
+      <span  >
+        <button className="typicalbutton righthand" type="button" onClick={() => handleDelete(item, props.currentList)}>
+          Delete
+        </button>
+      </span>
+    );
+
+  };
 
   // Revert to unedited item and mark read only
   const handleCancel = () => {
@@ -313,17 +379,21 @@ const WishListRow = (props) => {
           Wishlist Name:
           <span className="emphasize">{item.name}</span>
         </span>
-        {ShowEdit(item)}
+        <div>
+          {ShowEdit(item)}
+          {ShowDelete(item)}
+        </div>
         <div className="wishatt">
           Link:
           <a className="" href="#" onClick={(e) => goToLink(item.link)}>{item.link}</a>
         </div>
+        <span className="wishatt">
+          Added Date:
+          <span className="emphasize">{dateFormat(item.added_date)}</span>
+        </span>
       </div>
       )}
-      <span className="wishatt capital">
-        Added Date:
-        <span className="emphasize">{item.added_date}</span>
-      </span>
+
     </div>
 
   )
