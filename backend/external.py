@@ -1,10 +1,12 @@
 # import logging
 from bs4 import BeautifulSoup
 from .Wish import *
+from .Wishlist import *
 from .Utils import *
 import requests
 import re
 import traceback
+import json
 
 
 # logger = logging.getLogger()
@@ -23,23 +25,31 @@ def replaceSpecialCharacters(text):
 
 
 def getAllExternal():
-    try:
-        print("run REI")
-        getReiWishes()
-    except Exception as e:
-        logger.error("Error getting rei wishlist %s",
-                     e, traceback.format_exc())
 
-    try:
-        print("run amazon")
-        getAmazonWishes()
-    except Exception as e:
-        logger.error("Error getting amazon wishlist %s", e)
+    lists = json.loads(Wishlist.objects.to_json())
+
+    for listtop in lists:
+        testlink = listtop['link']
+        if "rei.com/lists" in testlink:
+            try:
+                print("run REI")
+                getReiWishes(testlink)
+            except Exception as e:
+                logger.error("Error getting rei wishlist %s",
+                             e, traceback.format_exc())
+        elif "amazon.com/hz/wishlist" in testlink:
+            try:
+                print("run amazon")
+                getAmazonWishes(testlink)
+            except Exception as e:
+                logger.error("Error getting amazon wishlist %s", e)
+        else:
+            logger.info("Link " + testlink + " not recognized to parse")
 
 
-def getReiWishes():
+def getReiWishes(wishlistlink):
     try:
-        wishlistlink = "https://www.rei.com/lists/415791132"
+        # wishlistlink = "https://www.rei.com/lists/415791132"
         wishlist = "Rei"
         try:
             reiwishlist = requests.get(wishlistlink)
@@ -95,9 +105,9 @@ def getReiWishes():
                      e,  traceback.format_exc())
 
 
-def getAmazonWishes():
+def getAmazonWishes(wishlistlink):
     try:
-        wishlistlink = "https://www.amazon.com/hz/wishlist/ls/3M5WRZQLL8Z1U?ref_=wl_share"
+        # wishlistlink = "https://www.amazon.com/hz/wishlist/ls/3M5WRZQLL8Z1U?ref_=wl_share"
         baselink = "https://www.amazon.com"
         wishlist = "Amazon"
         amazwishlist = requests.get(wishlistlink)

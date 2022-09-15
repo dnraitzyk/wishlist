@@ -330,7 +330,6 @@ def insertWishlist():
         baseLink = link[:link.rfind(".com") + 4]
     else:
         baseLink = link
-    logger.info("id is ", id)
 
     wishlistToSave = Wishlist(name=name,  baseLink=baseLink,
                               link=link, id=id, added_date=added_date)
@@ -342,6 +341,22 @@ def insertWishlist():
         return jsonify({"status": "error", "message": "Error saving wishlist"})
 
     return jsonify("Successfully added wishlist")
+
+
+@ flaskapp.route("/DeleteWishlist", methods=["POST"], strict_slashes=False)
+@ cross_origin()
+def DeleteWishlist():
+
+    id = request.get_json()
+
+    try:
+        remobj = Wishlist.objects.get(id=id)
+        remobj.delete()
+    except Exception as e:
+        logger.error("Error removing wishlist %s", e)
+        return jsonify({"status": "error", "message": "Error removing wishlist"})
+
+    return jsonify("Successfully removed wishlist")
 
 
 @ flaskapp.route("/FetchExternalWishes", methods=["GET"], strict_slashes=False)

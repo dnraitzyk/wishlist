@@ -75,6 +75,19 @@ async function InsertWishlist(body) {
     }
 }
 
+async function DeleteWishlist(body) {
+    try {
+        let postdbresp = axios.post(process.env.REACT_APP_BASE_URL + '/DeleteWishlist', body, {
+            headers: {
+                'content-type': 'application/json'
+            }
+        });
+    }
+    catch (e) {
+        console.log("Error in Apis.DeleteWishlist: " + e.message);
+    }
+}
+
 async function GetDistinctWishlists() {
     try {
         let getdbresp = await axios.get(process.env.REACT_APP_BASE_URL + "/GetWishlists");
@@ -134,4 +147,4 @@ async function GetWishlists() {
 //     return null
 // }
 
-export { GetAllWishes, InsertWish, GetDistinctWishlists, GetWishlists, GetExternalWishes, InsertWishlist };
+export { GetAllWishes, InsertWish, GetDistinctWishlists, GetWishlists, GetExternalWishes, InsertWishlist, DeleteWishlist };

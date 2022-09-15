@@ -2,6 +2,8 @@ General
 - 
 
 Functionality
+- Deletion of manual wishes
+- Parse only lists in wishlists and remove all auto items that arent in those lists
 - Add in "Manage wishlists" nav link and have backend loop through them based on site
 - Create a new wishlist from add button on add wish, cant be in current list
   - maybe validate on entering values, not on submit (when lose focus?)
@@ -19,6 +21,7 @@ Backend
 - remove items from wishlists that are no longer there
 
 UI
+- Look into adding wishes directly rather than separate nav
 - show add wish wishlist dropdown
   - items are built from distinct wishlist select from db
 - show out of stock items as error and collapse them?
@@ -28,9 +31,12 @@ UI
 - bootstrap?
 
 Validation
--
+- Validate link and name are input on wishlist
+- Add https:// on link add wishlist
 
 BUGS
+- Fix edit on wishes breaking
+
 ========================================================================
 DONE
 - group isdev and isheroku logic

@@ -2,7 +2,7 @@
 /* eslint-disable no-underscore-dangle */
 import axios from 'axios';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { GetWishlists, InsertWishlist } from './apis';
+import { GetWishlists, InsertWishlist, DeleteWishlist } from './apis';
 
 
 function dynamicSort(property, sortOrderWord = 'asc') {
@@ -26,10 +26,8 @@ function dynamicSort(property, sortOrderWord = 'asc') {
 }
 
 function dateFormat(date) {
-  console.log("d before is ", date);
 
   const d = new Date(date);
-  console.log("d is ", d);
   const month = d.getMonth() + 1;
   const day = d.getDate();
   let suffix = 'AM';
@@ -60,12 +58,7 @@ function dateFormat(date) {
   return `${monthString}/${dayString}/${d.getFullYear()} at ${hour}:${mins}${sec ? `:${sec}` : ''} ${suffix}`;
 }
 
-// let wishlistOptions = [];
-
-
-
-// GetWishlistOptions();
-
+let listChanged = Math.random();
 
 // Main component, acts a wrapper for the entire screen content
 const ManageWishlist = () => {
@@ -98,9 +91,9 @@ const ManageWishlist = () => {
   // Only once,
   useEffect(() => {
     RetrieveWishlistOptions()
-  }, []);
+    console.log("running useeffect")
+  }, [listChanged]);
 
-  console.log("wishlists ", wishlists)
   // Return header and content, pass down function for deep state update
   return (
     <div className="contentwrapper">
@@ -116,7 +109,6 @@ const WishlistHeader = (props) => {
   let { fullList, updateWishlists } = props;
 
   function AddWishlist() {
-    console.log("fullList is ", fullList)
 
     fullList.unshift({ "name": "", "link": "", "baseLink": "", "_id": "", "added_date": "" })
 
@@ -139,8 +131,6 @@ const WishlistHeader = (props) => {
 
 // Component to show list of items
 function WishListTable(props) {
-
-  console.log(props)
 
   const rows = [];
   let { fullList, updateWishlists } = props;
@@ -179,6 +169,7 @@ const WishListRow = (props) => {
       return { ...i };
     });
     updateWishlists(newlist);
+
   };
 
   // Send item to DB
@@ -198,9 +189,14 @@ const WishListRow = (props) => {
       let newdate = new Date()
       newdate = newdate.getTime() - newdate.getTimezoneOffset() * 60000
       item['added_date'] = newdate;
-      console.log("Submit date is ", item['added_date'])
     }
-    console.log("time offset is ", new Date().getTimezoneOffset());
+
+    if (item['_id'] && (item['_id'] != item['link'])) {
+
+      deleteWishlist(item._id)
+      item['_id'] = item['link']
+    }
+
     insertWishlist(item);
     const newlist = currentList.map(i => {
       if (i._id === item._id) {
@@ -208,7 +204,11 @@ const WishListRow = (props) => {
       }
       return { ...i };
     });
+
     updateWishlists(newlist);
+
+    listChanged = Math.random();
+
   };
 
   // Return content for submit button
@@ -238,17 +238,22 @@ const WishListRow = (props) => {
 
   };
 
+  async function deleteWishlist(itemid) {
+    try {
+      await DeleteWishlist(itemid);
+    } catch (e) {
+      console.log(`Error in manageWishlist.deleteWishlist: ${e.message}`);
+    }
+  };
 
   const handleDelete = () => {
     let { item, currentList, updateWishlists } = props;
     prevItem.current = { ...item };
-    const newlist = currentList.map(i => {
-      if (i._id === item._id) {
-        return { ...i, isReadOnly: false }
-      }
-
-      return { ...i };
-    });
+    const newlist = currentList.filter(i => {
+      return i._id !== item._id
+    }
+    );
+    deleteWishlist(item['_id']);
     updateWishlists(newlist);
   };
 
@@ -266,13 +271,20 @@ const WishListRow = (props) => {
   // Revert to unedited item and mark read only
   const handleCancel = () => {
     let { item, currentList, updateWishlists } = props;
-    const newlist = currentList.map(i => {
+    currentList = currentList.map(i => {
       if (i._id === item._id) {
         return { ...prevItem.current, isReadOnly: true }
       }
       return { ...i };
     });
+    const newlist = currentList.filter(i => {
+      return i.added_date
+    }
+    );
+
     updateWishlists(newlist);
+    listChanged = Math.random();
+
   };
 
   // Return content for cancel button
@@ -371,7 +383,7 @@ const WishListRow = (props) => {
             <label htmlFor="description">
               Link:
             </label>
-            <input className="wishatt" name="link" placeholder="link" onChange={(e) => handleChange(e, item)} value={item.description} />
+            <input className="wishatt" name="link" placeholder="link" onChange={(e) => handleChange(e, item)} value={item.link} />
           </div>
         </div>
       ) : (<div>
