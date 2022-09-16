@@ -262,6 +262,22 @@ def addWish():
     return jsonify("Successfully added wish")
 
 
+@ flaskapp.route("/DeleteWish", methods=["POST"], strict_slashes=False)
+@ cross_origin()
+def DeleteWish():
+
+    id = request.get_json()
+
+    try:
+        remobj = Wish.objects.get(id=id)
+        remobj.delete()
+    except Exception as e:
+        logger.error("Error removing wish %s", e)
+        return jsonify({"status": "error", "message": "Error removing wish"})
+
+    return jsonify("Successfully removed wish")
+
+
 @ flaskapp.route("/GetWishes", methods=["GET"], strict_slashes=False)
 @ cross_origin()
 def getWishes():

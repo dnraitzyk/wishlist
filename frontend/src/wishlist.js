@@ -2,7 +2,7 @@
 /* eslint-disable no-underscore-dangle */
 import axios from 'axios';
 import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { GetAllWishes, InsertWish, GetDistinctWishlists, GetExternalWishes } from './apis';
+import { GetAllWishes, InsertWish, GetDistinctWishlists, GetExternalWishes, DeleteWish } from './apis';
 // import { utf8ToAnsi } from 'utf8-to-ansi';
 
 // import caret-sort-down 
@@ -35,7 +35,7 @@ async function RetrieveWishlistOptions() {
     const options = apiresp.sort();
     wishlistOptions = (options.map(function (option) {
       return (
-        <option key={option} value={option}>{option}</option>
+        <option key={Math.random()} value={option._id}>{option.name}</option>
       )
     }
     ));
@@ -48,9 +48,6 @@ async function RetrieveWishlistOptions() {
 const GetWishlistOptions = () => {
   RetrieveWishlistOptions();
 }
-
-GetWishlistOptions();
-
 
 // Main component, acts a wrapper for the entire screen content
 const Wishlist = () => {
@@ -82,6 +79,8 @@ const Wishlist = () => {
   useEffect(() => {
     setLoading('true');
     GetWishes();
+    GetWishlistOptions();
+
   }, []);
 
   if (loading === 'initial') {
@@ -419,6 +418,36 @@ const WishRow = (props) => {
     return null;
   };
 
+  async function deleteWish(itemid) {
+    try {
+      await DeleteWish(itemid);
+    } catch (e) {
+      console.log(`Error in manageWishlist.deleteWish: ${e.message}`);
+    }
+  };
+
+  const handleDelete = () => {
+    let { item, currentList, updateListOfWishes } = props;
+    prevItem.current = { ...item };
+    const newlist = currentList.filter(i => {
+      return i._id !== item._id
+    }
+    );
+    deleteWish(item['_id']);
+    updateListOfWishes(newlist);
+  };
+
+  function ShowDelete(item) {
+    return (
+      <span  >
+        <button className="typicalbutton righthand" type="button" onClick={() => handleDelete(item, props.currentList)}>
+          Delete
+        </button>
+      </span>
+    );
+
+  };
+
 
   // Revert to unedited item and mark read only
   const handleCancel = () => {
@@ -547,12 +576,14 @@ const WishRow = (props) => {
           <div className="wishatt">
             {
               item.isReadOnly ? (
+
                 <div>
                   <span className="wishatt capital">
                     Category:
                     <span className="emphasize">{item.category}</span>
                   </span>
                   {ShowEdit(item)}
+                  {item.source !== "auto" ? ShowDelete(item) : null}
                   <div className="wishatt capital">
                     Item Name:
                     {item.link ? (

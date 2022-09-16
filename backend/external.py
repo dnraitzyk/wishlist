@@ -7,6 +7,7 @@ import requests
 import re
 import traceback
 import json
+from mongoengine.queryset.visitor import Q
 
 
 # logger = logging.getLogger()
@@ -26,25 +27,48 @@ def replaceSpecialCharacters(text):
 
 def getAllExternal():
 
+    # Figure out which lists from the wish table dont have corresponding links in wishlist table and delete
     lists = json.loads(Wishlist.objects.to_json())
+    distinctlistsdb = Wish.objects(
+        source="auto").distinct("wishlistLink")
+    comparelinkslist = []
+    for list in lists:
+        comparelinkslist.append(list['link'])
 
-    for listtop in lists:
-        testlink = listtop['link']
-        if "rei.com/lists" in testlink:
-            try:
-                print("run REI")
-                getReiWishes(testlink)
-            except Exception as e:
-                logger.error("Error getting rei wishlist %s",
-                             e, traceback.format_exc())
-        elif "amazon.com/hz/wishlist" in testlink:
-            try:
-                print("run amazon")
-                getAmazonWishes(testlink)
-            except Exception as e:
-                logger.error("Error getting amazon wishlist %s", e)
+    operatinglinkdict = {}
+    for link in comparelinkslist:
+        operatinglinkdict[link] = "update"
+    for link in distinctlistsdb:
+        if link in comparelinkslist:
+            operatinglinkdict[link] = "update"
         else:
-            logger.info("Link " + testlink + " not recognized to parse")
+            operatinglinkdict[link] = "delete"
+
+    print(operatinglinkdict)
+    for testlink, action in operatinglinkdict.items():
+        if action == "update":
+            if "rei.com/lists" in testlink:
+                try:
+                    print("run REI")
+                    getReiWishes(testlink)
+                except Exception as e:
+                    logger.error("Error getting rei wishlist %s",
+                                 e, traceback.format_exc())
+            elif "amazon.com/hz/wishlist" in testlink:
+                try:
+                    print("run amazon")
+                    getAmazonWishes(testlink)
+                except Exception as e:
+                    logger.error("Error getting amazon wishlist %s", e)
+            else:
+                logger.info("Link " + testlink + " not recognized to update")
+        elif action == "delete":
+            print("Deleting wishes for link ", testlink)
+            Wish.objects((Q(source="auto") & Q(
+                wishlistLink=testlink))).delete()
+        else:
+            logger.error(
+                "List action was not delete or update for link" + testlink)
 
 
 def getReiWishes(wishlistlink):
@@ -98,7 +122,9 @@ def getReiWishes(wishlistlink):
             wishToSave = Wish(name=namestring, description=itemdesc, cost=itemcost, quantity=itemquantity, link=itemlink,
                               wishlist=wishlist, wishlistLink=wishlistlink, id=id, availability=itemstock, source="auto", modified_date=datetime.today())
             reiWishObjs.append(wishToSave)
+
         saveWishesDB(reiWishObjs)
+
     # logger.info(reiWishObjs)
     except Exception as e:
         logger.error("Exception in getReiWishes %s",
