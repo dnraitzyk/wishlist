@@ -15,6 +15,7 @@ allowed_roles = ["admin", "operator"]
 
 
 class User(Document):
+
     username = StringField(required=True, max_length=256)
     password = StringField(required=True, max_length=256)
     lastName = StringField(required=True, max_length=256)
@@ -41,9 +42,13 @@ class User(Document):
     @property
     def rolenames(self):
         try:
-            roles = self.roles.split(",")
-            if set(roles).issubset(set(allowed_roles)):
-                return roles
+            roles = self.roles
+            if roles is not None:
+                roles = self.roles.split(",")
+                if set(roles).issubset(set(allowed_roles)):
+                    return roles
+                else:
+                    raise RoleException
             else:
                 raise RoleException
         except RoleException:

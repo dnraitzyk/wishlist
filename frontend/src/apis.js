@@ -133,6 +133,19 @@ async function GetWishlists() {
     }
 }
 
+async function AttemptLogin(body) {
+    try {
+        let postdbresp = axios.post(process.env.REACT_APP_BASE_URL + '/login', body, {
+            headers: {
+                'content-type': 'application/json'
+            }
+        });
+    }
+    catch (e) {
+        console.log("Error in Apis.AttemptLogin: " + e.message);
+    }
+}
+
 // async function SendCSVContent(body) {
 //     const formData = new FormData();
 //     formData.append("csvFile", body);
@@ -160,4 +173,4 @@ async function GetWishlists() {
 //     return null
 // }
 
-export { GetAllWishes, InsertWish, GetDistinctWishlists, GetWishlists, GetExternalWishes, InsertWishlist, DeleteWishlist, DeleteWish };
+export { GetAllWishes, InsertWish, GetDistinctWishlists, GetWishlists, GetExternalWishes, InsertWishlist, DeleteWishlist, DeleteWish, AttemptLogin };

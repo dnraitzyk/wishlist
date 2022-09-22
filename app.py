@@ -3,7 +3,7 @@ import argparse
 # from tkinter import W
 from backend import Wish
 from backend.Wishlist import Wishlist
-from backend import User
+from backend.User import User
 from backend.external import *
 import logging
 import json
@@ -155,6 +155,8 @@ api = Api(flaskapp)
 flaskapp.config["SECRET_KEY"] = "top secret"
 flaskapp.config["JWT_ACCESS_LIFESPAN"] = {"hours": 24}
 flaskapp.config["JWT_REFRESH_LIFESPAN"] = {"days": 30}
+flaskapp.config["PRAETORIAN_ROLES_DISABLED"] = True
+
 guard.init_app(flaskapp, User)
 
 
@@ -193,6 +195,8 @@ except ConnectionFailure as err:
 
 # if IS_DEV:
 #     proxy(WEBPACK_DEV_SERVER_HOST, request.path)
+User(username="dnraitzyktest", password=guard.hash_password('test'), lastName="Rtest",
+     firstName="Davidtest", email="test@test.com", id="dnraitzyktest").save()
 
 
 @flaskapp.route('/favicon.ico')
