@@ -13,7 +13,8 @@
   "dependencies": {
     "axios": "^0.27.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-token-auth": "^2.3.8"
   },
   "devDependencies": {
     "@babel/core": "^7.18.6",

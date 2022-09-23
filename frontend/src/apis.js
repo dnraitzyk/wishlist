@@ -1,4 +1,42 @@
 import axios from 'axios';
+// import { login, useAuth, logout } from './index';
+
+// const [logged] = useAuth();
+
+// async function AttemptLogin(body) {
+//     try {
+//         let authresp = await axios.post(process.env.REACT_APP_BASE_URL + '/login', body, {
+//             headers: {
+//                 'content-type': 'application/json'
+//             }
+//         }).catch(function (err) {
+//             if (err.response) {
+//                 console.log("err.response ", err.response)
+//             }
+//             else if (err.request) {
+//                 console.log("err.request ", err.request)
+//             }
+//             else {
+//                 // Something happened in setting up the request that triggered an Error
+//                 console.log('Error ', err.message);
+//             }
+//         });
+
+//         if (authresp) {
+//             if (authresp.data.access_token) {
+//                 console.log("token found ", authresp.data.access_token)
+//                 login(authresp.data.access_token)
+//             }
+//             else {
+//                 console.log("No token found")
+//             }
+//         }
+
+//     }
+//     catch (e) {
+//         console.log("Error in Apis.AttemptLogin: " + e.message);
+//     }
+// }
 
 async function InsertWish(body) {
     try {
@@ -133,18 +171,6 @@ async function GetWishlists() {
     }
 }
 
-async function AttemptLogin(body) {
-    try {
-        let postdbresp = axios.post(process.env.REACT_APP_BASE_URL + '/login', body, {
-            headers: {
-                'content-type': 'application/json'
-            }
-        });
-    }
-    catch (e) {
-        console.log("Error in Apis.AttemptLogin: " + e.message);
-    }
-}
 
 // async function SendCSVContent(body) {
 //     const formData = new FormData();
@@ -173,4 +199,4 @@ async function AttemptLogin(body) {
 //     return null
 // }
 
-export { GetAllWishes, InsertWish, GetDistinctWishlists, GetWishlists, GetExternalWishes, InsertWishlist, DeleteWishlist, DeleteWish, AttemptLogin };
+export { GetAllWishes, InsertWish, GetDistinctWishlists, GetWishlists, GetExternalWishes, InsertWishlist, DeleteWishlist, DeleteWish };

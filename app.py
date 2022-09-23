@@ -195,8 +195,8 @@ except ConnectionFailure as err:
 
 # if IS_DEV:
 #     proxy(WEBPACK_DEV_SERVER_HOST, request.path)
-User(username="dnraitzyktest", password=guard.hash_password('test'), lastName="Rtest",
-     firstName="Davidtest", email="test@test.com", id="dnraitzyktest").save()
+# User(username="dnraitzyktest", password=guard.hash_password('test'), lastName="Rtest",
+#      firstName="Davidtest", email="test@test.com", id="dnraitzyktest").save()
 
 
 @flaskapp.route('/favicon.ico')
