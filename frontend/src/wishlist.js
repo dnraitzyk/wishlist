@@ -711,7 +711,12 @@ const WishRow = (props) => {
                     )
                 )
             }
-
+            <div className="wishatt">
+              Owner:
+              <span className='emphasize'>
+                {item.owner}
+              </span>
+            </div>
             <div className="wishatt">
               Last Modified:
               <span className='emphasize'>

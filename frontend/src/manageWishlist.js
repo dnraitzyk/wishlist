@@ -400,6 +400,10 @@ const WishListRow = (props) => {
           <a className="" href="#" onClick={(e) => goToLink(item.link)}>{item.link}</a>
         </div>
         <span className="wishatt">
+          Owner:
+          <span className="emphasize">{item.owner}</span>
+        </span>
+        <span className="wishatt">
           Added Date:
           <span className="emphasize">{dateFormat(item.added_date)}</span>
         </span>

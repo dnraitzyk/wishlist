@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 // import { AttemptLogin } from './apis';
-import { login, logout } from './index';
+import { login, logout, handleLogoutActions } from './index';
 // import { createAuthProvider } from 'react-token-auth';
 import axios from 'axios';
 
@@ -21,18 +21,24 @@ function isEmpty(str) {
 }
 
 
-function Login(props) {
-  const logged = props.logged
+function Login() {
+  // const logged = props.logged
 
-  console.log("logged ", logged)
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  // console.log("logged ", logged)
+  const [username, setUsername] = useState("test");
+  const [password, setPassword] = useState("test");
   const [errors, setErrors] = useState({});
   const [fields, setFields] = useState({});
+  const [logged, setLogged] = useState(localStorage.getItem("REACT_TOKEN_AUTH_KEY"));
+  // function setInitialFields() {
+  //   return { "username": username, "password": password };
+  // };
+  // setFields({ "username": "dnraitzyktest", "password": "test" })
+  useEffect(() => {
+    setFields({ "username": "test", "password": "test" })
 
-  function setInitialFields() {
-    return { "username": username, "password": password };
-  };
+
+  }, []);
 
   function clearFields() {
     return { "username": "", "password": "" }
@@ -59,12 +65,16 @@ function Login(props) {
       });
 
       if (authresp) {
-        if (authresp.data.access_token) {
-          console.log("token found ", authresp.data.access_token)
-          login(authresp.data.access_token)
+        if (authresp.data.user.access_token) {
+          const token = authresp.data.user.access_token
+          const user = JSON.stringify(authresp.data.user)
+          localStorage.setItem('user', user)
+          login(token)
+          return token
         }
         else {
           console.log("No token found")
+          return null
         }
       }
 
@@ -76,7 +86,7 @@ function Login(props) {
 
 
   const handleChange = setter => event => {
-    console.log("running change")
+    // console.log("running change")
     const { name, value } = event.target;
 
     setFields({ ...fields, [name]: value });
@@ -118,7 +128,7 @@ function Login(props) {
       //     newlink = "https://" + link;
       //     setLink(newlink);
       // }
-      AttemptLogin({ "username": username, "password": password })
+      AttemptLogin({ "username": username, "password": password }).then(r => setLogged(r))
 
       setUsername("");
       setPassword("");
@@ -127,13 +137,28 @@ function Login(props) {
       // setLink("");
       // setCategory("default");
       // setWishlist("Default");
+      //   while (!localStorage.getItem("REACT_TOKEN_AUTH_KEY")) {
+      //   console.log("logging in while", localStorage.getItem("REACT_TOKEN_AUTH_KEY"))
+
+      // }
+      // console.log("logging in ", localStorage.getItem("REACT_TOKEN_AUTH_KEY"))
+      // setLogged(localStorage.getItem("REACT_TOKEN_AUTH_KEY"))
       setFields(clearFields());
     } else {
       alert("Form has errors.");
     }
 
+    // setLogged(localStorage.getItem("REACT_TOKEN_AUTH_KEY"))
+
   }
 
+  const handleLogout = () => {
+    handleLogoutActions();
+    setLogged("")
+    setFields({ "username": "test", "password": "test" })
+    setUsername("test");
+    setPassword("test");
+  }
   // function ShowMessage() {
 
   //   const [message, setMessage] = useState("");
@@ -153,7 +178,7 @@ function Login(props) {
 
   //   return message
   // }
-
+  // const logged = localStorage.getItem("REACT_TOKEN_AUTH_KEY") ? true : false
 
   return (
 
@@ -181,7 +206,7 @@ function Login(props) {
             Submit
           </button>
         </form>
-        : <button onClick={() => logout()}>Logout</button>}
+        : <button onClick={() => handleLogout()}>Logout</button>}
     </div>
   )
 }

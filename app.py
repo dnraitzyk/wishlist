@@ -195,8 +195,8 @@ except ConnectionFailure as err:
 
 # if IS_DEV:
 #     proxy(WEBPACK_DEV_SERVER_HOST, request.path)
-# User(username="dnraitzyktest", password=guard.hash_password('test'), lastName="Rtest",
-#      firstName="Davidtest", email="test@test.com", id="dnraitzyktest").save()
+# User(username="test", password=guard.hash_password('test'), lastName="testlast",
+#      firstName="testfirst", email="test@test1.com", id="test").save()
 
 
 @flaskapp.route('/favicon.ico')
@@ -222,6 +222,8 @@ def serve(path):
 
 @flaskapp.route('/login', methods=['POST'])
 def login():
+    print("login request")
+
     """
     Logs a user in by parsing a POST request containing user credentials and
     issuing a JWT token.
@@ -233,7 +235,8 @@ def login():
     username = req.get('username', None)
     password = req.get('password', None)
     user = guard.authenticate(username, password)
-    ret = {'access_token': guard.encode_jwt_token(user)}
+    ret = {'user': {'access_token': guard.encode_jwt_token(
+        user), 'username': username}}
     return jsonify(ret), 200
 
 
@@ -282,6 +285,7 @@ def addWish():
     description = request.json['description']
     wishlist = request.json['wishlist']
     source = request.json['source']
+    owner = request.json['owner']
     if 'wishlistlink' in reqdict:
         wishlistlink = request.json['wishlistlink']
     if 'availability' in reqdict:
@@ -291,10 +295,10 @@ def addWish():
     modified_date = datetime.today()
     # objid = ObjectId(id)
     if id is None or id == "":
-        id = wishlist+"_" + itemname.replace(" ", "_").lower()
+        id = wishlist + "_" + itemname.replace(" ", "_").lower()
     logger.info("id is ", id)
     wishToSave = Wish(name=itemname, description=description, cost=cost, quantity=quantity, category=category, link=link,
-                      wishlist=wishlist, wishlistLink=wishlistlink, id=id, availability=availability, source=source, modified_date=modified_date)
+                      wishlist=wishlist, wishlistLink=wishlistlink, id=id, availability=availability, source=source, modified_date=modified_date, owner=owner)
 
     # mydatabase = client.wish
     # mycollection = mydatabase.wishes
@@ -390,6 +394,7 @@ def insertWishlist():
     reqdict = request.get_json()
     logger.info("reqdict is ", reqdict)
     name = request.json['name']
+    owner = request.json['owner']
 
     if 'link' in reqdict:
         link = request.json['link']
@@ -405,8 +410,8 @@ def insertWishlist():
     else:
         baseLink = link
 
-    wishlistToSave = Wishlist(name=name,  baseLink=baseLink,
-                              link=link, id=id, added_date=added_date)
+    wishlistToSave = Wishlist(name=name, baseLink=baseLink,
+                              link=link, id=id, added_date=added_date, owner=owner)
 
     try:
         wishlistToSave.save()

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getLoggedInUser } from '.';
 // import { login, useAuth, logout } from './index';
 
 // const [logged] = useAuth();
@@ -40,6 +41,7 @@ import axios from 'axios';
 
 async function InsertWish(body) {
     try {
+        body["owner"] = getLoggedInUser().username
         let postdbresp = axios.post(process.env.REACT_APP_BASE_URL + '/submitwish', body, {
             headers: {
                 'content-type': 'application/json'
@@ -115,6 +117,7 @@ async function GetExternalWishes() {
 
 async function InsertWishlist(body) {
     try {
+        body["owner"] = getLoggedInUser().username
         let postdbresp = axios.post(process.env.REACT_APP_BASE_URL + '/AddWishlist', body, {
             headers: {
                 'content-type': 'application/json'

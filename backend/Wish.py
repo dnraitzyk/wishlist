@@ -18,6 +18,7 @@ class Wish(Document):
     id = StringField(required=True, max_length=256, primary_key=True)
     availability = StringField(max_length=20)
     source = StringField(max_length=10)
+    owner = StringField(required=True, max_length=256)
     modified_date = DateTimeField(required=True)
 
 

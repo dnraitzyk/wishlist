@@ -74,6 +74,7 @@ def getAllExternal():
 def getReiWishes(wishlistlink):
     try:
         # wishlistlink = "https://www.rei.com/lists/415791132"
+        owner = "defaultuser"
         wishlist = "Rei"
         try:
             reiwishlist = requests.get(wishlistlink)
@@ -120,7 +121,7 @@ def getReiWishes(wishlistlink):
             # reiWishObjs.append(mappedwish)
             id = wishlist + "_" + namestring.replace(" ", "_").lower()
             wishToSave = Wish(name=namestring, description=itemdesc, cost=itemcost, quantity=itemquantity, link=itemlink,
-                              wishlist=wishlist, wishlistLink=wishlistlink, id=id, availability=itemstock, source="auto", modified_date=datetime.today())
+                              wishlist=wishlist, wishlistLink=wishlistlink, id=id, availability=itemstock, source="auto", modified_date=datetime.today(), owner=owner)
             reiWishObjs.append(wishToSave)
 
         saveWishesDB(reiWishObjs)
@@ -134,6 +135,7 @@ def getReiWishes(wishlistlink):
 def getAmazonWishes(wishlistlink):
     try:
         # wishlistlink = "https://www.amazon.com/hz/wishlist/ls/3M5WRZQLL8Z1U?ref_=wl_share"
+        owner = "defaultuser"
         baselink = "https://www.amazon.com"
         wishlist = "Amazon"
         amazwishlist = requests.get(wishlistlink)
@@ -178,7 +180,7 @@ def getAmazonWishes(wishlistlink):
                 id = wishlist + "_" + itemname.replace(" ", "_").lower()
 
                 wishToSave = Wish(name=itemname, cost=itemcost, link=itemlink,
-                                  wishlist=wishlist, wishlistLink=wishlistlink, id=id, availability=itemavail, source="auto", modified_date=datetime.today())
+                                  wishlist=wishlist, wishlistLink=wishlistlink, id=id, availability=itemavail, source="auto", modified_date=datetime.today(), owner=owner)
                 amazWishObjs.append(wishToSave)
 
             # print(amazitems)

@@ -4,19 +4,20 @@ General
 - Look into material UI
 
 Functionality
+- Add sign up/create user and also email to sign up
 - Select wishes and provide cost and count for selected at top
 - Create a new wishlist from add button on add wish, cant be in current list
   - maybe validate on entering values, not on submit (when lose focus?)
 - Modify auto wishes and have them still save and be updated (only certain fields)
   - have to retrieve from backend once we know which we have or dont update certain values in DB
-- add login
 - export to file to send someone (flesh this out more))
 - add in verify in case an item changes or seems to have a matching item (idk if need)
-- add in priority tiers
+- add in priority tiers flags
+- validate jwt token especially if tampered
 
 Backend
 - Fix duplicate key error bulk insert mongoengine or convert back to bulkpymongo
-- Dont delete items in database that dont have corresponding wishlist, instead set them to hidden/collapsed (just in case wishlist is brough back and so we dont remove priority and other things we did to that item)
+- Dont delete items in database that dont have corresponding wishlist, instead set them to hidden/collapsed (just in case wishlist is brought back and so we dont remove priority and other things we did to that item)
 - Parse special characters from description and name
 - find common elements to simplify html parsing
 - handle rei stock and cost
@@ -44,6 +45,7 @@ BUGS
 
 ========================================================================
 DONE
+- add login
 - Add in "Manage wishlists" nav link and have backend loop through them based on site
 - Parse only lists in wishlists and remove all auto items that arent in those lists
 - Deletion of manual wishes

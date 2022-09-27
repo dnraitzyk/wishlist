@@ -37,6 +37,15 @@ p {
   display: block;
 }
 
+#user {
+  color: white;
+  padding: 16px;
+  text-decoration: none;
+  display: block;
+  border-bottom: 1px solid white;
+  font-weight: bold;
+}
+
 /* Change color on hover */
 .sidenav a:hover {
   background-color: #ddd;

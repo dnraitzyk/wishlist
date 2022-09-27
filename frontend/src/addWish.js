@@ -15,7 +15,7 @@ async function RetrieveWishlistOptions() {
         const options = apiresp.sort();
         wishlistOptions = (options.map(function (option) {
             return (
-                <option key={option} value={option}>{option}</option>
+                <option key={option.name} value={option.name}>{option.name}</option>
             )
         }
         ));
