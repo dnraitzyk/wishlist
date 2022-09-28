@@ -61,12 +61,9 @@ function RequireAuth({ children, redirectTo }) {
 }
 
 
-
-// console.log(<PrivateRoute path="/loginPage" component={Login} />)
-
 const rootelem = document.getElementById('root');
 const root = createRoot(rootelem);
-user = getLoggedInUser()
+user = getLoggedInUser();
 
 root.render(
 
@@ -78,17 +75,17 @@ root.render(
             <Route
                 path="*"
                 element={
-                    <RequireAuth redirectTo="/loginPage">
+                    <RequireAuth redirectTo="loginPage">
                         <Routes>
-                            <Route path="/*" element={<Wishlist />} />
-                            <Route path="/app/manageWishlists" element={<ManageWishlist />} />
-                            <Route path="/app/wishlists" element={<Wishlist />} />
-                            <Route path="/app/addwish" element={<AddWish />} />
+                            <Route path="app/manageWishlists" element={<ManageWishlist />} />
+                            <Route path="app/wishlists" element={<Wishlist />} />
+                            <Route path="app/addwish" element={<AddWish />} />
+                            <Route path="*" element={<Wishlist />} />
                         </Routes>
                     </RequireAuth>
                 }
             />
-            <Route path="/loginPage" element={<Login />} />
+            <Route path="loginPage" element={<Login />} />
         </Routes>
     </BrowserRouter >
 

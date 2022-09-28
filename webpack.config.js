@@ -16,7 +16,7 @@ module.exports = {
     static: './build/',
     hot: true,
     devMiddleware: {
-      publicPath: 'auto',
+      publicPath: '/',
       writeToDisk: true,
     }
   },
@@ -33,6 +33,12 @@ module.exports = {
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
+        },
+      },
+      {
+        test: /\.html$/i,
+        use: {
+          loader: "html-loader",
         },
       },
       {
@@ -62,6 +68,12 @@ module.exports = {
   plugins: [
     new HtmlWebPackPlugin({
       template: path.resolve(__dirname, 'frontend', 'src') + '/index.html',
+      // template: path.resolve(__dirname, 'frontend', 'src') + '/index.js',
+    }),
+    new HtmlWebPackPlugin({
+      template: path.resolve(__dirname, 'frontend', 'src') + '/error.html',
+      filename: 'error.html',
+      // template: path.resolve(__dirname, 'frontend', 'src') + '/index.js',
     }),
     new webpack.EnvironmentPlugin({
       REACT_APP_BASE_URL: 'http://localhost:5000',

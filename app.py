@@ -11,7 +11,7 @@ from bson import json_util
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 from bson.objectid import ObjectId
-from flask import Flask, jsonify, Response, render_template, request, send_file, redirect, url_for, send_from_directory
+from flask import Flask, jsonify, Response, render_template, make_response, request, send_file, redirect, url_for, send_from_directory
 from flask_restful import Api, Resource, reqparse
 from flask_cors import CORS, cross_origin
 import flask_praetorian
@@ -79,8 +79,8 @@ if isheroku:
 
 else:
     maindir = os.path.dirname(os.path.abspath(__file__))
-    print("maindir")
-    print(maindir)
+    # print("maindir")
+    # print(maindir)
     backenddir = os.path.join(maindir, 'backend')
     # template_dir = os.path.join(template_dir, 'frontend')
     template_dir = os.path.join(maindir, 'build')
@@ -207,17 +207,25 @@ def favicon():
 
 
 @flaskapp.route('/', defaults={'path': ''})
+@flaskapp.route('/app/', defaults={'path': ''})
 @flaskapp.route('/<path:path>')
-@flaskapp.errorhandler(404)
+# @flaskapp.errorhandler(404)
 def serve(path):
     statpath = flaskapp.static_folder
-    logger.info("flaskapp.template_folder")
-    logger.info(flaskapp.template_folder)
-    logger.info("flaskapp.template_folder files are")
+    # logger.info("flaskapp.template_folder")
+    # logger.info(flaskapp.template_folder)
+    # logger.info("flaskapp.template_folder files are")
     # logger.info(os.listdir(flaskapp.template_folder))
-    # logger.info(statpath)
+    print("running slash path")
+    print(render_template('index.html'))
 
     return render_template('index.html')
+
+
+@flaskapp.errorhandler(404)
+def showErrorPage(self):
+    # print(flaskapp.template_folder)
+    return make_response(render_template('error.html'), 404)
 
 
 @flaskapp.route('/login', methods=['POST'])
