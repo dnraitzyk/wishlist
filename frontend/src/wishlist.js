@@ -352,19 +352,7 @@ const WishRow = (props) => {
   let item = props.item;
   let prevItem = useRef(item);
 
-  // Store unedited item in case of cancel, mark not read only
-  const handleEdit = () => {
-    let { item, currentList, updateListOfWishes } = props;
-    prevItem.current = { ...item };
-    const newlist = currentList.map(i => {
-      if (i._id === item._id) {
-        return { ...i, isReadOnly: false }
-      }
 
-      return { ...i };
-    });
-    updateListOfWishes(newlist);
-  };
 
   // Send item to DB
   async function insertWish(item) {
@@ -404,6 +392,20 @@ const WishRow = (props) => {
     return null;
   };
 
+  // Store unedited item in case of cancel, mark not read only
+  const handleEdit = () => {
+    let { item, currentList, updateListOfWishes } = props;
+    prevItem.current = { ...item };
+    const newlist = currentList.map(i => {
+      if (i._id === item._id) {
+        return { ...i, isReadOnly: false }
+      }
+
+      return { ...i };
+    });
+    updateListOfWishes(newlist);
+  };
+
   // Return content for edit button
   function ShowEdit(item) {
     if (item.source === 'manual' || item.source === 'auto') {
@@ -416,6 +418,37 @@ const WishRow = (props) => {
       );
     }
     return null;
+  };
+
+  // Select item and update cost and num selected
+  const handleSelect = () => {
+    let { item, currentList, updateListOfWishes } = props;
+    prevItem.current = { ...item };
+    const newlist = currentList.map(i => {
+      if (i._id === item._id) {
+        return { ...i, isReadOnly: false }
+      }
+
+      return { ...i };
+    });
+    updateListOfWishes(newlist);
+  };
+
+  // Return content for select box
+  function ShowSelect(item) {
+    return (
+      <span className='' >
+        <input className="custom-control-input checkbox" id='selectWish' type="checkbox" onClick={() => handleSelect(item, props.currentList)}>
+
+        </input>
+        <label className="custom-control-label" htmlFor="selectWish">Select</label>
+
+        {/* <button className="typicalbutton" type="button" onClick={() => handleSelect(item, props.currentList)}>
+          Select
+        </button> */}
+      </span>
+    );
+
   };
 
   async function deleteWish(itemid) {
@@ -572,8 +605,11 @@ const WishRow = (props) => {
   return (
     <div >
       {item.show ? (
-        <div className="wish">
-          <div className="wishatt">
+        <div className="wish flex">
+          <span className='inlineblock selectmargin'>
+            {ShowSelect()}
+          </span>
+          <span className="wishatt inlineblock">
             {
               item.isReadOnly ? (
 
@@ -617,7 +653,7 @@ const WishRow = (props) => {
                     <div>
                       <label htmlFor="category">
                         Category:
-                        <select name="category" onChange={(e) => handleCategoryChange(e, item)} value={item.category}>
+                        <select className='custom-select custom-select-sm' name="category" onChange={(e) => handleCategoryChange(e, item)} value={item.category}>
                           <option value="default">Default</option>
                           <option value="camping">Camping</option>
                           <option value="hendrix">Hendrix</option>
@@ -723,7 +759,7 @@ const WishRow = (props) => {
                 {item.modified_date && dateFormat(item.modified_date)}
               </span>
             </div>
-          </div>
+          </span>
         </div>
       ) : null}
     </div>

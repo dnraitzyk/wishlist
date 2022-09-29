@@ -11,6 +11,11 @@ import Wishlist from './wishlist';
 import ManageWishlist from './manageWishlist';
 import jwtDecode from 'jwt-decode';
 
+// Bootstrap CSS
+import "bootstrap/dist/css/bootstrap.min.css";
+// Bootstrap Bundle JS
+import "bootstrap/dist/js/bootstrap.bundle.min";
+
 let logged = localStorage.getItem("REACT_TOKEN_AUTH_KEY")
 
 export const handleLogoutActions = () => {

@@ -10,6 +10,7 @@ module.exports = {
     // path: path.resolve(__dirname, 'frontend', 'build'),
     filename: '[name].bundle.js',
     clean: true,
+    publicPath: '/',
   },
   devtool: "source-map",
   devServer: {

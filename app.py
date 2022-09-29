@@ -152,7 +152,7 @@ flaskapp.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 cors = CORS(flaskapp)  # comment this on deployment
 api = Api(flaskapp)
 
-flaskapp.config["SECRET_KEY"] = "top secret"
+flaskapp.config["SECRET_KEY"] = "gurble911scurblemcflurble123@!"
 flaskapp.config["JWT_ACCESS_LIFESPAN"] = {"hours": 24}
 flaskapp.config["JWT_REFRESH_LIFESPAN"] = {"days": 30}
 flaskapp.config["PRAETORIAN_ROLES_DISABLED"] = True
@@ -195,8 +195,8 @@ except ConnectionFailure as err:
 
 # if IS_DEV:
 #     proxy(WEBPACK_DEV_SERVER_HOST, request.path)
-# User(username="test", password=guard.hash_password('test'), lastName="testlast",
-#      firstName="testfirst", email="test@test1.com", id="test").save()
+User(username="test", password=guard.hash_password('test'), lastName="testlast",
+     firstName="testfirst", email="test@test1.com", id="test").save()
 
 
 @flaskapp.route('/favicon.ico')
@@ -207,25 +207,26 @@ def favicon():
 
 
 @flaskapp.route('/', defaults={'path': ''})
-@flaskapp.route('/app/', defaults={'path': ''})
 @flaskapp.route('/<path:path>')
-# @flaskapp.errorhandler(404)
 def serve(path):
-    statpath = flaskapp.static_folder
+    # statpath = flaskapp.static_folder
     # logger.info("flaskapp.template_folder")
     # logger.info(flaskapp.template_folder)
     # logger.info("flaskapp.template_folder files are")
     # logger.info(os.listdir(flaskapp.template_folder))
     print("running slash path")
-    print(render_template('index.html'))
+    print(path)
+    # print(render_template('index.html'))
+    # return send_from_directory(flaskapp.template_folder, 'index.html')
 
     return render_template('index.html')
 
 
 @flaskapp.errorhandler(404)
 def showErrorPage(self):
-    # print(flaskapp.template_folder)
-    return make_response(render_template('error.html'), 404)
+    # can add @flaskapp.route('/app', defaults={'path': ''}) to try catch call
+    return render_template('index.html')
+    # return make_response(render_template('error.html'), 404)
 
 
 @flaskapp.route('/login', methods=['POST'])

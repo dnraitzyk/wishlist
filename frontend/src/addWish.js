@@ -19,7 +19,6 @@ async function RetrieveWishlistOptions() {
             )
         }
         ));
-        console.log("options: ", wishlistOptions);
     } catch (e) {
         console.log(`Error in AddWish.GetWishlistOptions: ${e.message}`);
     }
@@ -197,14 +196,17 @@ function AddWish() {
                     </label>
                     <br />
                     <span>
-                        <label className="topmargin" htmlFor="wishlist">
+                        {/* <label className="topmargin" htmlFor="wishlist">
                             <p>Wishlist:</p>
                             <input name="wishlist" autoComplete="off" onChange={handleChange(setWishlist)} value={wishlist} list="wishlists" />
                             <datalist id="wishlists">
                                 {wishlistOptions}
                             </datalist>
-                        </label>
-                        {/* <button className="button-79">Add New Wishlist</button> */}
+                            
+                        </label> */}
+                        <select className='custom-select custom-select-sm'>
+                            {wishlistOptions}
+                        </select>
                     </span>
                 </fieldset>
                 <button className="typicalbutton" type="submit" onClick={(e) => handleSubmit(e)}>
