@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation, useNavigat
 import { createAuthProvider } from 'react-token-auth';
 import App from './App';
 import "./styles/app.css";
+import "./styles/sidebar.css";
 import AddWish from './addWish';
 import Login from './loginPage';
 import Sidenav from './sidenav';
@@ -73,25 +74,26 @@ user = getLoggedInUser();
 root.render(
 
     // <StrictMode>
-
-    <BrowserRouter>
-        <Sidenav user={user} />
-        <Routes>
-            <Route
-                path="*"
-                element={
-                    <RequireAuth redirectTo="loginPage">
-                        <Routes>
-                            <Route path="app/manageWishlists" element={<ManageWishlist />} />
-                            <Route path="app/wishlists" element={<Wishlist />} />
-                            <Route path="app/addwish" element={<AddWish />} />
-                            <Route path="*" element={<Wishlist />} />
-                        </Routes>
-                    </RequireAuth>
-                }
-            />
-            <Route path="loginPage" element={<Login />} />
-        </Routes>
-    </BrowserRouter >
+    <div className="leaddiv">
+        <BrowserRouter>
+            <Sidenav user={user} />
+            <Routes>
+                <Route
+                    path="*"
+                    element={
+                        <RequireAuth redirectTo="loginPage">
+                            <Routes>
+                                <Route path="app/manageWishlists" element={<ManageWishlist />} />
+                                <Route path="app/wishlists" element={<Wishlist />} />
+                                <Route path="app/addwish" element={<AddWish />} />
+                                <Route path="*" element={<Wishlist />} />
+                            </Routes>
+                        </RequireAuth>
+                    }
+                />
+                <Route path="loginPage" element={<Login />} />
+            </Routes>
+        </BrowserRouter >
+    </div>
 
 );

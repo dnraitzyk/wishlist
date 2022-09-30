@@ -155,7 +155,7 @@ function AddWish() {
     return (
 
         <div className='contentwrapper'>
-            <form>
+            <form className='flexshrink'>
                 <fieldset>
                     <label>
                         <p>Category</p>

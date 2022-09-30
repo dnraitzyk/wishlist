@@ -1,0 +1,149 @@
+.wrapper {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  background-color: #215cad;
+  border-radius: 5px;
+  display: block;
+
+}
+
+#sidebarCollapse {
+  /* position: absolute; */
+  top: .5rem;
+}
+
+#sidebar {
+  height: inherit;
+  margin: 2rem;
+  text-align: left;
+}
+
+#sidebar ul li a {
+  margin-left: .5rem;
+  color: #e9e9ea;
+}
+
+svg {
+  color: white;
+}
+
+#sidebar .list-item {
+  margin: 2rem 0;
+  font-size: 15px;
+  font-weight: 600;
+  display: flex;
+}
+
+#sidebar .list-item a.collapselink img {
+  color: white;
+}
+
+.navicon {
+  color: white;
+}
+
+#sidebar li a {
+  text-decoration: none;
+  padding-left: .5rem;
+}
+
+.icon-color {
+  color: #738a9b;
+}
+
+.btn-custom {
+  background-color: white;
+  border-radius: 50%;
+  color: #215cad;
+  border-style: none;
+  font-weight: 600;
+  padding: .5rem .75rem;
+  left: 50%;
+  /* transform: translate(-50%, -50%); */
+
+}
+
+.sidebar-header {
+  margin-top: 1rem;
+  text-align: center;
+  color: #e9e9ea;
+}
+
+.usr-image {
+  border: 2px solid white;
+}
+
+.collapse {
+  display: none;
+}
+
+#sidebar.active .sidebar-header h3 {
+  display: none;
+}
+
+#sidebar ul li a {
+  text-align: left;
+}
+
+#sidebar.active ul li a {
+  display: none;
+}
+
+#sidebar.active ul li a.collapselink {
+  display: list-item;
+  color: white;
+  padding-left: 0;
+  margin: 0 auto;
+}
+
+#sidebar.active ul li i {
+  display: block;
+}
+
+#sidebar.active .dropdown-toggle::after {
+  top: auto;
+  bottom: 10px;
+  right: 50%;
+  -webkit-transform: translateX(50%);
+  -ms-transform: translateX(50%);
+  transform: translateX(50%);
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  #sidebar.active {
+    width: 50px;
+    text-align: center;
+    margin: 0;
+  }
+
+  #sidebar {
+    margin: 1rem;
+  }
+
+  #sidebar.active #sidebarCollapse {
+    /* right: .5rem; */
+  }
+
+  #sidebar #sidebarCollapse {
+    /* right: 3rem; */
+  }
+
+  #sidebar.active .sidebar-header h3 {
+    display: none;
+  }
+
+  .dropdown-toggle::after {
+    top: auto;
+    bottom: 10px;
+    right: 50%;
+    -webkit-transform: translateX(50%);
+    -ms-transform: translateX(50%);
+    transform: translateX(50%);
+  }
+}

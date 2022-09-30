@@ -5,8 +5,6 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { GetAllWishes, InsertWish, GetDistinctWishlists, GetExternalWishes, DeleteWish } from './apis';
 // import { utf8ToAnsi } from 'utf8-to-ansi';
 
-// import caret-sort-down 
-
 function dynamicSort(property, sortOrderWord = 'asc') {
   let sortOrder;
   if (sortOrderWord === 'asc') {
@@ -51,6 +49,9 @@ const GetWishlistOptions = () => {
 
 // Main component, acts a wrapper for the entire screen content
 const Wishlist = () => {
+
+
+
   const [loading, setLoading] = useState('initial');
   const [listOfWishes, setListOfWishes] = useState('default');
   // Passed down to update the main list state
@@ -438,7 +439,7 @@ const WishRow = (props) => {
   function ShowSelect(item) {
     return (
       <span className='' >
-        <input className="custom-control-input checkbox" id='selectWish' type="checkbox" onClick={() => handleSelect(item, props.currentList)}>
+        <input className="custom-control-input smallrightmargin" id='selectWish' type="checkbox" onClick={() => handleSelect(item, props.currentList)}>
 
         </input>
         <label className="custom-control-label" htmlFor="selectWish">Select</label>
@@ -606,7 +607,7 @@ const WishRow = (props) => {
     <div >
       {item.show ? (
         <div className="wish flex">
-          <span className='inlineblock selectmargin'>
+          <span className='inlineblock smallrightmargin'>
             {ShowSelect()}
           </span>
           <span className="wishatt inlineblock">

@@ -1,3 +1,4 @@
+/* GENERIC */
 * {
   box-sizing: border-box;
 }
@@ -6,6 +7,7 @@
 body {
   margin: 0;
   font-family: Arial, Helvetica, sans-serif;
+
 }
 
 p {
@@ -17,13 +19,82 @@ p {
   margin-top: 5em;
 }
 
+/* USES: Select checkbox */
+.smallrightmargin {
+  margin-right: 1em;
+}
+
 .inlineblock {
   display: inline-block;
+}
+
+.block {
+  display: block;
 }
 
 .floatright {
   float: right;
 }
+
+.righthandSection {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.flex {
+  display: flex;
+  align-items: center;
+}
+
+.flexvertcent {
+  align-items: center;
+}
+
+.leftfit {
+  flex-shrink: 0;
+  /* width: 20%; */
+  flex-grow: .25;
+}
+
+.flexbasis {
+  flex-basis: 20%;
+}
+
+.column {
+  flex-direction: column;
+}
+
+.row {
+  flex-direction: row;
+}
+
+.vertcent {
+  vertical-align: middle;
+}
+
+.righthand {
+  float: right;
+  margin-top: .25em;
+  margin-right: 7em;
+}
+
+.lower {
+  text-transform: lowercase;
+}
+
+.capital {
+  text-transform: capitalize;
+}
+
+.fitText {
+  block-size: fit-content;
+}
+
+.emphasize {
+  font-weight: bold;
+}
+
+/* SPECIFIC COMPONENTS (SIDEBAR, SELECT BOX, ETC */
 
 /* Style the side navigation */
 .sidenav {
@@ -45,6 +116,7 @@ p {
   display: block;
 }
 
+/* Username in top left */
 #user {
   color: white;
   padding: 16px;
@@ -54,26 +126,41 @@ p {
   font-weight: bold;
 }
 
-/* Change color on hover */
+/* Change color on hover of link*/
 .sidenav a:hover {
   background-color: #ddd;
   color: #161748;
 }
 
-/* Style the content */
+/* Style the content in lists */
 .contentwrapper {
-  margin-left: 200px;
-  padding-left: 20px;
+  /* margin-left: 200px;
+  padding-left: 20px; */
+  /* width: 100%; */
+  /* display: block; */
+  flex-grow: 1.5;
+  /* flex-direction: row; */
 }
 
 .content {}
 
-.selectmargin {
-  margin-right: 1em;
+.leaddiv {
+  display: flex;
+  width: 100%;
+
 }
 
-.checkbox {
-  margin-right: .5em;
+.flexshrink {
+  flex-shrink: 0;
+}
+
+
+.leaddiv .contentwrapper {
+  /* width: 100vw;
+  height: calc(100vh - 28px);
+  position: absolute;
+  left: calc(10em + 2em); */
+  /* display: flex; */
 }
 
 .contentBanner {
@@ -83,38 +170,13 @@ p {
   align-items: center;
 }
 
-.flex {
-  display: flex;
-  align-items: center;
-}
-
 .bannerItem5 {
-  /* width: 20%; */
   vertical-align: middle;
 
 }
 
 .bannerFilter {
   margin-bottom: 0;
-}
-
-.flexvertcent {
-  align-items: center;
-}
-
-.vertcent {
-  vertical-align: middle;
-}
-
-.righthand {
-  float: right;
-  margin-top: .25em;
-  margin-right: 7em;
-}
-
-.righthandSection {
-  display: flex;
-  justify-content: flex-end;
 }
 
 .wish {
@@ -141,23 +203,6 @@ p {
 
 }
 
-.lower {
-  text-transform: lowercase;
-}
-
-.capital {
-  text-transform: capitalize;
-}
-
-.fitText {
-  block-size: fit-content;
-}
-
-.emphasize {
-  font-weight: bold;
-
-}
-
 .sortButton {
   background: #FFFFFF;
   border: 0;
@@ -179,6 +224,14 @@ p {
   -webkit-user-select: none;
   touch-action: manipulation;
   vertical-align: middle;
+}
+
+#logoutbutton {
+  top: 25%;
+  left: 40%;
+  position: absolute;
+  padding: 8rem 8rem;
+  font-size: 2.5em;
 }
 
 .typicalbutton {
@@ -215,45 +268,11 @@ p {
   opacity: .5;
 }
 
+/* COMPLICATED PIECES */
 
-.modal {
-  font-size: 12px;
-}
+/* SIDEBAR */
 
-.modal>.header {
-  width: 100%;
-  border-bottom: 1px solid gray;
-  font-size: 18px;
-  text-align: center;
-  padding: 5px;
-}
-
-.modal>.content {
-  width: 100%;
-  padding: 10px 5px;
-}
-
-.modal>.actions {
-  width: 100%;
-  padding: 10px 5px;
-  margin: auto;
-  text-align: center;
-}
-
-.modal>.close {
-  cursor: pointer;
-  position: absolute;
-  display: block;
-  padding: 2px 5px;
-  line-height: 20px;
-  right: -10px;
-  top: -10px;
-  font-size: 24px;
-  background: #ffffff;
-  border-radius: 18px;
-  border: 1px solid #cfcece;
-}
-
+/* BUTTON 79 */
 .button-79 {
   backface-visibility: hidden;
   background: #332cf2;
@@ -314,4 +333,44 @@ p {
 
 .button-79:not(:disabled):active {
   transform: translateY(.125rem);
+}
+
+/* MODAL */
+
+.modal {
+  font-size: 12px;
+}
+
+.modal>.header {
+  width: 100%;
+  border-bottom: 1px solid gray;
+  font-size: 18px;
+  text-align: center;
+  padding: 5px;
+}
+
+.modal>.content {
+  width: 100%;
+  padding: 10px 5px;
+}
+
+.modal>.actions {
+  width: 100%;
+  padding: 10px 5px;
+  margin: auto;
+  text-align: center;
+}
+
+.modal>.close {
+  cursor: pointer;
+  position: absolute;
+  display: block;
+  padding: 2px 5px;
+  line-height: 20px;
+  right: -10px;
+  top: -10px;
+  font-size: 24px;
+  background: #ffffff;
+  border-radius: 18px;
+  border: 1px solid #cfcece;
 }

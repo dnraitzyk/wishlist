@@ -1,7 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 import { getLoggedInUser } from '.';
-
+import list from './images/list.svg'
+import cloudplus from './images/cloudplus.svg'
+import keys from './images/key.svg'
+import pluscircledotted from './images/pluscircledotted.svg'
 
 const UserInfo = (props) => {
     return getLoggedInUser() ? getLoggedInUser().username : null
@@ -9,29 +12,120 @@ const UserInfo = (props) => {
 
 }
 
+// function Sidenav(props) {
+//     const user = props.user
+
+//     return (
+//         <div className="sidenav">
+//             <div id="user">
+//                 <UserInfo props={user}></UserInfo>
+//                 {/* {getLoggedInUser() ? getLoggedInUser().username : null} */}
+//             </div>
+//             <div className="sidenavlink">
+//                 <Link to="/app/addwish">Add Wish</Link>
+//             </div>
+//             <div className="sidenavlink">
+//                 <Link to="/app/wishlists">Wishlists</Link>
+//             </div>
+//             <div className="sidenavlink">
+//                 <Link to="/app/manageWishlists">Manage Wishlists</Link>
+//             </div>
+//             <div className="sidenavlink">
+//                 <Link to="/loginPage">Login</Link>
+//             </div>
+//         </div>
+//     );
+// }
+// export default Sidenav;
+
 function Sidenav(props) {
     const user = props.user
 
+    const [isNotActive, setNotActive] = useState("true");
+    const [isDropdownActive, setDropdownActive] = useState("false");
+    var barsIcon = <img src={require("./images/list.svg").default} />
+    var crossIcon = <i className="fas fa-times-circle"></i>
     return (
-        <div className="sidenav">
-            <div id="user">
-                <UserInfo props={user}></UserInfo>
-                {/* {getLoggedInUser() ? getLoggedInUser().username : null} */}
+        <div className="flexbasis leftfit">
+            <div className="wrapper">
+                <nav id="sidebar" className={isNotActive ? "active" : ""}>
+                    <button
+                        type="button"
+                        id="sidebarCollapse"
+                        onClick={() => setNotActive(!isNotActive)}
+                        className="btn-custom"
+                    >
+                        <span className={isNotActive ? '' : 'hidden'}>{barsIcon}</span>
+                        <span className={isNotActive ? 'hidden' : ''}>{barsIcon}</span>
+                    </button>
+                    <div className="sidebar-header">
+                        <img
+                            // src={image}
+                            className="rounded-circle usr-image"
+                            height={isNotActive ? "20" : "70"}
+                            width={isNotActive ? "20" : "70"}
+                        ></img>
+                        <div>
+                            <UserInfo props={user}></UserInfo>
+                        </div>
+                    </div>
+
+                    <ul className="list-unstyled components">
+                        <li className="list-item">
+                            {/* <i className="fas fa-briefcase icon-color"></i> */}
+                            <Link className="collapselink" to="/app/addwish"><img src={require("./images/pluscircledotted.svg").default} /></Link>
+                            <Link to="/app/addwish">Add Wish</Link>
+                        </li>
+                        <li className="list-item">
+                            <Link className="collapselink" to="/app/wishlists"><img src={require("./images/listcheck.svg").default} /></Link>
+                            <Link to="/app/wishlists">Wishlists</Link>
+                        </li>
+                        {/* <li className="list-item">
+                <i className="fas fa-user-alt icon-color"></i>
+                <Link
+                  to="/portfolio"
+                  href="#homeSubmenu"
+                  data-toggle="collapse"
+                  aria-expanded="false"
+                  className="dropdown-toggle"
+                  onClick={() => setDropdownActive(!isDropdownActive)}
+                >
+                  My Space
+                </Link>
+                <ul
+                  className={
+                    isDropdownActive ? "list-unstyled  collapse" : "list-unstyled"
+                  }
+                  id="homeSubmenu"
+                >
+                  <li className="dropdown-item">
+                    <Link to="/portfolio">Portfolio</Link>
+                    <a href="#">Portfolio</a>
+                  </li>
+                  <li className="dropdown-item">
+                    <Link to="/personal-details">Personal Details</Link>
+                  </li>
+                  <li className="dropdown-item">
+                    <Link to="/additional-info">Additional Info</Link>
+                  </li>
+                  <li className="dropdown-item">
+                    <Link to="/personal-background">Personal Background</Link>
+                  </li>
+                </ul>
+              </li> */}
+                        <li className="list-item">
+                            <Link className="collapselink" to="/app/manageWishlists"><img src={require("./images/cloudplus.svg").default} /></Link>
+                            <Link to="/app/manageWishlists">Manage Wishlists</Link>
+                        </li>
+                        <li className="list-item">
+                            <Link className="collapselink" to="/loginPage"><img src={require("./images/key.svg").default} /></Link>
+                            <Link to="/loginPage">Login</Link>
+                        </li>
+                    </ul>
+                </nav>
             </div>
-            <div className="sidenavlink">
-                <Link to="/app/addwish">Add Wish</Link>
-            </div>
-            <div className="sidenavlink">
-                <Link to="/app/wishlists">Wishlists</Link>
-            </div>
-            <div className="sidenavlink">
-                <Link to="/app/manageWishlists">Manage Wishlists</Link>
-            </div>
-            <div className="sidenavlink">
-                <Link to="/loginPage">Login</Link>
-            </div>
-        </div>
+        </div >
     );
-}
+};
 export default Sidenav;
 

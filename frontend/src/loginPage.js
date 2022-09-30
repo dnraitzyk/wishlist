@@ -182,7 +182,7 @@ function Login() {
 
   return (
 
-    <div className='contentwrapper'>
+    <div className='contentwrapper flex'>
       {/* <div>{ShowMessage()}</div> */}
       {!logged ?
         <form>
@@ -206,7 +206,7 @@ function Login() {
             Submit
           </button>
         </form>
-        : <button onClick={() => handleLogout()}>Logout</button>}
+        : <button id="logoutbutton" className="typicalbutton" onClick={() => handleLogout()}>Logout</button>}
     </div>
   )
 }

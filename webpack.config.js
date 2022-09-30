@@ -8,9 +8,11 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'build'),
     // path: path.resolve(__dirname, 'frontend', 'build'),
-    filename: '[name].bundle.js',
+    filename: 'bundle.js',
     clean: true,
     publicPath: '/',
+    hotUpdateChunkFilename: 'hot/hot-update.js',
+    hotUpdateMainFilename: 'hot/hot-update.json'
   },
   devtool: "source-map",
   devServer: {
@@ -43,15 +45,8 @@ module.exports = {
         },
       },
       {
-        test: /\.css$/,
-        use: [
-          {
-            loader: 'style-loader',
-          },
-          {
-            loader: 'css-loader',
-          },
-        ],
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
       },
       {
         test: /\.(png|jp(e*)g|svg|gif)$/,
@@ -59,7 +54,9 @@ module.exports = {
           {
             loader: 'file-loader',
             options: {
-              name: './frontend/src/images/[hash]-[name].[ext]',
+              outputPath: 'images',
+              // name: utils.assetsPath('images/[name].[ext]'),
+              //   name: './frontend/src/images/[hash]-[name].[ext]',
             },
           },
         ],
