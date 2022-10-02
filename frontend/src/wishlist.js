@@ -66,7 +66,7 @@ const Wishlist = () => {
     try {
       const apiresp = await GetAllWishes();
       apiresp.sort(dynamicSort('wishlist'));
-      const goodlist = apiresp.map((item) => ({ ...item, isReadOnly: true, show: true }));
+      const goodlist = apiresp.map((item) => ({ ...item, isReadOnly: true, show: true, isSelected: false }));
 
       setListOfWishes(goodlist);
       setLoading('false');
@@ -113,6 +113,29 @@ const WishlistHeader = (props) => {
   function getShowCount(list) {
     return list.filter((item) => item.show === true).length;
   }
+
+  function getTotalCost(list) {
+    let totalcost = 0;
+    list.forEach(function (item) {
+      if (item.isSelected) {
+        totalcost += item.cost;
+      }
+    })
+    return totalcost;
+  }
+
+  // function handleSelectAll() {
+  //   let { fullList, updateListOfWishes } = props;
+
+  //   fullList.forEach(function (i) {
+  //     if (i.show) {
+  //       i.isSelected = true;
+  //     }
+  //     return { ...i };
+  //   })
+
+  //   updateListOfWishes(fullList);
+  // };
 
   // Update shown list items when filter changes
   const HandleFilterChange = (e) => {
@@ -285,10 +308,24 @@ const WishlistHeader = (props) => {
   // Return header component content
   return (
     <div className="contentBanner">
+      <div className="wishTitle bannerItem5">
+        <h1>
+          Wishes:
+          {' '}
+          {getShowCount(list)}
+        </h1>
+        <div>
+          {/* <span  >
+            <label className="custom-control-label smallrightmargin" htmlFor="selectAll">Select All</label>
+            <input className="custom-control-input" id='selectAll' type="checkbox" onClick={() => handleSelectAll()}>
+            </input>
+          </span> */}
+        </div>
+      </div>
       <h1 className="wishTitle bannerItem5">
-        Wishes:
+        Cost:
         {' '}
-        {getShowCount(list)}
+        {getTotalCost(list)}
       </h1>
       <button className="typicalbutton bannerItem5" type="button" onClick={() => HandleRefreshWishes()}>
         Get Wishes
@@ -328,11 +365,28 @@ const WishlistHeader = (props) => {
 
 // Component to show list of items
 function WishTable(props) {
-  const rows = [];
   let { fullList, updateListOfWishes } = props;
+
+
+  function handleSelectAll() {
+    // let { fullList, updateListOfWishes } = props;
+    console.log(fullList)
+
+    const currlist = fullList.map(function (i) {
+      if (i.show) {
+        i.isSelected = !i.isSelected;
+      }
+      return { ...i };
+    })
+    console.log(currlist)
+    updateListOfWishes(currlist);
+  };
+
+  const rows = [];
   if (fullList === null) {
     console.log('currentList is null');
   } else {
+
     fullList.forEach(function (item) {
       rows.push(
         <div key={item._id} >
@@ -343,6 +397,11 @@ function WishTable(props) {
 
   return (
     <div className="content">
+      <span className='table'>
+        <label className="custom-control-label smallrightmargin" htmlFor="selectAll">Select All</label>
+        <input className="custom-control-input" id='selectAll' type="checkbox" onClick={() => handleSelectAll()}>
+        </input>
+      </span>
       {rows}
     </div>
   );
@@ -352,7 +411,7 @@ function WishTable(props) {
 const WishRow = (props) => {
   let item = props.item;
   let prevItem = useRef(item);
-
+  // const [isSelected, setIsSelected] = useState(false);
 
 
   // Send item to DB
@@ -423,16 +482,13 @@ const WishRow = (props) => {
 
   // Select item and update cost and num selected
   const handleSelect = () => {
-    let { item, currentList, updateListOfWishes } = props;
-    prevItem.current = { ...item };
-    const newlist = currentList.map(i => {
-      if (i._id === item._id) {
-        return { ...i, isReadOnly: false }
-      }
-
+    let { currentList, updateListOfWishes } = props;
+    item.isSelected = true;
+    currentList = currentList.map(i => {
       return { ...i };
+
     });
-    updateListOfWishes(newlist);
+    updateListOfWishes(currentList);
   };
 
   // Return content for select box

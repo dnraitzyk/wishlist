@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import { getLoggedInUser } from '.';
 import list from './images/list.svg'
@@ -41,32 +41,38 @@ const UserInfo = (props) => {
 function Sidenav(props) {
     const user = props.user
 
-    const [isNotActive, setNotActive] = useState("true");
+    const [isActive, setActive] = useState(false);
+
+    // useEffect(() => {
+    //     setActive(true);
+    // }, [])
+
+    console.log(isActive)
     const [isDropdownActive, setDropdownActive] = useState("false");
     var barsIcon = <img src={require("./images/list.svg").default} />
     var crossIcon = <i className="fas fa-times-circle"></i>
     return (
-        <div className="flexbasis leftfit">
-            <div className="wrapper">
-                <nav id="sidebar" className={isNotActive ? "active" : ""}>
+        <div className={isActive ? "sidebarflex active" : "sidebarflex inactive"} >
+            < div className="wrapper" >
+                <nav id="sidebar" className={isActive ? "active" : "inactive"}>
                     <button
                         type="button"
                         id="sidebarCollapse"
-                        onClick={() => setNotActive(!isNotActive)}
+                        onClick={() => setActive(!isActive)}
                         className="btn-custom"
                     >
-                        <span className={isNotActive ? '' : 'hidden'}>{barsIcon}</span>
-                        <span className={isNotActive ? 'hidden' : ''}>{barsIcon}</span>
+                        <span className={isActive ? 'hidden' : ''}>{barsIcon}</span>
+                        <span className={isActive ? '' : 'hidden'}>{barsIcon}</span>
                     </button>
                     <div className="sidebar-header">
-                        <img
-                            // src={image}
-                            className="rounded-circle usr-image"
-                            height={isNotActive ? "20" : "70"}
-                            width={isNotActive ? "20" : "70"}
-                        ></img>
-                        <div>
-                            <UserInfo props={user}></UserInfo>
+                        <div className='sidebar-user'>
+                            <img
+                                // src={image}
+                                className={isActive ? "rounded-circle usr-image active" : "rounded-circle usr-image"}
+                            ></img>
+                            <div>
+                                <UserInfo props={user}></UserInfo>
+                            </div>
                         </div>
                     </div>
 
@@ -123,7 +129,7 @@ function Sidenav(props) {
                         </li>
                     </ul>
                 </nav>
-            </div>
+            </div >
         </div >
     );
 };

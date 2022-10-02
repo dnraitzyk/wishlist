@@ -1,7 +1,7 @@
 /* GENERIC */
-* {
+/* * {
   box-sizing: border-box;
-}
+} */
 
 
 body {
@@ -50,11 +50,7 @@ p {
   align-items: center;
 }
 
-.leftfit {
-  flex-shrink: 0;
-  /* width: 20%; */
-  flex-grow: .25;
-}
+
 
 .flexbasis {
   flex-basis: 20%;
@@ -132,13 +128,41 @@ p {
   color: #161748;
 }
 
+.sidebarflex.inactive {
+  /* flex-shrink: 0; */
+  /* width: 20%; */
+  /* flex-grow: .25; */
+  flex: 1 1 0;
+  margin: 0 2em 0 0;
+
+  /* flex-basis: auto; */
+}
+
+.sidebarflex.active {
+  flex: 1 1 0;
+  margin: auto;
+}
+
+
+.sidebarflex.inactive+.contentwrapper {
+  flex: 7 1 0;
+
+}
+
+.sidebarflex.active+.contentwrapper {
+  flex: 4 1 0;
+}
+
 /* Style the content in lists */
 .contentwrapper {
   /* margin-left: 200px;
   padding-left: 20px; */
   /* width: 100%; */
   /* display: block; */
-  flex-grow: 1.5;
+  /* flex-grow: 1.5; */
+  flex: 0;
+  /* flex-basis: auto; */
+
   /* flex-direction: row; */
 }
 
@@ -147,7 +171,8 @@ p {
 .leaddiv {
   display: flex;
   width: 100%;
-
+  flex-direction: row;
+  flex-wrap: nowrap;
 }
 
 .flexshrink {
@@ -197,7 +222,7 @@ p {
 
 .wishatt {
   overflow-wrap: break-word;
-  width: max-content;
+  /* width: max-content; */
   max-width: 85%;
   block-size: fit-content;
 

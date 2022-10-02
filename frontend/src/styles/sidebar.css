@@ -2,11 +2,11 @@
   position: fixed;
   left: 0;
   top: 0;
-  height: 100vh;
+  height: 100%;
   background-color: #215cad;
-  border-radius: 5px;
+  /* border-radius: 5px; */
   display: block;
-
+  margin-right: 1em;
 }
 
 #sidebarCollapse {
@@ -16,13 +16,14 @@
 
 #sidebar {
   height: inherit;
-  margin: 2rem;
+  margin: 0 2rem 0 2rem;
   text-align: left;
 }
 
 #sidebar ul li a {
-  margin-left: .5rem;
+  margin-left: .25rem;
   color: #e9e9ea;
+
 }
 
 svg {
@@ -34,6 +35,8 @@ svg {
   font-size: 15px;
   font-weight: 600;
   display: flex;
+  align-items: center;
+
 }
 
 #sidebar .list-item a.collapselink img {
@@ -46,7 +49,7 @@ svg {
 
 #sidebar li a {
   text-decoration: none;
-  padding-left: .5rem;
+  /* padding-left: .5rem; */
 }
 
 .icon-color {
@@ -60,7 +63,7 @@ svg {
   border-style: none;
   font-weight: 600;
   padding: .5rem .75rem;
-  left: 50%;
+  /* left: 50%; */
   /* transform: translate(-50%, -50%); */
 
 }
@@ -69,33 +72,55 @@ svg {
   margin-top: 1rem;
   text-align: center;
   color: #e9e9ea;
+  height: 6em;
+  display: flex;
+
+}
+
+.sidebar-user {
+  margin: auto;
 }
 
 .usr-image {
   border: 2px solid white;
 }
 
+.rounded-circle.usr-image {
+  width: 2em;
+  height: 2em;
+}
+
+.rounded-circle.usr-image.active {
+  width: 5em;
+  height: 5em;
+}
+
 .collapse {
-  display: none;
+  /* display: none; */
 }
 
 #sidebar.active .sidebar-header h3 {
-  display: none;
+  /* display: none; */
 }
 
-#sidebar ul li a {
+#sidebar.inactive ul li a {
   text-align: left;
+
 }
 
-#sidebar.active ul li a {
+#sidebar.inactive ul li a:nth-child(2) {
   display: none;
+
 }
+
+#sidebar.active ul li a:nth-child(2) {}
+
 
 #sidebar.active ul li a.collapselink {
   display: list-item;
   color: white;
   padding-left: 0;
-  margin: 0 auto;
+  margin: 0;
 }
 
 #sidebar.active ul li i {
@@ -117,7 +142,7 @@ svg {
 
 @media (max-width: 768px) {
   #sidebar.active {
-    width: 50px;
+    /* width: 50px; */
     text-align: center;
     margin: 0;
   }
@@ -135,7 +160,7 @@ svg {
   }
 
   #sidebar.active .sidebar-header h3 {
-    display: none;
+    /* display: none; */
   }
 
   .dropdown-toggle::after {
