@@ -4,6 +4,8 @@ General
 - Look into material UI
 
 Functionality
+- Add bulk edits to category, wishlist, description
+- Filter by wishlist
 - Add sign up/create user and also email to sign up
 - Select wishes and provide cost and count for selected at top
 - Create a new wishlist from add button on add wish, cant be in current list
@@ -16,6 +18,7 @@ Functionality
 - validate jwt token especially if tampered
 
 Backend
+- Add identical test db within local and cloud DB with ability to toggle with setting or UI
 - Fix duplicate key error bulk insert mongoengine or convert back to bulkpymongo
 - Dont delete items in database that dont have corresponding wishlist, instead set them to hidden/collapsed (just in case wishlist is brought back and so we dont remove priority and other things we did to that item)
 - Parse special characters from description and name
@@ -24,6 +27,8 @@ Backend
 - remove items from wishlists that are no longer there (check id of items from that wishlist link in db against ones we retrieve currently from online)
 
 UI
+- Left align inputs of fields regardless of label text length
+- Make modify buttons be same size regardless of text
 - Look into adding wishes directly from wish page rather than separate nav
 - Selection checkboxes for wishes, totals and whatnot based on selected
 - show add wish wishlist dropdown
@@ -33,18 +38,20 @@ UI
   - come up with UI for collapsed element to show relevant data (name abbreviated, list, cost)
 - add stock indicator icon (red triangle out of stock, green check in stock)
 - banner/header
+- Add mobile view
+- Fix when shrinking browser window
 - nav menu fold up hamburger, collapse/open on hover
-- bootstrap?
 
 Validation
 - Validate link and name are input on wishlist
 - Add https:// on link add wishlist
 
 BUGS
-- Fix edit on wishes breaking
 
 ========================================================================
 DONE
+- Fix edit on wishes breaking
+- bootstrap?
 - add login
 - Add in "Manage wishlists" nav link and have backend loop through them based on site
 - Parse only lists in wishlists and remove all auto items that arent in those lists

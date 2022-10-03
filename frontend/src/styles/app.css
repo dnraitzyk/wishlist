@@ -46,11 +46,14 @@ p {
   align-items: center;
 }
 
+.flexcol {
+  display: flex;
+  flex-direction: column;
+}
+
 .flexvertcent {
   align-items: center;
 }
-
-
 
 .flexbasis {
   flex-basis: 20%;
@@ -128,6 +131,29 @@ p {
   color: #161748;
 }
 
+#editButton {}
+
+.modifybuttons {
+  flex: 1 5 25%;
+  order: 2;
+  display: flex;
+  flex-direction: column;
+}
+
+.modifybutton {
+  flex-basis: 100%;
+}
+
+.wishFields {
+  order: 1;
+  flex: 4 1 75%;
+
+}
+
+.wishFieldsWrapper {
+  flex: 1 1 75%;
+}
+
 .sidebarflex.inactive {
   /* flex-shrink: 0; */
   /* width: 20%; */
@@ -146,7 +172,6 @@ p {
 
 .sidebarflex.inactive+.contentwrapper {
   flex: 7 1 0;
-
 }
 
 .sidebarflex.active+.contentwrapper {
@@ -205,10 +230,11 @@ p {
 }
 
 .wish {
-  padding-bottom: 20px;
-  border: 1px solid red;
-  margin: 5px;
+  padding-bottom: 1em;
+  border: .1em solid red;
+  margin-bottom: .1em;
   padding-left: .5em;
+  width: 100%;
 }
 
 .wish a {
@@ -261,9 +287,9 @@ p {
 
 .typicalbutton {
   background: #478559;
-  border: 1px solid #478559;
-  border-radius: 6px;
-  box-shadow: rgba(0, 0, 0, 0.1) 1px 2px 4px;
+  border: .1em solid #478559;
+  border-radius: .25em;
+  box-shadow: rgba(0, 0, 0, 0.1) .1em .2em .4em;
   box-sizing: border-box;
   color: #FFFFFF;
   cursor: pointer;
@@ -280,6 +306,7 @@ p {
   -webkit-user-select: none;
   touch-action: manipulation;
   vertical-align: middle;
+  margin: .1em;
 }
 
 .typicalbutton:hover,
