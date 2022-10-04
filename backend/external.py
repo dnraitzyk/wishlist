@@ -1,7 +1,7 @@
 # import logging
 from bs4 import BeautifulSoup
-from .Wish import *
-from .Wishlist import *
+from .Wish import Wish
+from .Wishlist import Wishlist
 from .Utils import *
 import requests
 import re
@@ -129,7 +129,7 @@ def getReiWishes(wishlistlink):
     # logger.info(reiWishObjs)
     except Exception as e:
         logger.error("Exception in getReiWishes %s",
-                     e,  traceback.format_exc())
+                     e, traceback.format_exc())
 
 
 def getAmazonWishes(wishlistlink):
@@ -190,4 +190,4 @@ def getAmazonWishes(wishlistlink):
             logger.error("Encountered captcha, wait 1 minute")
     except Exception as e:
         logger.error("Exception in getAmazonWishes %s",
-                     e,  traceback.format_exc())
+                     e, traceback.format_exc())
