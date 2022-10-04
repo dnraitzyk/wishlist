@@ -3,6 +3,7 @@ import os
 # print("python path ", os.environ['PYTHONPATH'])
 import sys
 from dotenv import load_dotenv
+print("running pre wsgi")
 
 load_dotenv()
 isheroku = os.environ.get('ISHEROKU')
