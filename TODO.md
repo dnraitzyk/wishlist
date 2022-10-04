@@ -48,6 +48,10 @@ Validation
 
 BUGS
 
+BIG LIFTS
+- move to AWS beanstalk or serverless
+- Fix heroku
+
 ========================================================================
 DONE
 - Fix edit on wishes breaking
