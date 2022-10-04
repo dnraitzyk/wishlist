@@ -2,9 +2,9 @@ import time
 import argparse
 # from tkinter import W
 from backend import Wish
-# from backend.Wishlist import Wishlist
+from backend import Wishlist
 from backend.User import User
-from backend.external import *
+from backend.external import getAllExternal
 import logging
 import json
 from bson import json_util
