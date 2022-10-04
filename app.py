@@ -1,8 +1,8 @@
 import time
 import argparse
 # from tkinter import W
-from backend import Wish
-from backend import Wishlist
+from backend import *
+from backend.Wishlist import *
 from backend.User import User
 from backend.external import getAllExternal
 import logging

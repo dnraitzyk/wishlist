@@ -11,3 +11,4 @@
 
 # # Setting up configuration
 # app.config.from_object('config')
+__all__ = ["Wish", "Wishlist", "User", "Utils", "external"]
