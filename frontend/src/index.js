@@ -70,7 +70,6 @@ function RequireAuth({ children, redirectTo }) {
 const rootelem = document.getElementById('root');
 const root = createRoot(rootelem);
 user = getLoggedInUser();
-
 root.render(
 
     // <StrictMode>

@@ -69,4 +69,6 @@ def saveWishesDB(recordList):
     # operations = [UpdateOne({"id": idn}, {'$set': data}, upsert=True)
     #               for idn, data in zip(ids, recordList)]
     # mycollection.bulk_write(operations)
-    Wish.objects.insert(recordList)
+    print(recordList[1].__str__())
+    if len(recordList) > 0:
+        Wish.objects.insert(recordList)

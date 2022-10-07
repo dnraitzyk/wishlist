@@ -7,6 +7,7 @@ import requests
 import re
 import traceback
 import json
+from pymongo.errors import BulkWriteError
 from mongoengine.queryset.visitor import Q
 
 
@@ -16,12 +17,10 @@ from mongoengine.queryset.visitor import Q
 
 def replaceSpecialCharacters(text):
     specialChars = {"’": "'"}
-    print(text)
 
     for key, value in specialChars.items():
         if key in text:
             text.replace(key, value)
-    print(text)
     return text
 
 
@@ -127,6 +126,9 @@ def getReiWishes(wishlistlink):
         saveWishesDB(reiWishObjs)
 
     # logger.info(reiWishObjs)
+    except BulkWriteError as bwe:
+        print(bwe.details)
+        raise
     except Exception as e:
         logger.error("Exception in getReiWishes %s",
                      e, traceback.format_exc())
@@ -176,7 +178,7 @@ def getAmazonWishes(wishlistlink):
                 # mappedwish = mapWishToDBRecord(Wish(
                 #     itemname, cost=itemcost, link=itemlink, wishlist="Amazon", wishlistLink=wishlistlink, availability=itemavail))
                 itemname = replaceSpecialCharacters(itemname)
-
+                print("itemname is ", itemname)
                 id = wishlist + "_" + itemname.replace(" ", "_").lower()
 
                 wishToSave = Wish(name=itemname, cost=itemcost, link=itemlink,

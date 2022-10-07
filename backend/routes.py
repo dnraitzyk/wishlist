@@ -1,9 +1,9 @@
 import time
 import argparse
 # from tkinter import W
-from backend import *
-from backend.Wishlist import *
-from backend.User import User
+# from backend import *
+from backend.Wishlist import Wishlist
+# from backend.User import User
 from backend.external import getAllExternal
 import logging
 import json
@@ -11,7 +11,7 @@ from bson import json_util
 from pymongo import MongoClient
 from pymongo.errors import ConnectionFailure
 from bson.objectid import ObjectId
-from flask import Flask, jsonify, Response, render_template, make_response, request, send_file, redirect, url_for, send_from_directory
+from flask import jsonify, Response, render_template, make_response, request, send_file, redirect, url_for, send_from_directory
 from flask_restful import Api, Resource, reqparse
 from flask_cors import CORS, cross_origin
 import flask_praetorian
@@ -24,190 +24,44 @@ import csv
 # import pathlib
 from backend.Utils import *
 from datetime import datetime
-
-print("running app.py name is + ", __name__)
-guard = flask_praetorian.Praetorian()
+from flask import Blueprint
+from backend import guard
+route_blueprint = Blueprint('route_blueprint', __name__)
+isheroku = os.environ.get('ISHEROKU')
+# guard = flask_praetorian.Praetorian()
 
 load_dotenv()
-isheroku = os.environ.get('ISHEROKU')
-port = int(os.environ.get('PORT'))
-print("$$$$$$$$$$$$$$$$port ")
-print(port)
+
 if isheroku:
     print("isheroku")
     currdir = os.path.dirname(os.path.dirname(__file__))
     print(currdir)
-    template_dir = os.path.abspath("./build/")
+    # template_dir = os.path.abspath("./build/")
     # template_dir = os.path.abspath("../../frontend/build/")
     # template_dir = os.path.dirname(
     #     os.path.abspath(os.path.dirname(__file__) + "/../"))
-    print("template_dir")
-    print(template_dir)
+    # print("template_dir")
+    # print(template_dir)
     backenddir = os.path.join(currdir, 'backend')
-    # template_dir = os.path.join(template_dir, 'frontend')
-    LOGGING_CONFIG = {
-        'version': 1,
-        'loggers': {
-            '': {  # root logger
-                'level': 'INFO',
-                'handlers': ['debug_console_handler'],
-            }
-            # ,
-            # 'my.package': {
-            #     'level': 'WARNING',
-            #     'propagate': False,
-            #     'handlers': ['info_rotating_file_handler', 'error_file_handler'],
-            # },
-        },
-        'handlers': {
-            'debug_console_handler': {
-                'level': 'DEBUG',
-                'formatter': 'info',
-                'class': 'logging.StreamHandler',
-                'stream': 'ext://sys.stdout',
-            }
-        },
-        'formatters': {
-            'info': {
-                'format': '%(asctime)s-%(levelname)s-%(name)s-%(process)d::%(module)s|%(lineno)s:: %(message)s'
-            },
-        },
-
-    }
-    dictConfig(LOGGING_CONFIG)
-
-
 else:
-    maindir = os.path.dirname(os.path.abspath(__file__))
+    backenddir = os.path.dirname(os.path.abspath(__file__))
+    print(backenddir)
     # print("maindir")
     # print(maindir)
-    backenddir = os.path.join(maindir, 'backend')
-    # template_dir = os.path.join(template_dir, 'frontend')
-    template_dir = os.path.join(maindir, 'build')
-
-    LOGGING_CONFIG = {
-        'version': 1,
-        'loggers': {
-            '': {  # root logger
-                'level': 'INFO',
-                'handlers': ['debug_console_handler', 'rotating_file_handler', 'error_file_handler'],
-            }
-            # ,
-            # 'my.package': {
-            #     'level': 'WARNING',
-            #     'propagate': False,
-            #     'handlers': ['info_rotating_file_handler', 'error_file_handler'],
-            # },
-        },
-        'handlers': {
-            'debug_console_handler': {
-                'level': 'DEBUG',
-                'formatter': 'info',
-                'class': 'logging.StreamHandler',
-                'stream': 'ext://sys.stdout',
-            },
-            'rotating_file_handler': {
-                'level': 'INFO',
-                'formatter': 'info',
-                'class': 'logging.handlers.RotatingFileHandler',
-                'filename': 'app.log',
-                'mode': 'a',
-                'maxBytes': 1048576,
-                'backupCount': 2
-            },
-            'error_file_handler': {
-                'level': 'WARNING',
-                'formatter': 'error',
-                'class': 'logging.FileHandler',
-                'filename': 'error.log',
-                'mode': 'a',
-            }
-        },
-        'formatters': {
-            'info': {
-                'format': '%(asctime)s-%(levelname)s-%(name)s::%(module)s|%(lineno)s:: %(message)s'
-            },
-            'error': {
-                'format': '%(asctime)s-%(levelname)s-%(name)s-%(process)d::%(module)s|%(lineno)s:: %(message)s'
-            },
-        },
-
-    }
-
-    dictConfig(LOGGING_CONFIG)
-    # logging.basicConfig(filename="app.log",
-    #                     format='%(asctime)s %(message)s',
-    #                     filemode='w')
-# logger.info(os.listdir(template_dir+"/"))
-
-# template_dir = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
-
-IS_DEV = os.environ.get('FLASK_ENV') == "development"
+    # backenddir = os.path.join(maindir, 'backend')
+    # backenddir = maindir
+    # template_dir = os.path.join(os.path.dirname(backenddir), 'build')
 
 
-flaskapp = Flask("app", root_path="wishlist",
-                 template_folder=template_dir, static_folder=template_dir, static_url_path='/')
-flaskapp.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
-
-cors = CORS(flaskapp)  # comment this on deployment
-api = Api(flaskapp)
-
-flaskapp.config["SECRET_KEY"] = "gurble911scurblemcflurble123@!"
-flaskapp.config["JWT_ACCESS_LIFESPAN"] = {"hours": 24}
-flaskapp.config["JWT_REFRESH_LIFESPAN"] = {"days": 30}
-flaskapp.config["PRAETORIAN_ROLES_DISABLED"] = True
-
-guard.init_app(flaskapp, User)
-
-
-# if app.use_reloader:
-#     logger.info("run german thing")
-# The app is not in debug mode or we are in the reloaded process
-
-
-logger = logging.getLogger()
-
-# logger.setLevel(logging.INFO)
-# app.config.from_object('config')
-
-
-connstring = os.environ.get('MONGODB_URI')
-logger.info("connstring is %s", connstring)
-try:
-    if connstring is None:
-        connect(db="wish")
-        client = MongoClient('localhost', 27017)
-        logger.info('Connected to local MongoDB')
-    else:
-        connect(host=connstring)
-        client = MongoClient(connstring)
-        logger.info('Connected to Atlas MongoDB')
-# logger.info(client.server_info())
-except Exception as e:
-    logger.error("Unable to connect to the server.", e)
-
-try:
-    client.admin.command('ping')
-    logger.info('Data Base Connection Established........')
-
-except ConnectionFailure as err:
-    logger.error("Data Base Connection failed. Error: {err}")
-
-# if IS_DEV:
-#     proxy(WEBPACK_DEV_SERVER_HOST, request.path)
-# User(username="test", password=guard.hash_password('test'), lastName="testlast",
-#      firstName="testfirst", email="test@test1.com", id="test").save()
-
-
-@flaskapp.route('/favicon.ico')
+@route_blueprint.route('/favicon.ico')
 def favicon():
     # statpath = app.static_folder
     # return render_template('index.html')
     return send_from_directory(backenddir, 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
-@flaskapp.route('/', defaults={'path': ''})
-@flaskapp.route('/<path:path>')
+@route_blueprint.route('/', defaults={'path': ''})
+@route_blueprint.route('/<path:path>')
 def serve(path):
     # statpath = flaskapp.static_folder
     # logger.info("flaskapp.template_folder")
@@ -222,14 +76,14 @@ def serve(path):
     return render_template('index.html')
 
 
-@flaskapp.errorhandler(404)
+@route_blueprint.app_errorhandler(404)
 def showErrorPage(self):
-    # can add @flaskapp.route('/app', defaults={'path': ''}) to try catch call
+    # can add @route_blueprint.route('/app', defaults={'path': ''}) to try catch call
     return render_template('index.html')
     # return make_response(render_template('error.html'), 404)
 
 
-@flaskapp.route('/login', methods=['POST'])
+@route_blueprint.route('/login', methods=['POST'])
 def login():
     print("login request")
 
@@ -249,7 +103,7 @@ def login():
     return jsonify(ret), 200
 
 
-@flaskapp.route('/refresh', methods=['POST'])
+@route_blueprint.route('/refresh', methods=['POST'])
 def refresh():
     """
     Refreshes an existing JWT by creating a new one that is a copy of the old
@@ -265,7 +119,7 @@ def refresh():
     return ret, 200
 
 
-@flaskapp.route('/protected')
+@route_blueprint.route('/protected')
 @flask_praetorian.auth_required
 def protected():
     """
@@ -278,7 +132,7 @@ def protected():
     return {'message': f'protected endpoint (allowed user {flask_praetorian.current_user().username})'}
 
 
-@ flaskapp.route("/submitwish", methods=["POST"], strict_slashes=False)
+@route_blueprint.route("/submitwish", methods=["POST"], strict_slashes=False)
 def addWish():
     wishlistlink = ""
     availability = ""
@@ -333,8 +187,8 @@ def addWish():
     return jsonify("Successfully added wish")
 
 
-@ flaskapp.route("/DeleteWish", methods=["POST"], strict_slashes=False)
-@ cross_origin()
+@route_blueprint.route("/DeleteWish", methods=["POST"], strict_slashes=False)
+@cross_origin()
 def DeleteWish():
 
     id = request.get_json()
@@ -349,8 +203,8 @@ def DeleteWish():
     return jsonify("Successfully removed wish")
 
 
-@ flaskapp.route("/GetWishes", methods=["GET"], strict_slashes=False)
-@ cross_origin()
+@route_blueprint.route("/GetWishes", methods=["GET"], strict_slashes=False)
+@cross_origin()
 def getWishes():
     logger.info("running flask route getwishes")
     # client = MongoClient('localhost', 27017)
@@ -374,8 +228,8 @@ def getWishes():
     # return json_util.dumps(wishes)
 
 
-@ flaskapp.route("/GetWishlists", methods=["GET"], strict_slashes=False)
-@ cross_origin()
+@route_blueprint.route("/GetWishlists", methods=["GET"], strict_slashes=False)
+@cross_origin()
 def getWishlists():
     logger.info("running flask route getwishlists")
 
@@ -395,8 +249,8 @@ def getWishlists():
     return lists
 
 
-@ flaskapp.route("/AddWishlist", methods=["POST"], strict_slashes=False)
-@ cross_origin()
+@route_blueprint.route("/AddWishlist", methods=["POST"], strict_slashes=False)
+@cross_origin()
 def insertWishlist():
     id = ""
 
@@ -431,8 +285,8 @@ def insertWishlist():
     return jsonify("Successfully added wishlist")
 
 
-@ flaskapp.route("/DeleteWishlist", methods=["POST"], strict_slashes=False)
-@ cross_origin()
+@route_blueprint.route("/DeleteWishlist", methods=["POST"], strict_slashes=False)
+@cross_origin()
 def DeleteWishlist():
 
     id = request.get_json()
@@ -447,8 +301,8 @@ def DeleteWishlist():
     return jsonify("Successfully removed wishlist")
 
 
-@ flaskapp.route("/FetchExternalWishes", methods=["GET"], strict_slashes=False)
-@ cross_origin()
+@route_blueprint.route("/FetchExternalWishes", methods=["GET"], strict_slashes=False)
+@cross_origin()
 def fetchExternalWishes():
     logger.info("running flask route FetchExternalWishes")
     try:
@@ -460,7 +314,7 @@ def fetchExternalWishes():
     return wishes
 
 
-@ flaskapp.route('/go_outside_flask/<path:link>', strict_slashes=False)
+@route_blueprint.route('/go_outside_flask/<path:link>', strict_slashes=False)
 def go_outside_flask_method(link):
 
     return link
