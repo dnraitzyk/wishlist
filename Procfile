@@ -1,1 +1,1 @@
-web: gunicorn --timeout 200 wsgi:wsgi --pythonpath=./
+web: gunicorn --timeout 200 wsgi:wsgi
