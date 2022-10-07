@@ -2,7 +2,7 @@ import time
 import argparse
 # from tkinter import W
 # from backend import *
-import Wishlist
+from Wishlist import Wishlist
 # from backend.User import User
 from .external import getAllExternal
 import logging
