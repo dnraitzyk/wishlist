@@ -9,14 +9,9 @@ import json
 directory = os.path.dirname(os.path.dirname(
     os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(directory)
-# print(directory)
-# SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-# print(os.path.dirname(SCRIPT_DIR))
-# sys.path.append(os.path.dirname(SCRIPT_DIR))
-from backend.Wishlist import Wishlist
-from backend.Wish import Wish
 
-# sys.path.append(os.path.dirname(SCRIPT_DIR))
+from backend.wishlist import Wishlist
+from backend.wish import Wish
 
 
 load_dotenv()
@@ -42,9 +37,5 @@ try:
 except ConnectionFailure as err:
     print("Data Base Connection failed. Error: {err}")
 
-# Wishlist.objects((Q(source="auto") & Q(
-#                 wishlistLink=testlink))).delete()
-
 Wishlist.objects.update(set__owner="dnraitzyktest")
 Wish.objects.update(set__owner="dnraitzyktest")
-# print("Wishlist.objects ", Wishlist.objects.to_json())

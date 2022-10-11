@@ -1,34 +1,17 @@
-import time
-import argparse
-# from tkinter import W
-# from backend import *
 from .wishlist import Wishlist
-# from backend.User import User
+from .wish import Wish
 from .external import getAllExternal
-import logging
-import json
-from bson import json_util
-from pymongo import MongoClient
-from pymongo.errors import ConnectionFailure
-from bson.objectid import ObjectId
-from flask import jsonify, Response, render_template, make_response, request, send_file, redirect, url_for, send_from_directory
-from flask_restful import Api, Resource, reqparse
-from flask_cors import CORS, cross_origin
+from flask import jsonify, render_template, request, send_from_directory
+from flask_cors import cross_origin
 import flask_praetorian
 from dotenv import load_dotenv
-from mongoengine import connect
-from logging.config import dictConfig
 import os
-import sys
-import csv
-# import pathlib
 from backend.Utils import *
 from datetime import datetime
 from flask import Blueprint
 from backend import guard
 route_blueprint = Blueprint('route_blueprint', __name__)
 isheroku = os.environ.get('ISHEROKU')
-# guard = flask_praetorian.Praetorian()
 
 load_dotenv()
 
@@ -36,51 +19,28 @@ if isheroku:
     print("isheroku")
     currdir = os.path.dirname(os.path.dirname(__file__))
     print(currdir)
-    # template_dir = os.path.abspath("./build/")
-    # template_dir = os.path.abspath("../../frontend/build/")
-    # template_dir = os.path.dirname(
-    #     os.path.abspath(os.path.dirname(__file__) + "/../"))
-    # print("template_dir")
-    # print(template_dir)
+
     backenddir = os.path.join(currdir, 'backend')
 else:
     backenddir = os.path.dirname(os.path.abspath(__file__))
     print(backenddir)
-    # print("maindir")
-    # print(maindir)
-    # backenddir = os.path.join(maindir, 'backend')
-    # backenddir = maindir
-    # template_dir = os.path.join(os.path.dirname(backenddir), 'build')
 
 
 @route_blueprint.route('/favicon.ico')
 def favicon():
-    # statpath = app.static_folder
-    # return render_template('index.html')
     return send_from_directory(backenddir, 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
 
 @route_blueprint.route('/', defaults={'path': ''})
 @route_blueprint.route('/<path:path>')
 def serve(path):
-    # statpath = flaskapp.static_folder
-    # logger.info("flaskapp.template_folder")
-    # logger.info(flaskapp.template_folder)
-    # logger.info("flaskapp.template_folder files are")
-    # logger.info(os.listdir(flaskapp.template_folder))
     print("running slash path")
-    print(path)
-    # print(render_template('index.html'))
-    # return send_from_directory(flaskapp.template_folder, 'index.html')
-
     return render_template('index.html')
 
 
 @route_blueprint.app_errorhandler(404)
 def showErrorPage(self):
-    # can add @route_blueprint.route('/app', defaults={'path': ''}) to try catch call
     return render_template('index.html')
-    # return make_response(render_template('error.html'), 404)
 
 
 @route_blueprint.route('/login', methods=['POST'])
@@ -156,33 +116,18 @@ def addWish():
     if '_id' in reqdict:
         id = request.json['_id']
     modified_date = datetime.today()
-    # objid = ObjectId(id)
+
     if id is None or id == "":
         id = wishlist + "_" + itemname.replace(" ", "_").lower()
-    logger.info("id is ", id)
+    # logger.info("id is ", id)
     wishToSave = Wish(name=itemname, description=description, cost=cost, quantity=quantity, category=category, link=link,
                       wishlist=wishlist, wishlistLink=wishlistlink, id=id, availability=availability, source=source, modified_date=modified_date, owner=owner)
 
-    # mydatabase = client.wish
-    # mycollection = mydatabase.wishes
-
-    # record = {
-    #     'description': description,
-    #     'name': itemname,
-    #     'cost': cost,
-    #     'link': link,
-    #     'quantity': quantity,
-    #     'category': category,
-    #     'wishlist': wishlist,
-    #     'modified_date': modified_date,
-    #     'source': source
-    # }
     try:
         wishToSave.save()
     except Exception as e:
         logger.error("Error saving wish %s", e)
         return jsonify({"status": "error", "message": "Error saving wish"})
-    # rec = mycollection.replace_one({"_id": objid}, record, upsert=True)
 
     return jsonify("Successfully added wish")
 
@@ -207,25 +152,13 @@ def DeleteWish():
 @cross_origin()
 def getWishes():
     logger.info("running flask route getwishes")
-    # client = MongoClient('localhost', 27017)
-    # mydatabase = client.wish
-    # mycollection = mydatabase.wishes
+
     try:
         wishes = Wish.objects.to_json()
-    #     # getReiWishes()
-    #     logger.info("run REI")
-    # except Exception as e:
-    #     logger.info("Error getting rei wishlist %s", e)
-    # try:
-    #     logger.info("run amazon")
-    #     # getAmazonWishes()
     except Exception as e:
         logger.info("Error GetWishes %s", e)
 
-    # wishes = mycollection.find({})
-    # logger.info(json_util.dumps(wishes))
     return wishes
-    # return json_util.dumps(wishes)
 
 
 @route_blueprint.route("/GetWishlists", methods=["GET"], strict_slashes=False)
@@ -233,19 +166,12 @@ def getWishes():
 def getWishlists():
     logger.info("running flask route getwishlists")
 
-    # client = MongoClient('localhost', 27017)
-    # mydatabase = client.wish
-    # mycollection = mydatabase.wishes
     try:
-        # lists = mycollection.distinct("wishlist")
-        # lists = Wish.objects.distinct("wishlist")
         lists = Wishlist.objects.to_json()
 
     except Exception as e:
         logger.info("Error getting distinct wishlists %s", e)
 
-    # wishes = mycollection.find({})
-    # logger.info(json_util.dumps(wishes))
     return lists
 
 
@@ -255,7 +181,7 @@ def insertWishlist():
     id = ""
 
     reqdict = request.get_json()
-    logger.info("reqdict is ", reqdict)
+
     name = request.json['name']
     owner = request.json['owner']
 

@@ -1,6 +1,6 @@
 # import logging
 from bs4 import BeautifulSoup
-from .Wish import Wish
+from .wish import Wish
 from .wishlist import Wishlist
 from .Utils import *
 import requests
