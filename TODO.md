@@ -1,5 +1,4 @@
 General
-- Default link / or homepage to wishes
 - Look into formik
 - Look into material UI
 
@@ -13,13 +12,13 @@ Functionality
 - Modify auto wishes and have them still save and be updated (only certain fields)
   - have to retrieve from backend once we know which we have or dont update certain values in DB
 - export to file to send someone (flesh this out more))
+- import from csv file
 - add in verify in case an item changes or seems to have a matching item (idk if need)
 - add in priority tiers flags
 - validate jwt token especially if tampered
 
 Backend
 - Add identical test db within local and cloud DB with ability to toggle with setting or UI
-- Fix duplicate key error bulk insert mongoengine or convert back to bulkpymongo
 - Dont delete items in database that dont have corresponding wishlist, instead set them to hidden/collapsed (just in case wishlist is brought back and so we dont remove priority and other things we did to that item)
 - Parse special characters from description and name
 - find common elements to simplify html parsing
@@ -30,7 +29,6 @@ UI
 - Left align inputs of fields regardless of label text length
 - Make modify buttons be same size regardless of text
 - Look into adding wishes directly from wish page rather than separate nav
-- Selection checkboxes for wishes, totals and whatnot based on selected
 - show add wish wishlist dropdown
   - items are built from distinct wishlist select from db
 - show out of stock items as error and collapse them?
@@ -45,15 +43,19 @@ UI
 Validation
 - Validate link and name are input on wishlist
 - Add https:// on link add wishlist
+- Figure out how to validate on server and not continue the call
 
 BUGS
+- Fix duplicate key error bulk insert mongoengine or convert back to bulkpymongo
 
 BIG LIFTS
 - move to AWS beanstalk or serverless
-- Fix heroku
 
 ========================================================================
 DONE
+- Selection checkboxes for wishes, totals and whatnot based on selected
+- Fix heroku
+- Default link / or homepage to wishes
 - Fix edit on wishes breaking
 - bootstrap?
 - add login

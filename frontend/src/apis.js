@@ -146,6 +146,7 @@ async function GetDistinctWishlists() {
     try {
         let getdbresp = await axios.get(process.env.REACT_APP_BASE_URL + "/GetWishlists");
         let respdata = getdbresp.data;
+        respdata.unshift({ '_id': "Default", 'name': 'Default' });
         // respdata = respdata.map((elem) => elem.trim().toLowerCase().replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase()))) );
 
         return respdata;

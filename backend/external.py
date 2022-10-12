@@ -1,4 +1,5 @@
 # import logging
+from datetime import datetime
 from bs4 import BeautifulSoup
 from .wish import Wish
 from .wishlist import Wishlist
@@ -161,6 +162,7 @@ def getAmazonWishes(wishlistlink):
                 relitemlink = i.find("a", id=re.compile("^itemName_"))['href']
                 itemlink = baselink + relitemlink
                 itemcost = 0
+                itemquantity = 0
                 itemavail = "Out"
                 try:
                     itemcost = float(
@@ -171,6 +173,13 @@ def getAmazonWishes(wishlistlink):
                 try:
                     if str(i.find("a", string=re.compile("Add to Cart")).string):
                         itemavail = "In"
+                        try:
+                            foundquantity = i.find("span", id=re.compile(
+                                "^itemQuantityRow"), class_="a-size-small").span.find("span", id=re.compile("^itemRequested_")).string
+                            if foundquantity:
+                                itemquantity = foundquantity
+                        except Exception as e:
+                            itemquantity = 1
                 except AttributeError as e:
                     logger.error("No add to cart found for " + itemname)
                     logger.error("itemavail error %s ", e)
@@ -181,7 +190,7 @@ def getAmazonWishes(wishlistlink):
                 print("itemname is ", itemname)
                 id = wishlist + "_" + itemname.replace(" ", "_").lower()
 
-                wishToSave = Wish(name=itemname, cost=itemcost, link=itemlink,
+                wishToSave = Wish(name=itemname, quantity=itemquantity, cost=itemcost, link=itemlink,
                                   wishlist=wishlist, wishlistLink=wishlistlink, id=id, availability=itemavail, source="auto", modified_date=datetime.today(), owner=owner)
                 amazWishObjs.append(wishToSave)
 

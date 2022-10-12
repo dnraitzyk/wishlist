@@ -119,7 +119,7 @@ const WishlistHeader = (props) => {
     let totalcost = 0;
     list.forEach(function (item) {
       if (item.isSelected) {
-        totalcost += item.cost;
+        totalcost += (item.cost * item.quantity);
       }
     })
     return totalcost.toFixed(2);
