@@ -10,6 +10,9 @@ from backend.Utils import *
 from datetime import datetime
 from flask import Blueprint
 from backend import guard
+from mongoengine.queryset.visitor import Q
+
+
 route_blueprint = Blueprint('route_blueprint', __name__)
 isheroku = os.environ.get('ISHEROKU')
 
@@ -93,13 +96,14 @@ def protected():
 
 
 @route_blueprint.route("/submitwish", methods=["POST"], strict_slashes=False)
+@flask_praetorian.auth_required
 def addWish():
     wishlistlink = ""
     availability = ""
     id = ""
 
     reqdict = request.get_json()
-    logger.info("reqdict is ", reqdict)
+    print("reqdict is ", reqdict)
     itemname = request.json['name']
     quantity = request.json['quantity']
     cost = request.json['cost']
@@ -133,7 +137,7 @@ def addWish():
 
 
 @route_blueprint.route("/DeleteWish", methods=["POST"], strict_slashes=False)
-@cross_origin()
+@flask_praetorian.auth_required
 def DeleteWish():
 
     id = request.get_json()
@@ -149,7 +153,7 @@ def DeleteWish():
 
 
 @route_blueprint.route("/GetWishes", methods=["GET"], strict_slashes=False)
-@cross_origin()
+@flask_praetorian.auth_required
 def getWishes():
     logger.info("running flask route getwishes")
 
@@ -163,6 +167,7 @@ def getWishes():
 
 @route_blueprint.route("/GetWishlists", methods=["GET"], strict_slashes=False)
 @cross_origin()
+@flask_praetorian.auth_required
 def getWishlists():
     logger.info("running flask route getwishlists")
 
@@ -176,7 +181,7 @@ def getWishlists():
 
 
 @route_blueprint.route("/AddWishlist", methods=["POST"], strict_slashes=False)
-@cross_origin()
+@flask_praetorian.auth_required
 def insertWishlist():
     id = ""
 
@@ -212,13 +217,16 @@ def insertWishlist():
 
 
 @route_blueprint.route("/DeleteWishlist", methods=["POST"], strict_slashes=False)
-@cross_origin()
+@flask_praetorian.auth_required
 def DeleteWishlist():
-
-    id = request.get_json()
+    reqdict = request.get_json()
+    if 'id' in reqdict:
+        id = request.json['id']
+    if 'owner' in reqdict:
+        owner = request.json['owner']
 
     try:
-        remobj = Wishlist.objects.get(id=id)
+        remobj = Wishlist.objects.get((Q(id=id) & Q(owner=owner)))
         remobj.delete()
     except Exception as e:
         logger.error("Error removing wishlist %s", e)

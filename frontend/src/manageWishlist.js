@@ -240,7 +240,7 @@ const WishListRow = (props) => {
 
   async function deleteWishlist(itemid) {
     try {
-      await DeleteWishlist(itemid);
+      await DeleteWishlist({ 'id': itemid });
     } catch (e) {
       console.log(`Error in manageWishlist.deleteWishlist: ${e.message}`);
     }

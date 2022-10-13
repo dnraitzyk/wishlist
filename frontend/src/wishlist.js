@@ -26,11 +26,14 @@ function dynamicSort(property, sortOrderWord = 'asc') {
 }
 
 let wishlistOptions = [];
+let filterWishlistOptions = [];
 
 async function RetrieveWishlistOptions() {
   try {
     const apiresp = await GetDistinctWishlists();
     const options = apiresp.sort();
+    const filteroptions = [...options];
+
     wishlistOptions = (options.map(function (option) {
       return (
         <option key={Math.random()} value={option._id}>{option.name}</option>
@@ -38,6 +41,19 @@ async function RetrieveWishlistOptions() {
     }
     ));
 
+    filteroptions.unshift("all");
+    filterWishlistOptions = (filteroptions.map(function (option) {
+
+      if (option === "all") {
+        return <option key={Math.random()} value={"all"}>{"All"}</option>
+      }
+      else {
+        return <option key={Math.random()} value={option.name}>{option.name}</option>
+      }
+
+    }
+    ));
+    console.log("filterWishlistOptions ", filterWishlistOptions)
 
   } catch (e) {
     console.log(`Error in Wishlist.GetWishlistOptions: ${e.message}`);
@@ -103,7 +119,8 @@ const Wishlist = () => {
 
 // Header component
 const WishlistHeader = (props) => {
-  const [filter, setFilter] = useState('all');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [wishlistFilter, setWishlistFilter] = useState('all');
   const [sortBy, setSortBy] = useState('wishlist');
   const [sortOrder, setSortOrder] = useState('desc');
 
@@ -139,7 +156,7 @@ const WishlistHeader = (props) => {
   // };
 
   // Update shown list items when filter changes
-  const HandleFilterChange = (e) => {
+  const HandleCategoryFilterChange = (e) => {
     const { fullList, updateListOfWishes } = props;
     const { value } = e.target;
 
@@ -151,7 +168,35 @@ const WishlistHeader = (props) => {
       }
     }
 
-    setFilter(value);
+    setCategoryFilter(value);
+
+    const newlist = fullList.map(i => {
+      return { ...i };
+
+    });
+
+    updateListOfWishes(newlist);
+  }
+
+  const HandleWishlistFilterChange = (e) => {
+    const { fullList, updateListOfWishes } = props;
+    const { value } = e.target;
+    console.log("e.target ", e.target)
+
+    for (let i = fullList.length - 1; i >= 0; i -= 1) {
+      fullList[i].isReadOnly = true;
+      fullList[i].show = true;
+      console.log("fullList[i] ", fullList[i])
+      console.log("value ", value)
+      if (value !== 'all' && fullList[i].wishlist !== value) {
+        fullList[i].show = false;
+      }
+      else if (value === 'all') {
+        fullList[i].show = true;
+      }
+    }
+
+    setWishlistFilter(value);
 
     const newlist = fullList.map(i => {
       return { ...i };
@@ -334,9 +379,15 @@ const WishlistHeader = (props) => {
       <button className="typicalbutton bannerItem5" type="button" onClick={() => HandleExport()}>
         Export
       </button>
+      <label className="bannerItem5" htmlFor="wishlistfilter">
+        <p>Wishlist:</p>
+        <select id="wishlistfilter" name="wishlistfilter" value={wishlistFilter} onChange={(e) => HandleWishlistFilterChange(e)}>
+          {filterWishlistOptions}
+        </select>
+      </label>
       <label className="bannerItem5" htmlFor="category">
         <p>Category:</p>
-        <select id="category" name="category" value={filter} onChange={(e) => HandleFilterChange(e)}>
+        <select id="category" name="category" value={categoryFilter} onChange={(e) => HandleCategoryFilterChange(e)}>
           <option value="all">All</option>
           <option value="default">Default</option>
           <option value="camping">Camping</option>

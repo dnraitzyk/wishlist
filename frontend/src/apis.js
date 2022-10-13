@@ -1,48 +1,31 @@
+// import { axios, interceptors } from 'axios';
 import axios from 'axios';
 import { getLoggedInUser } from '.';
-// import { login, useAuth, logout } from './index';
 
-// const [logged] = useAuth();
+const myaxios = axios.create({
+    baseURL: process.env.REACT_APP_BASE_URL
+});
 
-// async function AttemptLogin(body) {
-//     try {
-//         let authresp = await axios.post(process.env.REACT_APP_BASE_URL + '/login', body, {
-//             headers: {
-//                 'content-type': 'application/json'
-//             }
-//         }).catch(function (err) {
-//             if (err.response) {
-//                 console.log("err.response ", err.response)
-//             }
-//             else if (err.request) {
-//                 console.log("err.request ", err.request)
-//             }
-//             else {
-//                 // Something happened in setting up the request that triggered an Error
-//                 console.log('Error ', err.message);
-//             }
-//         });
-
-//         if (authresp) {
-//             if (authresp.data.access_token) {
-//                 console.log("token found ", authresp.data.access_token)
-//                 login(authresp.data.access_token)
-//             }
-//             else {
-//                 console.log("No token found")
-//             }
-//         }
-
-//     }
-//     catch (e) {
-//         console.log("Error in Apis.AttemptLogin: " + e.message);
-//     }
-// }
+myaxios.interceptors.request.use(
+    function (req) {
+        const user = getLoggedInUser()
+        if (user) {
+            if (req.data) {
+                req.data.owner = user.username
+            }
+            req.headers['Authorization'] = 'Bearer ' + user.access_token
+        }
+        // config.headers['Content-Type'] = 'application/json';
+        return req
+    },
+    (error) => {
+        Promise.reject(error)
+    }
+)
 
 async function InsertWish(body) {
     try {
-        body["owner"] = getLoggedInUser().username
-        let postdbresp = axios.post(process.env.REACT_APP_BASE_URL + '/submitwish', body, {
+        let postdbresp = myaxios.post('/submitwish', body, {
             headers: {
                 'content-type': 'application/json'
             }
@@ -55,7 +38,7 @@ async function InsertWish(body) {
 
 async function DeleteWish(body) {
     try {
-        let postdbresp = axios.post(process.env.REACT_APP_BASE_URL + '/DeleteWish', body, {
+        let postdbresp = myaxios.post('/DeleteWish', body, {
             headers: {
                 'content-type': 'application/json'
             }
@@ -69,7 +52,7 @@ async function DeleteWish(body) {
 
 async function GetAllWishes() {
     try {
-        let getdbresp = await axios.get(process.env.REACT_APP_BASE_URL + "/GetWishes");
+        let getdbresp = await myaxios.get("/GetWishes");
         let respdata = getdbresp.data;
         respdata.forEach(function (arrayItem) {
             let id = "";
@@ -92,7 +75,7 @@ async function GetAllWishes() {
 
 async function GetExternalWishes() {
     try {
-        let getdbresp = await axios.get(process.env.REACT_APP_BASE_URL + "/FetchExternalWishes");
+        let getdbresp = await myaxios.get("/FetchExternalWishes");
         let respdata = getdbresp.data;
 
         respdata.forEach(function (arrayItem) {
@@ -117,8 +100,7 @@ async function GetExternalWishes() {
 
 async function InsertWishlist(body) {
     try {
-        body["owner"] = getLoggedInUser().username
-        let postdbresp = axios.post(process.env.REACT_APP_BASE_URL + '/AddWishlist', body, {
+        let postdbresp = myaxios.post('/AddWishlist', body, {
             headers: {
                 'content-type': 'application/json'
             }
@@ -131,7 +113,7 @@ async function InsertWishlist(body) {
 
 async function DeleteWishlist(body) {
     try {
-        let postdbresp = axios.post(process.env.REACT_APP_BASE_URL + '/DeleteWishlist', body, {
+        let postdbresp = myaxios.post('/DeleteWishlist', body, {
             headers: {
                 'content-type': 'application/json'
             }
@@ -144,7 +126,7 @@ async function DeleteWishlist(body) {
 
 async function GetDistinctWishlists() {
     try {
-        let getdbresp = await axios.get(process.env.REACT_APP_BASE_URL + "/GetWishlists");
+        let getdbresp = await myaxios.get("/GetWishlists");
         let respdata = getdbresp.data;
         respdata.unshift({ '_id': "Default", 'name': 'Default' });
         // respdata = respdata.map((elem) => elem.trim().toLowerCase().replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase()))) );
@@ -158,7 +140,7 @@ async function GetDistinctWishlists() {
 
 async function GetWishlists() {
     try {
-        let getdbresp = await axios.get(process.env.REACT_APP_BASE_URL + "/GetWishlists");
+        let getdbresp = await myaxios.get("/GetWishlists");
         let respdata = getdbresp.data;
         // respdata = respdata.map((elem) => elem.trim().toLowerCase().replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase()))) );
         respdata.forEach(function (arrayItem) {
@@ -181,7 +163,7 @@ async function GetWishlists() {
 //     formData.append("csvFile", body);
 //     console.log("running api sendCSVContent", formData)
 //     try {
-//         const response = await axios.post(process.env.REACT_APP_BASE_URL + "/downloadCSV", formData, {
+//         const response = await axios.post( "/downloadCSV", formData, {
 //             headers: { "Content-Type": "multipart/form-data", }, responseType: 'arraybuffer',
 //         });
 //         console.log("response is ", response)
