@@ -12,12 +12,7 @@ LOGGING_CONFIG = {
             'level': 'INFO',
             'handlers': ['debug_console_handler'],
         }
-        # ,
-        # 'my.package': {
-        #     'level': 'WARNING',
-        #     'propagate': False,
-        #     'handlers': ['info_rotating_file_handler', 'error_file_handler'],
-        # },
+
     },
     'handlers': {
         'debug_console_handler': {

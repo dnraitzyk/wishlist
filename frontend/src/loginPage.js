@@ -120,35 +120,15 @@ function Login() {
 
     if (handleValidation(fields)) {
 
-
-      // alert("Form submitted");
-      // let newlink = "";
-
-      // if (link !== "" && !link.startsWith("https://")) {
-      //     newlink = "https://" + link;
-      //     setLink(newlink);
-      // }
       AttemptLogin({ "username": username, "password": password }).then(r => setLogged(r))
 
       setUsername("");
       setPassword("");
-      // setCost(0);
-      // setQuantity("1");
-      // setLink("");
-      // setCategory("default");
-      // setWishlist("Default");
-      //   while (!localStorage.getItem("REACT_TOKEN_AUTH_KEY")) {
-      //   console.log("logging in while", localStorage.getItem("REACT_TOKEN_AUTH_KEY"))
 
-      // }
-      // console.log("logging in ", localStorage.getItem("REACT_TOKEN_AUTH_KEY"))
-      // setLogged(localStorage.getItem("REACT_TOKEN_AUTH_KEY"))
       setFields(clearFields());
     } else {
       alert("Form has errors.");
     }
-
-    // setLogged(localStorage.getItem("REACT_TOKEN_AUTH_KEY"))
 
   }
 
@@ -159,31 +139,9 @@ function Login() {
     setUsername("test");
     setPassword("test");
   }
-  // function ShowMessage() {
-
-  //   const [message, setMessage] = useState("");
-
-
-  //   authFetch("/protected").then(response => {
-  //     if (response.status === 401) {
-  //       setMessage("Must login")
-  //       return null
-  //     }
-  //     return response.json()
-  //   }).then(response => {
-  //     if (response && response.message) {
-  //       setMessage(response.message)
-  //     }
-  //   })
-
-  //   return message
-  // }
-  // const logged = localStorage.getItem("REACT_TOKEN_AUTH_KEY") ? true : false
-
   return (
 
     <div className='contentwrapper flex'>
-      {/* <div>{ShowMessage()}</div> */}
       {!logged ?
         <form>
           <fieldset>

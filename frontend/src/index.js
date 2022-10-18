@@ -1,15 +1,10 @@
-import React, { StrictMode, useState } from 'react';
+import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter, Routes, Route, Navigate, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { createAuthProvider } from 'react-token-auth';
 import App from './App';
 import "./styles/app.css";
 import "./styles/sidebar.css";
-import AddWish from './addWish';
-import Login from './loginPage';
-import Sidenav from './sidenav';
-import Wishlist from './wishlist';
-import ManageWishlist from './manageWishlist';
 import jwtDecode from 'jwt-decode';
 
 // Bootstrap CSS
@@ -53,7 +48,7 @@ export const { useAuth, authFetch, login, logout } =
     })
 
 
-function RequireAuth({ children, redirectTo }) {
+export default function RequireAuth({ children, redirectTo }) {
     logged = false
     const token = localStorage.getItem("REACT_TOKEN_AUTH_KEY")
     if (token) {
@@ -66,33 +61,12 @@ function RequireAuth({ children, redirectTo }) {
     return logged ? children : <Navigate to={redirectTo} />;
 }
 
-
 const rootelem = document.getElementById('root');
 const root = createRoot(rootelem);
 user = getLoggedInUser();
+
 root.render(
 
-    // <StrictMode>
-    <div className="leaddiv">
-        <BrowserRouter>
-            <Sidenav user={user} />
-            <Routes>
-                <Route
-                    path="*"
-                    element={
-                        <RequireAuth redirectTo="loginPage">
-                            <Routes>
-                                <Route path="app/manageWishlists" element={<ManageWishlist />} />
-                                <Route path="app/wishlists" element={<Wishlist />} />
-                                <Route path="app/addwish" element={<AddWish />} />
-                                <Route path="*" element={<Wishlist />} />
-                            </Routes>
-                        </RequireAuth>
-                    }
-                />
-                <Route path="loginPage" element={<Login />} />
-            </Routes>
-        </BrowserRouter >
-    </div>
+    <App user={user} />
 
 );

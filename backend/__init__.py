@@ -1,5 +1,4 @@
 import logging
-# import json
 # from bson import json_util
 from pymongo import MongoClient
 from backend.User import User
@@ -14,6 +13,7 @@ from dotenv import load_dotenv
 from mongoengine import connect
 from logging.config import dictConfig
 import os
+from .config import configureDatabase
 
 load_dotenv()
 
@@ -21,10 +21,11 @@ print("running app.py name is + ", __name__)
 guard = flask_praetorian.Praetorian()
 mongo = PyMongo()
 logger = logging.getLogger()
+isheroku = os.environ.get('ISHEROKU')
+os.environ["currentDBAlias"] = "wishdev"
 
 
 def create_app():
-    isheroku = os.environ.get('ISHEROKU')
     port = int(os.environ.get('PORT'))
 
     if isheroku:
@@ -109,34 +110,10 @@ def create_app():
     # flaskapp = Flask(__name__, instance_relative_config=False)
     # flaskapp.config.from_object('config.Config')
 
-    connstring = os.environ.get('MONGO_URI')
-    logger.info("connstring is %s", connstring)
-    try:
-        if connstring is None:
-            connect(db="wish")
-            client = MongoClient('localhost', 27017)
-            logger.info('Connected to local MongoDB')
-        else:
-            connect(host=connstring)
-            client = MongoClient(connstring)
-            logger.info('Connected to Atlas MongoDB')
-            # logger.info(client.server_info())
-    except Exception as e:
-        logger.error("Unable to connect to the server.", e)
-
-    try:
-        client.admin.command('ping')
-        logger.info('Data Base Connection Established........')
-
-    except ConnectionFailure as err:
-        logger.error("Data Base Connection failed. Error: {err}")
+    configureDatabase()
 
     print("running __init__.py name is ", __name__)
 
-    load_dotenv()
-    print("port is ", port)
-
-    # IS_DEV = os.environ.get('FLASK_ENV') == "development"
     IS_PROD = os.environ.get('FLASK_ENV') == "production"
 
     flaskapp.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0

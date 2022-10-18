@@ -1,4 +1,3 @@
-// import { axios, interceptors } from 'axios';
 import axios from 'axios';
 import { getLoggedInUser } from '.';
 
@@ -22,6 +21,23 @@ myaxios.interceptors.request.use(
         Promise.reject(error)
     }
 )
+
+async function SwitchDB(body) {
+    try {
+        await myaxios.post('/switchDB', body, {
+            headers: {
+                'content-type': 'application/json'
+            }
+        });
+        setTimeout(function () {
+            //do what you need here
+        }, 2000);
+    }
+    catch (e) {
+        console.log("Error in Apis.SwitchDB: " + e.message);
+    }
+}
+
 
 async function InsertWish(body) {
     try {
@@ -129,7 +145,6 @@ async function GetDistinctWishlists() {
         let getdbresp = await myaxios.get("/GetWishlists");
         let respdata = getdbresp.data;
         respdata.unshift({ '_id': "Default", 'name': 'Default' });
-        // respdata = respdata.map((elem) => elem.trim().toLowerCase().replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase()))) );
 
         return respdata;
     }
@@ -142,7 +157,6 @@ async function GetWishlists() {
     try {
         let getdbresp = await myaxios.get("/GetWishlists");
         let respdata = getdbresp.data;
-        // respdata = respdata.map((elem) => elem.trim().toLowerCase().replace(/\w\S*/g, (w) => (w.replace(/^\w/, (c) => c.toUpperCase()))) );
         respdata.forEach(function (arrayItem) {
             let date;
             if (typeof arrayItem.added_date === "object") {
@@ -185,4 +199,4 @@ async function GetWishlists() {
 //     return null
 // }
 
-export { GetAllWishes, InsertWish, GetDistinctWishlists, GetWishlists, GetExternalWishes, InsertWishlist, DeleteWishlist, DeleteWish };
+export { GetAllWishes, InsertWish, GetDistinctWishlists, GetWishlists, GetExternalWishes, InsertWishlist, DeleteWishlist, DeleteWish, SwitchDB };

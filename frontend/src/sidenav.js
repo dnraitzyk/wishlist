@@ -1,92 +1,56 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
 import { getLoggedInUser } from '.';
-import list from './images/list.svg'
-import cloudplus from './images/cloudplus.svg'
-import keys from './images/key.svg'
-import pluscircledotted from './images/pluscircledotted.svg'
+
 
 const UserInfo = (props) => {
-    return getLoggedInUser() ? getLoggedInUser().username : null
-
-
+  return getLoggedInUser() ? getLoggedInUser().username : null
 }
 
-// function Sidenav(props) {
-//     const user = props.user
-
-//     return (
-//         <div className="sidenav">
-//             <div id="user">
-//                 <UserInfo props={user}></UserInfo>
-//                 {/* {getLoggedInUser() ? getLoggedInUser().username : null} */}
-//             </div>
-//             <div className="sidenavlink">
-//                 <Link to="/app/addwish">Add Wish</Link>
-//             </div>
-//             <div className="sidenavlink">
-//                 <Link to="/app/wishlists">Wishlists</Link>
-//             </div>
-//             <div className="sidenavlink">
-//                 <Link to="/app/manageWishlists">Manage Wishlists</Link>
-//             </div>
-//             <div className="sidenavlink">
-//                 <Link to="/loginPage">Login</Link>
-//             </div>
-//         </div>
-//     );
-// }
-// export default Sidenav;
-
 function Sidenav(props) {
-    const user = props.user
+  const user = props.user
 
-    const [isActive, setActive] = useState(false);
+  const [isActive, setActive] = useState(false);
 
-    // useEffect(() => {
-    //     setActive(true);
-    // }, [])
+  const [isDropdownActive, setDropdownActive] = useState("false");
+  var barsIcon = <img src={require("./images/list.svg").default} />
+  var crossIcon = <i className="fas fa-times-circle"></i>
+  return (
+    <div className={isActive ? "sidebarflex active" : "sidebarflex inactive"} >
+      < div className="wrapper" >
+        <nav id="sidebar" className={isActive ? "active" : "inactive"}>
+          <button
+            type="button"
+            id="sidebarCollapse"
+            onClick={() => setActive(!isActive)}
+            className="btn-custom"
+          >
+            <span className={isActive ? 'hidden' : ''}>{barsIcon}</span>
+            <span className={isActive ? '' : 'hidden'}>{barsIcon}</span>
+          </button>
+          <div className="sidebar-header">
+            <div className='sidebar-user'>
+              <img
+                // src={image}
+                className={isActive ? "rounded-circle usr-image active" : "rounded-circle usr-image"}
+              ></img>
+              <div>
+                <UserInfo props={user}></UserInfo>
+              </div>
+            </div>
+          </div>
 
-    console.log(isActive)
-    const [isDropdownActive, setDropdownActive] = useState("false");
-    var barsIcon = <img src={require("./images/list.svg").default} />
-    var crossIcon = <i className="fas fa-times-circle"></i>
-    return (
-        <div className={isActive ? "sidebarflex active" : "sidebarflex inactive"} >
-            < div className="wrapper" >
-                <nav id="sidebar" className={isActive ? "active" : "inactive"}>
-                    <button
-                        type="button"
-                        id="sidebarCollapse"
-                        onClick={() => setActive(!isActive)}
-                        className="btn-custom"
-                    >
-                        <span className={isActive ? 'hidden' : ''}>{barsIcon}</span>
-                        <span className={isActive ? '' : 'hidden'}>{barsIcon}</span>
-                    </button>
-                    <div className="sidebar-header">
-                        <div className='sidebar-user'>
-                            <img
-                                // src={image}
-                                className={isActive ? "rounded-circle usr-image active" : "rounded-circle usr-image"}
-                            ></img>
-                            <div>
-                                <UserInfo props={user}></UserInfo>
-                            </div>
-                        </div>
-                    </div>
-
-                    <ul className="list-unstyled components">
-                        <li className="list-item">
-                            {/* <i className="fas fa-briefcase icon-color"></i> */}
-                            <Link className="collapselink" to="/app/addwish"><img src={require("./images/pluscircledotted.svg").default} /></Link>
-                            <Link to="/app/addwish">Add Wish</Link>
-                        </li>
-                        <li className="list-item">
-                            <Link className="collapselink" to="/app/wishlists"><img src={require("./images/listcheck.svg").default} /></Link>
-                            <Link to="/app/wishlists">Wishlists</Link>
-                        </li>
-                        {/* <li className="list-item">
+          <ul className="list-unstyled components">
+            <li className="list-item">
+              {/* <i className="fas fa-briefcase icon-color"></i> */}
+              <Link className="collapselink" to="/app/addwish"><img src={require("./images/pluscircledotted.svg").default} /></Link>
+              <Link to="/app/addwish">Add Wish</Link>
+            </li>
+            <li className="list-item">
+              <Link className="collapselink" to="/app/wishlists"><img src={require("./images/listcheck.svg").default} /></Link>
+              <Link to="/app/wishlists">Wishlists</Link>
+            </li>
+            {/* <li className="list-item">
                 <i className="fas fa-user-alt icon-color"></i>
                 <Link
                   to="/portfolio"
@@ -119,19 +83,19 @@ function Sidenav(props) {
                   </li>
                 </ul>
               </li> */}
-                        <li className="list-item">
-                            <Link className="collapselink" to="/app/manageWishlists"><img src={require("./images/cloudplus.svg").default} /></Link>
-                            <Link to="/app/manageWishlists">Manage Wishlists</Link>
-                        </li>
-                        <li className="list-item">
-                            <Link className="collapselink" to="/loginPage"><img src={require("./images/key.svg").default} /></Link>
-                            <Link to="/loginPage">Login</Link>
-                        </li>
-                    </ul>
-                </nav>
-            </div >
-        </div >
-    );
+            <li className="list-item">
+              <Link className="collapselink" to="/app/manageWishlists"><img src={require("./images/cloudplus.svg").default} /></Link>
+              <Link to="/app/manageWishlists">Manage Wishlists</Link>
+            </li>
+            <li className="list-item">
+              <Link className="collapselink" to="/loginPage"><img src={require("./images/key.svg").default} /></Link>
+              <Link to="/loginPage">Login</Link>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  );
 };
 export default Sidenav;
 

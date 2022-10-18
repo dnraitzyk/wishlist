@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-// import Popup from 'reactjs-popup';
 import { InsertWish, GetDistinctWishlists } from './apis';
 
 
@@ -196,14 +195,6 @@ function AddWish() {
                     </label>
                     <br />
                     <span>
-                        {/* <label className="topmargin" htmlFor="wishlist">
-                            <p>Wishlist:</p>
-                            <input name="wishlist" autoComplete="off" onChange={handleChange(setWishlist)} value={wishlist} list="wishlists" />
-                            <datalist id="wishlists">
-                                {wishlistOptions}
-                            </datalist>
-                            
-                        </label> */}
                         <select className='custom-select custom-select-sm'>
                             {wishlistOptions}
                         </select>

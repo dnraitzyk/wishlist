@@ -23,18 +23,3 @@ class Wish(Document):
 
     def __str__(self):
         return str("name: " + self.name + " description: " + self.description + " cost: " + self.cost + " quantity: " + self.quantity + " category: " + self.category + " link: " + self.link + " wishlist: " + self.wishlist + " wishlistLink: " + self.wishlistLink + " id: " + self.id + " availability: " + self.availability + " source: " + self.source + " owner: " + self.owner + " modified_date: " + self.modified_date)
-
-# class Wish():
-
-    # def __init__(self, name="", description="", cost=0, quantity=1, category="default", link="", wishlist="default", wishlistLink="", availability=""):
-    #     self.name = name
-    #     self.description = description
-    #     self.cost = cost
-    #     self.quantity = quantity
-    #     self.category = category
-    #     self.link = link
-    #     self.wishlist = wishlist
-    #     self.wishlistLink = wishlistLink
-    #     self.id = wishlist+"_"+name.replace(" ", "_").lower()
-    #     self.availability = availability
-    #     self.modified_date = datetime.today()

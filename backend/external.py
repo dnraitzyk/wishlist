@@ -1,5 +1,6 @@
 # import logging
 from datetime import datetime
+from unicodedata import category
 from bs4 import BeautifulSoup
 from .wish import Wish
 from .wishlist import Wishlist
@@ -10,7 +11,6 @@ import traceback
 import json
 from pymongo.errors import BulkWriteError
 from mongoengine.queryset.visitor import Q
-
 
 # logger = logging.getLogger()
 # logger.setLevel(logging.INFO)
@@ -116,11 +116,9 @@ def getReiWishes(wishlistlink):
 
             itemquantity = row.find(
                 "div", class_="list-item__quantity").p.contents[0].strip()
-            # mappedwish = mapWishToDBRecord(
-            #     Wish(namestring, itemdesc, itemcost, itemquantity, link=itemlink, wishlist="Rei", wishlistLink=wishlistlink, availability=""))
-            # reiWishObjs.append(mappedwish)
+
             id = wishlist + "_" + namestring.replace(" ", "_").lower()
-            wishToSave = Wish(name=namestring, description=itemdesc, cost=itemcost, quantity=itemquantity, link=itemlink,
+            wishToSave = Wish(name=namestring, description=itemdesc, cost=itemcost, category="Default", quantity=itemquantity, link=itemlink,
                               wishlist=wishlist, wishlistLink=wishlistlink, id=id, availability=itemstock, source="auto", modified_date=datetime.today(), owner=owner)
             reiWishObjs.append(wishToSave)
 
@@ -153,7 +151,6 @@ def getAmazonWishes(wishlistlink):
                     "li", attrs={"data-id": True}))
 
             except Exception as e:
-                # getAmazonWishes()
                 logger.error("Exception in getAmazonWishes %s", e)
             amazWishObjs = list()
 
@@ -184,13 +181,11 @@ def getAmazonWishes(wishlistlink):
                     logger.error("No add to cart found for " + itemname)
                     logger.error("itemavail error %s ", e)
 
-                # mappedwish = mapWishToDBRecord(Wish(
-                #     itemname, cost=itemcost, link=itemlink, wishlist="Amazon", wishlistLink=wishlistlink, availability=itemavail))
                 itemname = replaceSpecialCharacters(itemname)
                 print("itemname is ", itemname)
                 id = wishlist + "_" + itemname.replace(" ", "_").lower()
 
-                wishToSave = Wish(name=itemname, quantity=itemquantity, cost=itemcost, link=itemlink,
+                wishToSave = Wish(name=itemname, quantity=itemquantity, cost=itemcost, category="Default", link=itemlink,
                                   wishlist=wishlist, wishlistLink=wishlistlink, id=id, availability=itemavail, source="auto", modified_date=datetime.today(), owner=owner)
                 amazWishObjs.append(wishToSave)
 

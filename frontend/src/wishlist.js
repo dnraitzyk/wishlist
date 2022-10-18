@@ -1,9 +1,8 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-underscore-dangle */
 import axios from 'axios';
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { GetAllWishes, InsertWish, GetDistinctWishlists, GetExternalWishes, DeleteWish } from './apis';
-// import { utf8ToAnsi } from 'utf8-to-ansi';
 
 function dynamicSort(property, sortOrderWord = 'asc') {
   let sortOrder;
@@ -64,8 +63,8 @@ const GetWishlistOptions = () => {
 }
 
 // Main component, acts a wrapper for the entire screen content
-const Wishlist = () => {
-
+const Wishlist = (props) => {
+  const { useProdDB } = props
 
 
   const [loading, setLoading] = useState('initial');
@@ -97,8 +96,7 @@ const Wishlist = () => {
     setLoading('true');
     GetWishes();
     GetWishlistOptions();
-
-  }, []);
+  }, [useProdDB]);
 
   if (loading === 'initial') {
     return <h2 className="content">Initializing...</h2>;
@@ -132,7 +130,6 @@ const WishlistHeader = (props) => {
   }
 
   function getTotalCost(list) {
-    console.log(list)
     let totalcost = 0;
     list.forEach(function (item) {
       if (item.isSelected) {
@@ -141,19 +138,6 @@ const WishlistHeader = (props) => {
     })
     return totalcost.toFixed(2);
   }
-
-  // function handleSelectAll() {
-  //   let { fullList, updateListOfWishes } = props;
-
-  //   fullList.forEach(function (i) {
-  //     if (i.show) {
-  //       i.isSelected = true;
-  //     }
-  //     return { ...i };
-  //   })
-
-  //   updateListOfWishes(fullList);
-  // };
 
   // Update shown list items when filter changes
   const HandleCategoryFilterChange = (e) => {
@@ -288,9 +272,7 @@ const WishlistHeader = (props) => {
 
     fullList = fullList.map(function (obj) {
       let innerarr = []
-      // Object.keys(obj).forEach(function (e) {
-      //   innerarr.push(String(obj[e]))
-      // });
+
       innerarr.push(String(obj['name']) === "undefined" ? "" : String(obj['name']))
       innerarr.push(String(obj['availability']) === "undefined" ? "" : String(obj['availability']))
       innerarr.push(String(obj['description']) === "undefined" ? "" : String(obj['description']))
@@ -361,11 +343,6 @@ const WishlistHeader = (props) => {
           {getShowCount(list)}
         </h1>
         <div>
-          {/* <span  >
-            <label className="custom-control-label smallrightmargin" htmlFor="selectAll">Select All</label>
-            <input className="custom-control-input" id='selectAll' type="checkbox" onClick={() => handleSelectAll()}>
-            </input>
-          </span> */}
         </div>
       </div>
       <h1 className="wishTitle bannerItem5">
@@ -798,6 +775,12 @@ const WishRow = (props) => {
                           Wishlist:
                           <span className="emphasize">{item.wishlist}</span>
                         </div>
+                        <div>
+                          <label htmlFor="needByDate">
+                            Needed By Date:
+                          </label>
+                          <input type="date" className="wishatt" name="needByDate" placeholder="Needed By:" onChange={(e) => handleChange(e, item)} value={item.needByDate || new Date().toLocaleDateString()} />
+                        </div>
                       </div>
                     </div>
                   ) :
@@ -854,6 +837,12 @@ const WishRow = (props) => {
                                 {wishlistOptions}
                               </select>
                             </label>
+                            <div>
+                              <label htmlFor="needByDate">
+                                Needed By Date:
+                              </label>
+                              <input type="date" className="wishatt" name="needByDate" placeholder="Needed By:" onChange={(e) => handleChange(e, item)} value={item.needByDate || new Date().toLocaleDateString()} />
+                            </div>
                           </div>
                         </div>
                       </span>

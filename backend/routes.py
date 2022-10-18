@@ -11,6 +11,9 @@ from datetime import datetime
 from flask import Blueprint
 from backend import guard
 from mongoengine.queryset.visitor import Q
+from .config import configureDatabase, getDatabaseVersion
+from mongoengine import connect, disconnect
+from .__init__ import create_app
 
 
 route_blueprint = Blueprint('route_blueprint', __name__)
@@ -95,6 +98,20 @@ def protected():
     return {'message': f'protected endpoint (allowed user {flask_praetorian.current_user().username})'}
 
 
+@route_blueprint.route("/switchDB", methods=["POST"], strict_slashes=False)
+@flask_praetorian.auth_required
+def switchDatabase():
+
+    reqdict = request.get_json()
+    switchToDB = request.json['db']
+    logger.info("running flask route switchDB, db is " + switchToDB)
+    getDatabaseVersion(switchToDB)
+
+    app = create_app()
+
+    return jsonify("Successfully switched db to" + switchToDB)
+
+
 @route_blueprint.route("/submitwish", methods=["POST"], strict_slashes=False)
 @flask_praetorian.auth_required
 def addWish():
@@ -123,7 +140,7 @@ def addWish():
 
     if id is None or id == "":
         id = wishlist + "_" + itemname.replace(" ", "_").lower()
-    # logger.info("id is ", id)
+
     wishToSave = Wish(name=itemname, description=description, cost=cost, quantity=quantity, category=category, link=link,
                       wishlist=wishlist, wishlistLink=wishlistlink, id=id, availability=availability, source=source, modified_date=modified_date, owner=owner)
 
@@ -180,8 +197,8 @@ def getWishlists():
     return lists
 
 
-@route_blueprint.route("/AddWishlist", methods=["POST"], strict_slashes=False)
-@flask_praetorian.auth_required
+@ route_blueprint.route("/AddWishlist", methods=["POST"], strict_slashes=False)
+@ flask_praetorian.auth_required
 def insertWishlist():
     id = ""
 
@@ -216,8 +233,8 @@ def insertWishlist():
     return jsonify("Successfully added wishlist")
 
 
-@route_blueprint.route("/DeleteWishlist", methods=["POST"], strict_slashes=False)
-@flask_praetorian.auth_required
+@ route_blueprint.route("/DeleteWishlist", methods=["POST"], strict_slashes=False)
+@ flask_praetorian.auth_required
 def DeleteWishlist():
     reqdict = request.get_json()
     if 'id' in reqdict:
@@ -235,8 +252,8 @@ def DeleteWishlist():
     return jsonify("Successfully removed wishlist")
 
 
-@route_blueprint.route("/FetchExternalWishes", methods=["GET"], strict_slashes=False)
-@cross_origin()
+@ route_blueprint.route("/FetchExternalWishes", methods=["GET"], strict_slashes=False)
+@ cross_origin()
 def fetchExternalWishes():
     logger.info("running flask route FetchExternalWishes")
     try:
@@ -248,7 +265,7 @@ def fetchExternalWishes():
     return wishes
 
 
-@route_blueprint.route('/go_outside_flask/<path:link>', strict_slashes=False)
+@ route_blueprint.route('/go_outside_flask/<path:link>', strict_slashes=False)
 def go_outside_flask_method(link):
 
     return link

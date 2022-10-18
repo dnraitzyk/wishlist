@@ -75,7 +75,6 @@ const ManageWishlist = () => {
       let options = apiresp.sort();
       options = options.map((item) => ({ ...item, isReadOnly: true }));
 
-      console.log("options is ", options)
       setWishlists(options)
 
 
