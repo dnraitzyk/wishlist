@@ -18,18 +18,22 @@ def mapWishToDBRecord(Wish):
         "availability": Wish.availability,
         "id": Wish.id,
         "source": "auto",
-        "modified_date": Wish.modified_date
+        "modified_date": Wish.modified_date,
+        "needed_by_date": Wish.needed_by_date
     }
     return recordDict
 
 
 def saveWishesDB(recordList):
-
+    # for x in range(len(recordList)):
+    #     print(str(recordList[x]))
     logger.info("inserting " + str(len(recordList)) + " records")
 
     # operations = [UpdateOne({"id": idn}, {'$set': data}, upsert=True)
     #               for idn, data in zip(ids, recordList)]
     # mycollection.bulk_write(operations)
     # print(recordList[1].__str__())
-    if len(recordList) > 0:
-        Wish.objects.insert(recordList)
+    for x in range(len(recordList)):
+        recordList[x].save()
+    # if len(recordList) > 0:
+    #     Wish.objects.insert(recordList)

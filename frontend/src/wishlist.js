@@ -776,10 +776,10 @@ const WishRow = (props) => {
                           <span className="emphasize">{item.wishlist}</span>
                         </div>
                         <div>
-                          <label htmlFor="needByDate">
+                          <label htmlFor="needed_by_date">
                             Needed By Date:
                           </label>
-                          <input type="date" className="wishatt" name="needByDate" placeholder="Needed By:" onChange={(e) => handleChange(e, item)} value={item.needByDate || new Date().toLocaleDateString()} />
+                          <input type="date" className="wishatt" name="needed_by_date" placeholder="Needed By:" onChange={(e) => handleChange(e, item)} value={item.needed_by_date || new Date().toLocaleDateString()} />
                         </div>
                       </div>
                     </div>
@@ -838,10 +838,10 @@ const WishRow = (props) => {
                               </select>
                             </label>
                             <div>
-                              <label htmlFor="needByDate">
+                              <label htmlFor="needed_by_date">
                                 Needed By Date:
                               </label>
-                              <input type="date" className="wishatt" name="needByDate" placeholder="Needed By:" onChange={(e) => handleChange(e, item)} value={item.needByDate || new Date().toLocaleDateString()} />
+                              <input type="date" className="wishatt" name="needed_by_date" placeholder="Needed By:" onChange={(e) => handleChange(e, item)} value={item.needed_by_date || new Date().toLocaleDateString()} />
                             </div>
                           </div>
                         </div>

@@ -126,7 +126,7 @@ def addWish():
     cost = request.json['cost']
     link = request.json['link']
     category = request.json['category']
-    description = request.json['description']
+    # description = request.json['description']
     wishlist = request.json['wishlist']
     source = request.json['source']
     owner = request.json['owner']
@@ -136,6 +136,14 @@ def addWish():
         availability = request.json['availability']
     if '_id' in reqdict:
         id = request.json['_id']
+    if 'description' in reqdict:
+        description = request.json['description']
+    else:
+        description = ""
+    if 'needed_by_date' in reqdict:
+        needed_by_date = request.json['needed_by_date']
+    else:
+        needed_by_date = ""
     modified_date = datetime.today()
 
     if id is None or id == "":
@@ -143,6 +151,8 @@ def addWish():
 
     wishToSave = Wish(name=itemname, description=description, cost=cost, quantity=quantity, category=category, link=link,
                       wishlist=wishlist, wishlistLink=wishlistlink, id=id, availability=availability, source=source, modified_date=modified_date, owner=owner)
+    if needed_by_date is not "":
+        wishToSave.setNeededByDate(needed_by_date)
 
     try:
         wishToSave.save()

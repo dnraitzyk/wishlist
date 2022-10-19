@@ -8,7 +8,7 @@ logger.setLevel(logging.INFO)
 
 class Wish(Document):
     name = StringField(required=True, max_length=256)
-    description = StringField(required=True, max_length=256)
+    description = StringField(max_length=256)
     cost = DecimalField(required=True, min_value=0)
     quantity = IntField(required=True, min_value=0)
     category = StringField(required=True, max_length=256)
@@ -20,6 +20,12 @@ class Wish(Document):
     source = StringField(max_length=10)
     owner = StringField(required=True, max_length=256)
     modified_date = DateTimeField(required=True)
+    needed_by_date = DateTimeField()
+
+    def setNeededByDate(self, value):
+        self.needed_by_date = value
+    # def __str__(self):
+    #     return str("name: " + self.name + " description: " + self.description + " cost: " + self.cost + " quantity: " + self.quantity + " category: " + self.category + " link: " + self.link + " wishlist: " + self.wishlist + " wishlistLink: " + self.wishlistLink + " id: " + self.id + " availability: " + self.availability + " source: " + self.source + " owner: " + self.owner + " modified_date: " + self.modified_date)
 
     def __str__(self):
-        return str("name: " + self.name + " description: " + self.description + " cost: " + self.cost + " quantity: " + self.quantity + " category: " + self.category + " link: " + self.link + " wishlist: " + self.wishlist + " wishlistLink: " + self.wishlistLink + " id: " + self.id + " availability: " + self.availability + " source: " + self.source + " owner: " + self.owner + " modified_date: " + self.modified_date)
+        return str("name: " + self.name + " description: " + self.description + " id: " + self.id)
