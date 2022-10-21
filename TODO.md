@@ -46,13 +46,14 @@ Validation
 - Figure out how to validate on server and not continue the call
 
 BUGS
-- Fix duplicate key error bulk insert mongoengine or convert back to bulkpymongo
+- needed_by_date is one day off, need to look into generating dates on frontend or backend only
 
 BIG LIFTS
 - move to AWS beanstalk or serverless
 
 ========================================================================
 DONE
+- Fix duplicate key error bulk insert mongoengine or convert back to bulkpymongo
 - Selection checkboxes for wishes, totals and whatnot based on selected
 - Fix heroku
 - Default link / or homepage to wishes

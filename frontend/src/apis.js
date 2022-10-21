@@ -81,6 +81,10 @@ async function GetAllWishes() {
                 ({ $date: date } = arrayItem.modified_date);
                 arrayItem.modified_date = date;
             }
+            if (typeof arrayItem.needed_by_date === "object") {
+                ({ $date: date } = arrayItem.needed_by_date);
+                arrayItem.needed_by_date = date;
+            }
         });
         return respdata;
     }

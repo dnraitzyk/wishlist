@@ -3,6 +3,8 @@
 import axios from 'axios';
 import React, { useState, useEffect, useRef } from 'react';
 import { GetAllWishes, InsertWish, GetDistinctWishlists, GetExternalWishes, DeleteWish } from './apis';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 function dynamicSort(property, sortOrderWord = 'asc') {
   let sortOrder;
@@ -593,6 +595,7 @@ const WishRow = (props) => {
   // Update item when fields edited
   const handleChange = (e) => {
     let { item, currentList, updateListOfWishes } = props;
+    console.log(e.target)
     const { name, value } = e.target;
     item[name] = value;
     const newlist = currentList.map(i => {
@@ -610,6 +613,26 @@ const WishRow = (props) => {
       return { ...i };
     });
     updateListOfWishes(newlist);
+  };
+
+  const handleDatePickerChange = (date, setFunction) => {
+    console.log("date ", date)
+    console.log("setFunction ", setFunction)
+    let { item, currentList, updateListOfWishes } = props;
+
+    setFunction(date)
+    item.needed_by_date = date;
+    const newlist = currentList.map(i => {
+      return { ...i };
+    });
+    updateListOfWishes(newlist);
+    // const { value } = e.target;
+    // let { item, currentList, updateListOfWishes } = props;
+    // item.category = value;
+    // const newlist = currentList.map(i => {
+    //   return { ...i };
+    // });
+    // updateListOfWishes(newlist);
   };
 
   // Update item for wishlist change
@@ -649,38 +672,47 @@ const WishRow = (props) => {
     }
   };
 
-  function dateFormat(date) {
+  function dateFormat(date, showTime = true) {
     const d = new Date(date);
 
     const month = d.getMonth() + 1;
     const day = d.getDate();
-    let suffix = 'AM';
-    let hour = d.getUTCHours().toString();
 
-    if (hour > 12) {
-      hour = String(hour - 12);
-      suffix = 'PM';
+    let timeSuffix = ""
+    if (showTime) {
+      let suffix = 'AM';
+      let hour = d.getUTCHours().toString();
+
+      if (hour > 12) {
+        hour = String(hour - 12);
+        suffix = 'PM';
+      }
+
+      let mins = d.getUTCMinutes().toString();
+
+      let sec = d.getUTCSeconds().toString();
+
+      if (hour.length === 1) {
+        hour = '0' + hour;
+      }
+
+      if (mins.length === 1) {
+        mins = '0' + mins;
+      }
+
+      if (sec.length === 1) {
+        sec = '0' + sec;
+      }
+      timeSuffix = ` at ${hour}:${mins}${sec ? `:${sec}` : ''} ${suffix}`;
     }
 
-    let mins = d.getUTCMinutes().toString();
-
-    let sec = d.getUTCSeconds().toString();
-
-    if (hour.length === 1) {
-      hour = '0' + hour;
-    }
-
-    if (mins.length === 1) {
-      mins = '0' + mins;
-    }
-
-    if (sec.length === 1) {
-      sec = '0' + sec;
-    }
     const monthString = month >= 10 ? month : `0${month}`;
     const dayString = day >= 10 ? day : `0${day}`;
-    return `${monthString}/${dayString}/${d.getFullYear()} at ${hour}:${mins}${sec ? `:${sec}` : ''} ${suffix}`;
+    return `${monthString}/${dayString}/${d.getFullYear()}${timeSuffix}`;
   }
+
+  // const ShowNeededByDate = ({ item }) => (item.needed_by_date ? <ShowNeededByDate item={item} /> : null);
+  const [neededByDate, setNeededByDate] = useState(item.needed_by_date);
 
   // Row content, if read only show just fields, if not read only then show different buttons and editable fields
   return (
@@ -692,162 +724,129 @@ const WishRow = (props) => {
           </span>
           <span className="wishFieldsWrapper flexcol">
             {
-              item.isReadOnly ? (
 
-                <div className="flex">
-                  <span className="righthandsection modifybuttons" >
-                    {ShowEdit(item)}
-                    {item.source !== "auto" ? ShowDelete(item) : null}
-
-                  </span>
-                  <div className="wishFields">
-                    <span className="wishatt capital">
-                      Category:
-                      <span className="emphasize">{item.category}</span>
+              (
+                item.source === "auto" ? (
+                  <div className="flex">
+                    <span className="righthandSection modifybuttons">
+                      {/* {Submit(item)} */}
+                      {/* {Cancel(item)} */}
+                      {/* {ShowEdit(item)} */}
+                      {!item.isReadOnly ? Submit(item) : null}
+                      {!item.isReadOnly ? Cancel(item) : null}
+                      {item.isReadOnly ? ShowEdit(item) : null}
+                      {item.source !== "auto" ? ShowDelete(item) : null}
                     </span>
-                    <div className="wishatt capital">
-                      Item Name:
-                      {item.link ? (
+                    <div className='wishFields'>
+                      <label htmlFor="category">
+                        Category:
+                        <select className='custom-select custom-select-sm' disabled={item.isReadOnly} name="category" onChange={(e) => handleCategoryChange(e, item)} value={item.category}>
+                          <option value="default">Default</option>
+                          <option value="camping">Camping</option>
+                          <option value="hendrix">Hendrix</option>
+                          <option value="decor">Decor</option>
+                        </select>
+                      </label>
+                      <div className="wishatt capital">
+                        Item Name:
                         <a className="" href="#" onClick={(e) => goToLink(item.link)}>{item.name}</a>
-                      )
-                        : (
-                          <span className="">{item.name}</span>
-                        )}
-                    </div>
-                    <div className="wishatt">
-                      Description:
-                      <span className="emphasize">{item.description}</span>
-                    </div>
-                    <div className="wishatt">
-                      Cost:
-                      <span className="emphasize">{item.cost}</span>
-                    </div>
-                    <div className="wishatt ">
-                      Quantity:
-                      <span className="emphasize">{item.quantity}</span>
-                    </div>
-                    <div className="wishatt capital ">
-                      Wishlist:
-                      <span className="emphasize">{item.wishlist}</span>
+                      </div>
+                      <div>
+                        <label htmlFor="description">
+                          Description:
+                        </label>
+                        <input className="wishatt" readOnly={item.isReadOnly} name="description" placeholder="Description" onChange={(e) => handleChange(e, item)} value={item.description} />
+                      </div>
+                      <div className="wishatt">
+                        Cost:
+                        <span className="emphasize">{item.cost}</span>
+                      </div>
+                      <div>
+                        <label htmlFor="quantity">
+                          Quantity:
+                        </label>
+                        <input className="wishatt" name="quantity" readOnly={item.isReadOnly} placeholder="Quantity" onChange={(e) => handleChange(e, item)} value={item.quantity} />
+                      </div>
+                      <div className="wishatt capital ">
+                        Wishlist:
+                        <span className="emphasize">{item.wishlist}</span>
+                      </div>
+                      <div>
+                        <label htmlFor="needed_by_date">
+                          Needed By Date:
+                        </label>
+                        <DatePicker readOnly={item.isReadOnly} selected={neededByDate} onChange={(date) => handleDatePickerChange(date, setNeededByDate)} />
+                        {/* <input type={item.isReadOnly ? "text" : "date"} className="wishatt" readOnly={item.isReadOnly} name="needed_by_date" placeholder="Needed By:" onChange={(e) => handleChange(e, item)} value={item.needed_by_date || dateFormat(item.needed_by_date, false)} /> */}
+                      </div>
                     </div>
                   </div>
-                </div>
-              )
-                :
-                (
-                  item.source === "auto" ? (
-                    <div className="flex">
-                      <span className="righthandSection modifybuttons">
+                ) :
+                  (
+                    <span className="flex">
+                      <div className="righthandSection modifybuttons">
                         {Submit(item)}
                         {Cancel(item)}
-                      </span>
+                      </div>
                       <div className='wishFields'>
                         <label htmlFor="category">
                           Category:
-                          <select className='custom-select custom-select-sm' name="category" onChange={(e) => handleCategoryChange(e, item)} value={item.category}>
+                          <select name="category" disabled={item.isReadOnly} onChange={(e) => handleCategoryChange(e, item)} value={item.category}>
                             <option value="default">Default</option>
                             <option value="camping">Camping</option>
                             <option value="hendrix">Hendrix</option>
                             <option value="decor">Decor</option>
                           </select>
                         </label>
-                        <div className="wishatt capital">
-                          Item Name:
-                          <a className="" href="#" onClick={(e) => goToLink(item.link)}>{item.name}</a>
-                        </div>
                         <div>
-                          <label htmlFor="description">
-                            Description:
-                          </label>
-                          <input className="wishatt" name="description" placeholder="Description" onChange={(e) => handleChange(e, item)} value={item.description} />
-                        </div>
-                        <div className="wishatt">
-                          Cost:
-                          <span className="emphasize">{item.cost}</span>
-                        </div>
-                        <div>
-                          <label htmlFor="quantity">
-                            Quantity:
-                          </label>
-                          <input className="wishatt" name="quantity" placeholder="Quantity" onChange={(e) => handleChange(e, item)} value={item.quantity} />
-                        </div>
-                        <div className="wishatt capital ">
-                          Wishlist:
-                          <span className="emphasize">{item.wishlist}</span>
-                        </div>
-                        <div>
-                          <label htmlFor="needed_by_date">
-                            Needed By Date:
-                          </label>
-                          <input type="date" className="wishatt" name="needed_by_date" placeholder="Needed By:" onChange={(e) => handleChange(e, item)} value={item.needed_by_date || new Date().toLocaleDateString()} />
-                        </div>
-                      </div>
-                    </div>
-                  ) :
-                    (
-                      <span className="flex">
-                        <div className="righthandSection modifybuttons">
-                          {Submit(item)}
-                          {Cancel(item)}
-                        </div>
-                        <div className='wishFields'>
-                          <label htmlFor="category">
-                            Category:
-                            <select name="category" onChange={(e) => handleCategoryChange(e, item)} value={item.category}>
-                              <option value="default">Default</option>
-                              <option value="camping">Camping</option>
-                              <option value="hendrix">Hendrix</option>
-                              <option value="decor">Decor</option>
+                          <div>
+                            <label htmlFor="name">
+                              Item Name:
+                            </label>
+                            <input className="wishatt capital" readOnly={item.isReadOnly} name="name" placeholder="Name" onChange={(e) => handleChange(e, item)} value={item.name} />
+                          </div>
+                          <div>
+                            <label htmlFor="description">
+                              Description:
+                            </label>
+                            <input className="wishatt" readOnly={item.isReadOnly} name="description" placeholder="Description" onChange={(e) => handleChange(e, item)} value={item.description} />
+                          </div>
+                          <div>
+                            <label htmlFor="cost">
+                              Cost:
+                            </label>
+                            <input className="wishatt" readOnly={item.isReadOnly} name="cost" placeholder="Cost" onChange={(e) => handleChange(e, item)} value={item.cost} />
+                          </div>
+                          <div>
+                            <label htmlFor="link">
+                              Link:
+                            </label>
+                            <input className="wishatt" readOnly={item.isReadOnly} name="link" placeholder="Link" onChange={(e) => handleChange(e, item)} value={item.link} />
+                          </div>
+                          <div>
+                            <label htmlFor="quantity">
+                              Quantity:
+                            </label>
+                            <input className="wishatt" readOnly={item.isReadOnly} name="quantity" placeholder="Quantity" onChange={(e) => handleChange(e, item)} value={item.quantity} />
+                          </div>
+                          <label htmlFor="wishlist">
+                            Wishlist:
+                            <select name="wishlist" readOnly={item.isReadOnly} onChange={(e) => handleWishlistChange(e, item)} value={item.wishlist}>
+                              {wishlistOptions}
                             </select>
                           </label>
                           <div>
-                            <div>
-                              <label htmlFor="name">
-                                Item Name:
-                              </label>
-                              <input className="wishatt capital" name="name" placeholder="Name" onChange={(e) => handleChange(e, item)} value={item.name} />
-                            </div>
-                            <div>
-                              <label htmlFor="description">
-                                Description:
-                              </label>
-                              <input className="wishatt" name="description" placeholder="Description" onChange={(e) => handleChange(e, item)} value={item.description} />
-                            </div>
-                            <div>
-                              <label htmlFor="cost">
-                                Cost:
-                              </label>
-                              <input className="wishatt" name="cost" placeholder="Cost" onChange={(e) => handleChange(e, item)} value={item.cost} />
-                            </div>
-                            <div>
-                              <label htmlFor="link">
-                                Link:
-                              </label>
-                              <input className="wishatt" name="link" placeholder="Link" onChange={(e) => handleChange(e, item)} value={item.link} />
-                            </div>
-                            <div>
-                              <label htmlFor="quantity">
-                                Quantity:
-                              </label>
-                              <input className="wishatt" name="quantity" placeholder="Quantity" onChange={(e) => handleChange(e, item)} value={item.quantity} />
-                            </div>
-                            <label htmlFor="wishlist">
-                              Wishlist:
-                              <select name="wishlist" onChange={(e) => handleWishlistChange(e, item)} value={item.wishlist}>
-                                {wishlistOptions}
-                              </select>
+                            <label htmlFor="needed_by_date">
+                              Needed By Date:
                             </label>
-                            <div>
-                              <label htmlFor="needed_by_date">
-                                Needed By Date:
-                              </label>
-                              <input type="date" className="wishatt" name="needed_by_date" placeholder="Needed By:" onChange={(e) => handleChange(e, item)} value={item.needed_by_date || new Date().toLocaleDateString()} />
-                            </div>
+                            <DatePicker readOnly={item.isReadOnly} selected={neededByDate} onChange={(date) => handleDatePickerChange(date, setNeededByDate)} />
+
+                            {/* <input type="date" readOnly={item.isReadOnly} className="wishatt" name="needed_by_date" placeholder="Needed By:" onChange={(e) => handleChange(e, item)} value={item.needed_by_date || new Date().toLocaleDateString()} /> */}
                           </div>
                         </div>
-                      </span>
-                    )
-                )
+                      </div>
+                    </span>
+                  )
+              )
             }
             <div className="wishatt">
               Owner:

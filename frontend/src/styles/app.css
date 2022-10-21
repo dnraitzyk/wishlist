@@ -267,6 +267,30 @@ p {
 
 }
 
+input:read-only {
+  border: none;
+  outline: none;
+  cursor: default;
+  appearance: none;
+}
+
+select:disabled {
+  background: none;
+  appearance: none;
+  border: none;
+  color: black;
+  font-weight: bold;
+}
+
+/* input:read-only:active,
+input:read-only:focus {
+  border: none;
+} */
+
+input:read-only::placeholder {
+  color: transparent;
+}
+
 .sortButton {
   background: #FFFFFF;
   border: 0;
